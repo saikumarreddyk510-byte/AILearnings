@@ -13,3 +13,17 @@ scikit-learn
 # Jupyter / interactive notebooks
 jupyter
 ipykernel
+
+# LLM / LangChain
+langchain-community
+langchain-core
+langchain-groq
+langchain-huggingface
+langchain-chroma
+langchain-text-splitters
+langchain-experimental
+tiktoken
+sentence-transformers
+python-dotenv
+pypdf
+beautifulsoup4

@@ -1,3 +1,53 @@
+# ---------------- Architecture Diagram ----------------
+# [User Text]
+#    |
+#    +--> [No History: llm.invoke("...")]
+#    |         |
+#    |         v
+#    |    [Model may forget previous turn]
+#    |
+#    +--> [Manual chat_history list]
+#    |         |
+#    |         v
+#    |    [HumanMessage/AIMessage append]
+#    |         |
+#    |         v
+#    |    [llm.invoke(chat_history)]
+#    |
+#    +--> [ConversationChain + BufferMemory (legacy)]
+#              |
+#              v
+#         [Auto memory + replies + buffer print]
+#
+# ---------------- Deep Architecture Notes (Kid-Friendly) ----------------
+# I file main goal: memory undi vs memory ledu difference chupinchadam.
+#
+# Part A: Memory Leni Calls
+# Step 1: First prompt `My name is Sai.` pampistam.
+# Step 2: Separate second call lo `What is my name?` adugutam.
+# Step 3: Previous context pass cheyyakapothe model confuse avvachu.
+#
+# Part B: Manual History List
+# Step 1: `chat_history = []` create chestam.
+# Step 2: User message HumanMessage ga add chestam.
+# Step 3: Model reply AIMessage ga add chestam.
+# Step 4: Next user question kuda add chestam.
+# Step 5: Full history model ki pampiste context maintain avtundi.
+#
+# Part C: ConversationBufferMemory (legacy)
+# Step 1: Memory object create chestam.
+# Step 2: ConversationChain lo llm + memory attach chestam.
+# Step 3: `predict()` calls automatic ga memory update chestayi.
+# Step 4: `memory.buffer` print chesi full chat transcript choodachu.
+#
+# Data Types:
+# - chat_history: list[HumanMessage | AIMessage]
+# - memory.buffer: str
+# - model output: str
+#
+# Concept summary:
+# Context pampithe AI gurthupettundi, context pampakapothe AI marchipovachu.
+
 # `.env` file values ni load cheyyadaniki import.
 from dotenv import load_dotenv
 # Groq model connect cheyyadaniki import.

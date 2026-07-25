@@ -3,6 +3,51 @@ Ikkada manam LangChain + Groq use chesi oka simple chat example run chestunnam.
 Chinna pillaki cheppinatlu: mana message ni AI ki pampinchi, dani answer tiskuntam.
 """
 
+# ---------------- Architecture Diagram ----------------
+# [.env]
+#    |
+#    v
+# [load_dotenv + os.getenv("GROQ_API_KEY")]
+#    |
+#    v
+# [ChatGroq LLM create]
+#    |
+#    v
+# [SystemMessage + HumanMessage list]
+#    |
+#    v
+# [llm.invoke(messages)]
+#    |
+#    v
+# [print(response.content)]
+#
+# ---------------- Deep Architecture Notes (Kid-Friendly) ----------------
+# Step 1: `load_dotenv()` `.env` file ni read chestundi.
+# Step 2: `GROQ_API_KEY` ni environment nundi teeskuntam.
+# Step 3: Key lekapothe error throw chesi program ni early ga stop chestam.
+#         Idi safety check; lekapothe backend call fail ayina reason clear ga teliyadu.
+# Step 4: `ChatGroq` object create chestam (model + temperature + api_key).
+# Step 5: `main()` lo two messages create chestam:
+#         - SystemMessage: AI behavior rules
+#         - HumanMessage: actual question
+# Step 6: `llm.invoke(messages)` dvara full message list model ki pampistam.
+# Step 7: Model response object vastundi; final text `response.content` lo untundi.
+# Step 8: Aa text ni print chestam.
+#
+# Data Types:
+# - api_key: str
+# - messages: list[SystemMessage | HumanMessage]
+# - response: AI message-like object
+# - response.content: str
+#
+# Failure points:
+# - API key missing
+# - Invalid model name
+# - Network/API auth issues
+#
+# Quick memory model:
+# Secret Key + Prompt -> Cloud LLM -> Text Answer
+
 # `os` module use chesi environment variables (system lo save ayina values) read chestam.
 import os
 

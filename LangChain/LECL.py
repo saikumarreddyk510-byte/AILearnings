@@ -1,3 +1,51 @@
+# ---------------- Architecture Diagram ----------------
+# [Topic Input]
+#    |
+#    +--> [PromptTemplate] -> [ChatGroq] -> [StrOutputParser] -> [Single Output]
+#    |
+#    +--> [RunnableParallel]
+#    |         |
+#    |         +--> [Summary Chain]
+#    |         +--> [Examples Chain]
+#    |         +--> [Quiz Chain]
+#    |                 |
+#    |                 v
+#    |            [3 Outputs Printed]
+#    |
+#    +--> [RunnablePassthrough + Summary Chain]
+#              |
+#              v
+#         [Original Topic + Summary Printed]
+#
+# ---------------- Deep Architecture Notes (Kid-Friendly) ----------------
+# I file lo 3 patterns chupistunnam: Simple Chain, Parallel Chain, Passthrough Chain.
+#
+# Part A: Simple Chain
+# Step 1: Topic variable prompt lo fill avutundi.
+# Step 2: Prompt model ki velthundi.
+# Step 3: Model output parser dvara plain text ga marutundi.
+# Step 4: Final result print chestam.
+#
+# Part B: RunnableParallel
+# Step 1: Oke topic nundi 3 tasks create chestam (summary, examples, quiz).
+# Step 2: 3 chains parallel ga run avuthayi.
+# Step 3: Output dictionary lo 3 keys tho result vastundi.
+# Step 4: Prathi key output separate ga print chestam.
+#
+# Part C: RunnablePassthrough
+# Step 1: Input topic ni untouched ga oka key lo preserve chestam.
+# Step 2: Ade input tho summary generate chestam.
+# Step 3: Output lo original input + transformed summary rendu pondutam.
+#
+# Data Shapes:
+# - Input: dict or str
+# - Chain output: str
+# - Parallel output: dict[str, str]
+#
+# Enduku ee file important ante:
+# - LCEL pipeline ela compose cheyyalo chupistundi.
+# - Oke input nundi multi-output generation pattern nerpisthundi.
+
 # `.env` file nundi secrets/loadable variables ni read cheyyadaniki idi import.
 from dotenv import load_dotenv
 # Groq model ni LangChain dvara call cheyyadaniki class import.

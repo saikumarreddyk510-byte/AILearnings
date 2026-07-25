@@ -1,3 +1,42 @@
+# ---------------- Architecture Diagram ----------------
+# [Variables Input]
+#    |
+#    +--> [PromptTemplate.format] -> [Formatted Text]
+#    |
+#    +--> [ChatPromptTemplate.from_messages] -> [Message Objects]
+#    |
+#    +--> [MessagesPlaceholder + history + question]
+#              |
+#              v
+#        [Final multi-turn prompt messages]
+#
+# ---------------- Deep Architecture Notes (Kid-Friendly) ----------------
+# I file prompt building fundamentals ni 4 levels lo chupistundi.
+#
+# Level 1: Single Variable Prompt
+# Step 1: Template string lo `{topic}` placeholder pettam.
+# Step 2: `format(topic=...)` call chesi final string create chestam.
+#
+# Level 2: Multi Variable Prompt
+# Step 1: `destination`, `days`, `budget`, `language` placeholders define chestam.
+# Step 2: Oka sari lo anni values pass chesi personalized prompt create chestam.
+#
+# Level 3: Chat Prompt
+# Step 1: `system` and `human` roles define chestam.
+# Step 2: `format_messages()` dvara chat-ready message objects create chestam.
+#
+# Level 4: History-Based Chat Prompt
+# Step 1: `MessagesPlaceholder` dvara past chat ki slot pettam.
+# Step 2: `history` list + new question kalipi final context build chestam.
+# Step 3: Follow-up questions ki proper context dorukutundi.
+#
+# Data Shapes:
+# - format output: str
+# - format_messages output: list[BaseMessage]
+#
+# Key idea:
+# Prompt quality bagunte model answer quality usually improve avutundi.
+
 # ---------------- Single-Turn Prompt Template ----------------
 # PromptTemplate class ni import chestunnam.
 from langchain_core.prompts import PromptTemplate
