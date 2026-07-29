@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=65.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "langgraph-trip-planner"
+version = "0.1.0"
+description = "A LangGraph-inspired multi-agent trip planner workflow."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "langgraph>=0.0.0"
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0"]
+
+[project.urls]
+"Homepage" = "https://example.com/langgraph-trip-planner"
+"Repository" = "https://example.com/langgraph-trip-planner.git"
