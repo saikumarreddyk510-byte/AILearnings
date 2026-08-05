@@ -55,25 +55,6 @@ Machine Learning lo kuda same idea.
 Computer ki examples istam.
 Adi aa examples nundi pattern learn chesi, new input vachinappudu answer chepthundi.
 
-### One very easy real-time example
-
-Suppose mee intlo mummy apples select chesthunnaru.
-
-Mummy antaru:
-- red and fresh ga unte good apple
-- black spots ekkuva unte bad apple
-
-Nuvvu 100 apples chusi observe chesthe, next apple chusi nuvve guess chesthav:
-- idi good apple aa?
-- bad apple aa?
-
-Idi human learning.
-
-Machine Learning lo kuda same:
-- past examples chustundi
-- pattern nerchukuntundi
-- new case ki guess/predict chestundi
-
 ### ML and normal programming difference
 
 #### Normal programming
@@ -134,22 +115,6 @@ Gmail chala mails ni chusi nerchukundi:
 - unknown senders untaru
 
 Aa pattern batti new email spam aa kaada ani guess chestundi.
-
-#### 4. Shopping apps
-
-Amazon/Flipkart lo nuvvu shoes search chesthe, next malli similar products chupisthayi.
-
-System nerchukundi:
-- nuvvu em search chesavu
-- em click chesavu
-- em konnavu
-
-#### 5. Netflix / Spotify
-
-Nuvvu action movies chusthe action movies suggest chesthundi.
-Slow songs vinnte similar songs suggest chesthundi.
-
-Idi kuda ML.
 
 ---
 
@@ -362,28 +327,6 @@ Machine Learning lo manam data istam, model aa data nundi rules learn chestundi.
 Example:
 - Traditional program: "if marks > 35 pass"
 - ML program: previous student data batti "ee student pass avuthada?" ani predict chestundi
-
----
-
-## 1. Machine Learning ante enti?
-
-Machine Learning anedi Artificial Intelligence lo oka branch.
-
-Idi em chesthundi?
-- Data ni observe chesthundi
-- Patterns ni identify chesthundi
-- Future lo predictions chesthundi
-- Manual ga rules anni rayakunda decisions ki help chesthundi
-
-### Real-life examples
-
-- Email spam detection
-- YouTube/Netflix recommendations
-- House price prediction
-- Fraud detection
-- Face recognition
-- Customer churn prediction
-- Medical diagnosis support
 
 ---
 
@@ -724,9 +667,28 @@ Real-world data change ayithe model performance taggachu. Appudu retrain cheyyal
 
 Machine Learning ni mostly 3 main types ga divide chestharu.
 
+**Label ante enti?** Label ante oka data point ki correct answer or output (example: oka email "spam" or "not spam" ane tag). Idi manam model ki nerpinche target value.
+
+**Types of labels:**
+- **Categorical (discrete) label:** fixed classes lo untundi. Example: "spam" / "not spam", "cat" / "dog", "pass" / "fail". Idi classification lo vadatam.
+- **Continuous (numeric) label:** oka number value untundi. Example: house price 5000000, temperature 32.5, salary 45000. Idi regression lo vadatam.
+
+**Algorithm ante enti?** Algorithm ante oka step-by-step method (recipe laga) which data nundi pattern nerchukoni model ni build chestundi. Example: Linear Regression, KNN, Random Forest ivi anni algorithms. Manam problem type batti correct algorithm choose chestham.
+
+**Supervised ante enti? (Definition)** Labeled data (input + correct answer/label) tho model ni train chese ML type. Manam model ki questions and answers rendu istam, so adi relation nerchukoni kotha input ki answer predict chestundi.
+
+**Unsupervised ante enti? (Definition)** Labels lekunda, only input data tho model ni train chese ML type. Answers ivvamu, so model self ga data lo hidden patterns and groups (clusters) kanukuntundi.
+
+**Algorithms and their connection:**
+- **Supervised algorithms** (labeled data meeda pani chestai): Linear Regression, Ridge, Lasso, KNN, Naive Bayes, SVM, Decision Tree, Random Forest, Logistic Regression, Boosting models. Ivi label nunchi learn cheyyadam valla supervised lo untai.
+- **Unsupervised algorithms** (label leni data meeda pani chestai): K-Means Clustering, Hierarchical Clustering, PCA, DBSCAN. Ivi label lekunda groups/structure kanukuntai, so unsupervised lo untai.
+- Ade algorithm rendu chota rakpovachu: label unte supervised, label lekapothe unsupervised. Problem lo label undha ledha ane daani batti connection decide avuthundi.
+
 ### 5.1 Supervised Learning
 
 Input + correct output rendu untayi.
+
+**Data + Label concept:** ikkada prathi data (input) ki oka label (correct answer) untundi, so model data-to-label relation ni nerchukuntundi.
 
 Example:
 - House size, location -> house price
@@ -734,29 +696,80 @@ Example:
 
 #### Supervised learning two main tasks
 
+**Label type batti eppudu edi vadali?**
+- **Label continuous (numeric) aithe -> Regression** vadatam. Example: price, temperature, salary lantivi predict cheyyali ante.
+- **Label categorical (discrete/class) aithe -> Classification** vadatam. Example: spam/not spam, pass/fail lantivi predict cheyyali ante.
+
 ##### A. Regression
 
 Output continuous value.
+
+Label type: continuous (numeric values unapudu e model use chestam).
 
 Examples:
 - House price prediction
 - Salary prediction
 - Temperature prediction
 
+**Regression algorithms (numerical label kosam):**
+- Linear Regression
+- Ridge Regression
+- Lasso Regression
+
 ##### B. Classification
 
 Output categories or classes.
+
+Label type: categorical values unapudu e model use chestam(discrete/class).
 
 Examples:
 - Spam / Not Spam
 - Pass / Fail
 - Disease / No Disease
 
+**Classification algorithms (categorical label kosam):**
+- KNN (K-Nearest Neighbors)
+- Naive Bayes
+- SVM (Support Vector Machine)
+- Decision Trees
+- Random Forest
+- Logistic Regression
+- Boosting models -> ADA Boost, Gradient Boosting, XG Boosting
+
+#### Supervised Algorithms Quick Summary
+
+Prathi algorithm ki full detail (Enti, Enduku, Eppudu, Example, code) section 8 "Common Machine Learning Algorithms" lo undi. Ikkada oka quick one-line summary:
+
+- **Linear Regression:** numeric value predict cheyyadaniki straight-line model. (Detail: section 8.1)
+- **Ridge Regression:** Linear Regression + L2 penalty, overfitting control. (Detail: section 8.9)
+- **Lasso Regression:** Linear Regression + L1 penalty, feature selection kuda chestundi. (Detail: section 8.10)
+- **KNN:** daggara unna neighbors chusi class assign chestundi. (Detail: section 8.5)
+- **Naive Bayes:** probability base text/spam classifier. (Detail: section 8.11)
+- **SVM:** classes ni best boundary tho separate chestundi. (Detail: section 8.6)
+- **Decision Tree:** yes/no questions tho decision. (Detail: section 8.3)
+- **Random Forest:** chala trees vote chesi final answer. (Detail: section 8.4)
+- **Logistic Regression:** binary classification + probability. (Detail: section 8.2)
+- **Boosting (ADA/Gradient/XGBoost):** weak models kalipi high accuracy. (Detail: section 8.12)
+
+#### Right algorithm eppudu choose cheyyali? (Quick Guide)
+
+- Label **numeric** and simple trend -> **Linear Regression**.
+- Numeric but features ekkuva/overfitting -> **Ridge** or **Lasso** (Lasso feature selection kuda chestundi).
+- Label **categorical** and small data + similarity -> **KNN**.
+- Text/spam data -> **Naive Bayes**.
+- Clear boundary + high dimension -> **SVM**.
+- Explainable rules kavali -> **Decision Tree**.
+- Strong all-round accuracy -> **Random Forest**.
+- Simple binary classification + probability -> **Logistic Regression**.
+- Maximum accuracy on tabular data -> **Boosting (XGBoost)**.
+
 ---
 
 ### 5.2 Unsupervised Learning
 
 Input data untundi, kani correct labels undavu.
+
+**Data + Label concept:** ikkada data untundi kani labels undavu, so model self ga data lo patterns and relations ni kanukoni groups chestundi.
 
 Goal:
 - Similar groups identify cheyyadam
@@ -864,6 +877,517 @@ model.fit(X, y)
 prediction = model.predict([[1600]])
 print(prediction)
 ```
+
+### Linear Regression Full Detail
+
+> **Agenda (ee section lo em nerchukuntam):**
+> 1. What is Linear Regression?
+> 2. Purpose of Linear Regression
+> 3. Assumptions of Linear Regression
+> 4. How does Linear Regression work?
+> 5. What is Gradient Descent?
+> 6. Evaluation Metrics of Linear Regression
+> 7. Bias-Variance Tradeoff (Underfitting and Overfitting)
+
+---
+
+#### 1. What is Linear Regression? (Idi enti?)
+
+> **Main Point:** rendu vishayala (input and output) madhya unna relation ni oka straight line tho cheppadam.
+
+- **Simple meaning:** rendu vishayala madhya (two things) unna relation ni oka straight line tho cheppadam.
+- **Kid example:** nuvvu ekkuva hours chaduvithe, ekkuva marks vasthai. Study hours penchithe marks perugutai. Ee "hours penchithe marks perugutundi" ane straight relation ne Linear Regression pattukuntundi.
+- **Line ante enti?** graph paper meeda oka natta (straight) geeta. Aa geeta anni points madhyalo balance ga vellutundi.
+- **Formula:** `y = mx + c`
+  - `x` = input (study hours)
+  - `y` = output (marks)
+  - `m` = slope (oka hour penchithe marks entha perugutai)
+  - `c` = intercept (0 hours chadivina base marks)
+- **Story:** oka pillavadu ni "1 hour chadivithe 10 marks, 2 hours aithe 20 marks" ani chusi, "5 hours aithe entha marks?" ani guess cheyyadam = Linear Regression.
+
+##### Real House Price Example (Table nundi)
+
+Ee table lo 7 houses data undi. Manam house price ni predict cheyyali. (Size and price thousands/lakhs lo unnai.)
+
+| # | Size (sqft) | Rooms | Age of House | House Price (Lakhs) |
+|---|---|---|---|---|
+| 1 | 12 | 5 | 3 | 40 |
+| 2 | 15 | 8 | 2 | 50 |
+| 3 | 7 | 3 | 10 | 25 |
+| 4 | 6 | 3 | 14 | 22 |
+| 5 | 25 | 10 | 3 | 75 |
+| 6 | 30 | 15 | 1 | 80 |
+| 7 | 18 | 9 | 2 | 60 |
+
+> **Main Point:** **Size, Rooms, Age = inputs (X)**, **House Price = target (y)**. Inputs batti target numeric value ni predict chestam.
+
+- **Independent columns (X):** Size, Rooms, Age of House. Ivi input features (manam ichchevi).
+- **Target / Dependent column (y):** House Price. Idi predict cheyyalsina numeric value.
+- **Kid explanation:** pedda size, ekkuva rooms unte price ekkuva (rows 5, 6 chudu -> 75, 80). Chinna size, ekkuva age unte price takkuva (rows 3, 4 chudu -> 25, 22). Ee pattern ni Linear Regression nerchukuni, kotha house (size, rooms, age) ichchinapudu price predict chestundi.
+- **Enduku Linear Regression:** house price oka numerical value, so numeric predict cheyyadaniki Linear Regression correct choice.
+- **Formula ee example ki:** `price = m1*size + m2*rooms + m3*age + c` (multiple inputs unnapudu prathi input ki oka slope untundi).
+
+```python
+from sklearn.linear_model import LinearRegression
+
+# columns: size, rooms, age
+X = [[12, 5, 3], [15, 8, 2], [7, 3, 10], [6, 3, 14], [25, 10, 3], [30, 15, 1], [18, 9, 2]]
+y = [40, 50, 25, 22, 75, 80, 60]  # house price in lakhs
+
+model = LinearRegression()
+model.fit(X, y)
+
+# kotha house: size=20, rooms=9, age=4
+prediction = model.predict([[20, 9, 4]])
+print("Predicted house price (lakhs):", prediction)
+```
+
+##### Simple Linear Regression (Oka input tho)
+
+> **Main Point:** oka input column tho (only size) house price predict cheste, danini **Simple Linear Regression** antaru. One input, one straight line.
+
+- **Simple vs Multiple:**
+  - **Simple Linear Regression:** oka input feature matrame. Example: only **size** tho price predict. Formula: `price = m*size + c`.
+  - **Multiple Linear Regression:** rendu or ekkuva inputs. Example: size + rooms + age tho price predict (pai example). Formula: `price = m1*size + m2*rooms + m3*age + c`.
+
+- **Ee example lo:** size (sqft) ni x-axis lo, house price ni y-axis lo petti, anni points ki daggara ga oka best-fit line (model) geestham. Ee line ye manam vethuke **objective** (goal).
+
+- **Graph (size vs house price, model line):**
+
+  ```text
+  house price (y, lakhs)
+     ^
+  110|                                          o (test: size=40 -> price ~110)
+     |                                       .-
+  80 |                              o     .-
+     |                           .-
+  60 |                    o   .-
+  50 |               o .-  o
+  40 |          o .-
+  20 |     o .-
+  10 | .-
+     +----------------------------------------------> size (x, sqft)
+        5   10   15   20   25   30   35   40
+  ```
+
+  (o = actual data points, .- = best-fit model line)
+
+- **Training data (model nerchukune data):**
+
+| Size (sqft) | House Price (Lakhs) |
+|---|---|
+| 12 | 40 |
+| 15 | 50 |
+| 7 | 25 |
+| 6 | 22 |
+| 25 | 75 |
+| 30 | 80 |
+| 18 | 60 |
+
+- **Test data (model ni check chese kotha input):** size = **40**. Model line follow chesi predict chestundi -> price approx **110 lakhs**. (Training data lo 40 ledu, kani line extend chesi model guess chestundi.)
+
+- **Kid explanation:** dots (houses) anni oka slope lo perugutunnayi. Manam oka scale (line) geesi, aa line meeda "40 sqft ekkada untundo" chusi, daniki corresponding price (110) chaduvutham. Ade simple linear regression prediction.
+
+```python
+from sklearn.linear_model import LinearRegression
+
+# only one input: size
+X = [[12], [15], [7], [6], [25], [30], [18]]
+y = [40, 50, 25, 22, 75, 80, 60]  # house price in lakhs
+
+model = LinearRegression()
+model.fit(X, y)
+
+# test data: size = 40
+prediction = model.predict([[40]])
+print("Predicted price for 40 sqft (lakhs):", prediction)
+```
+
+##### Best Fit Line ante enti? (Detailed)
+
+> **Main Point:** anni data points ki mottham daggara ga (least total error) unde straight line ne **best fit line** antaru. Idi model.
+
+- **Best fit line ante enti?**
+  - Graph lo data points (houses) chelli chedari untai. Vati madhyalo geesina oka straight line, ye line ayite anni points ki average ga daggara ga untundo, ade **best fit line** (or regression line).
+  - Ee line ye manam predict cheyyadaniki vadataam. `price = m*size + c` lo `m` (slope) and `c` (intercept) ee line ni define chestai.
+
+- **Enduku best fit "line" (curve kaadu)?**
+  - Linear Regression assume chestundi relation straight ga untundi ani. So oka straight line tho relation ni represent chestundi.
+
+- **Error (residual) ante enti?**
+  - Prathi actual point and line meeda unde predicted value madhya gap ne **error** or **residual** antaru.
+  - `error = actual price - predicted price`.
+  - Example: actual house price 50, kani line meeda predicted 47 aithe, error = 50 - 47 = 3.
+
+  ```text
+  price
+     ^        o  actual point (50)
+     |        |  <- error (gap = 3)
+     |        x  predicted point on line (47)
+     |      .-
+     |   .-
+     +----------------> size
+  ```
+
+- **Best fit line ni ela finalise chestham? (Least Squares Method)**
+  1. Model konni different lines try chestundi (different `m`, `c` values).
+  2. Prathi line ki, anni points errors ni teesukuntundi.
+  3. Ee errors ni **square** chestundi (negative and positive cancel avvakunda, and pedda errors ni ekkuva punish cheyyadaniki).
+  4. Anni squared errors ni add chestundi -> danini **SSE (Sum of Squared Errors)** or **cost** antaru.
+  5. Ye line ki ee total squared error **anniti kante takkuva** (minimum) untundo, ade **best fit line**.
+  - Ee method ni **Least Squares Method** (or Ordinary Least Squares, OLS) antaru. "Least squares" ante "smallest squared error".
+
+- **Formula (simple form):**
+  - Slope: `m = sum((x - x_mean) * (y - y_mean)) / sum((x - x_mean)^2)`
+  - Intercept: `c = y_mean - m * x_mean`
+  - Ee formulas use chesi sklearn automatic ga best `m` and `c` compute chestundi.
+
+##### Error and SSE Worked Example (Table nundi)
+
+> **Main Point:** `Error = y_actual - y_pred`. Anni errors square chesi add cheste `SSE (Sum of Squares of Error)` vastundi. SSE takkuva unte line manchidi.
+
+- **Error formula:** `Error = y_actual - y_pred` (actual price minus model predicted price).
+
+- **Table (prathi house ki actual, predicted, error):**
+
+| # | House Price (y_actual) | y_pred (model) | Error (y_actual - y_pred) |
+|---|---|---|---|
+| 1 | 40 | 29 | 11 |
+| 2 | 50 | 35 | 15 |
+| 3 | 25 | 19 | 6 |
+| 4 | 22 | 17 | 5 |
+| 5 | 75 | 55 | 20 |
+| 6 | 40 | 60 | -20 |
+| 7 | 60 | 41 | 19 |
+
+- **Enduku errors ni just add cheyyakudadu? (cancellation problem):**
+  - Plain errors add cheste: `11 + 15 + 6 + 5 + 20 + (-20) + 19`.
+  - Row 5 error `+20` and Row 6 error `-20` okadanni okati cancel chesukuntai.
+  - So positive and negative errors kalisi total ni chinnaga (misleading) chupistai. Nijamga model row 5, row 6 lo 20 choppuna tappu chesindi, kani sum lo adi kanipinchadu.
+
+- **Enduku squaring? (Why we square the error):**
+  1. **Negative signs pothai:** square chesthe `(-20)^2 = 400` positive avutundi. So positive/negative cancel avvadu. Prathi error count avutundi.
+  2. **Pedda errors ni ekkuva punish chestundi:** `20^2 = 400` kani `5^2 = 25`. Pedda tappulu (20) ni model ekkuva seriously teesukuntundi, so big mistakes ni tagginchadaniki try chestundi.
+  3. **Smooth math:** squared function calculus (gradient descent) ki easy ga pani chestundi.
+
+- **SSE formula:** `SSE = sum( (y_actual - y_pred)^2 )` for all rows. (Sum of Squares of Error.)
+
+- **SSE ee example ki:**
+  - `= 11^2 + 15^2 + 6^2 + 5^2 + 20^2 + (-20)^2 + 19^2`
+  - `= 121 + 225 + 36 + 25 + 400 + 400 + 361`
+  - `= 1568`.
+  - Ee SSE (1568) ni minimum chese `m`, `c` values ye best fit line. Vere line try chesthe SSE marutundi; ye line ki SSE smallest o ade best.
+
+- **Kid explanation:** errors ni just add cheste, oka student oka subject lo +20 marks extra, inko subject lo -20 marks takkuva vesthe, total lo "0 tappu" laga kanipistundi - kani nijamga rendu subjects lo tappu chesadu. Anduke square chesi (sign teesi) prathi tappu ni count chestham.
+
+##### SSE vs MSE vs RMSE (Evaluation Metrics Detail)
+
+> **Main Point:** SSE, MSE, RMSE anni "model entha tappu chesindi" ani cheppe error measures. Chinna value = better model. RMSE actual units lo cheptundi, so most useful.
+
+**Enduku ee metrics kavali?** Model train ayyaka, "idi entha manchidi?" ani number tho cheppali. Just chusi cheppalem. So error ni oka single number ga measure chestham. Ee number batti rendu models compare kuda cheyyachu.
+
+**1. SSE (Sum of Squares of Error)**
+
+- **Enti:** anni rows squared errors ni add cheyyadam.
+- **Formula:** `SSE = sum( (y_actual - y_pred)^2 )`
+- **Problem:** rows ekkuva aithe SSE automatic ga pedda avutundi (100 rows unte 7 rows kanna pedda number). So different-size datasets compare cheyyadam kastam. Anduke average teesukuntam -> MSE.
+- **Our example:** SSE = 1568.
+
+**2. MSE (Mean Squared Error) = Average Squared Error**
+
+- **Enti:** SSE ni total rows (`n`) tho divide chesi average teesukovadam.
+- **Enduku:** dataset size effect teesesi, "per row average tappu (squared)" ni istundi. So different datasets fair ga compare cheyyachu.
+- **Formula:** `MSE = SSE / n = sum( (y_actual - y_pred)^2 ) / n`
+- **Our example:** `MSE = 1568 / 7 = 224`.
+- **Problem:** errors ni square chesam kabatti, MSE units kuda squared avutayi (price lakhs^2 laantidi), so directly artham cheyyadam kastam. Anduke square root teesukuntam -> RMSE.
+
+**3. RMSE (Root Mean Squared Error)**
+
+- **Enti:** MSE ki square root.
+- **Enduku:** square root teesthe units malli original (price lakhs) ki vastayi. So "model average ga entha lakhs tappu padutondi" ani direct ga artham avutundi.
+- **Formula:** `RMSE = sqrt(MSE) = sqrt( sum( (y_actual - y_pred)^2 ) / n )`
+- **Our example:** `RMSE = sqrt(224) = 14.97` (approx). Ante model average ga sumaru 15 lakhs tappu chestundi.
+
+**Quick compare table:**
+
+| Metric | Formula | Our value | Units | Use |
+|---|---|---|---|---|
+| SSE | sum((actual-pred)^2) | 1568 | squared | total error |
+| MSE | SSE / n | 224 | squared | average error (dataset compare) |
+| RMSE | sqrt(MSE) | 14.97 | original (lakhs) | real-world error, easy to read |
+
+**Kid explanation:** SSE ante "andari tappula mottham". MSE ante "sagatuna prati okkadi tappu (kani square lo)". RMSE ante aa square ni theesi malli normal marks lo cheppadam. RMSE 15 ante "average ga 15 lakhs tappu" - ee number chinnaga unte model manchidi.
+
+**Code:**
+
+```python
+from sklearn.metrics import mean_squared_error
+import numpy as np
+
+y_actual = [40, 50, 25, 22, 75, 40, 60]
+y_pred   = [29, 35, 19, 17, 55, 60, 41]
+
+mse = mean_squared_error(y_actual, y_pred)
+rmse = np.sqrt(mse)
+
+print("MSE:", mse)
+print("RMSE:", rmse)
+```
+
+- **Gradient Descent tho kuda finalise cheyyachu:**
+  - Chinna data ki least squares formula direct ga best line istundi.
+  - Pedda data / complex models ki, **Gradient Descent** vadi (cost ni step by step taggistu) best `m`, `c` ki cheruthaam. (Detail section 5 lo undi.)
+
+- **Kid explanation (rope story):** imagine anni houses chukkalu board meeda pins laga unnayi. Nuvvu oka straight rope (thread) teesukoni, aa pins madhyalo pedataav. Rope ni pins anni daggaraga unde la adjust chestav - konni pins paina, konni kinda, kani mottham gap chinnaga undela. Aa final rope position ye best fit line.
+
+- **Best fit line manchidi ani ela telustundi?**
+  - Total error (SSE) chinnaga unte line manchidi.
+  - **R2 score** 1 ki daggara unte line data ni baaga fit ayindi. (Metrics section 6 lo undi.)
+
+##### Line Equation, Slope and Intercept (Detailed)
+
+> **Main Point:** Linear Regression ante oka **best fit line** help tho **numerical value** ni predict chese process. Aa line ni `y = mx + c` equation define chestundi.
+
+- **Line equation:** `y = m*x + c`
+  - `y` = output (house price) - predict cheyyalsindi.
+  - `x` = input (size in sqft).
+  - `m` = **slope** (line entha steep ga peruguthundo).
+  - `c` = **y-intercept** (x = 0 unnapudu y value, i.e., line y-axis ni ekkada touch chestundo).
+
+- **Slope (m) ante enti?**
+  - x oka unit penchithe, y entha marutundo cheppedi.
+  - **Formula:** `slope (m) = (y2 - y1) / (x2 - x1)` - line meeda rendu points teesukoni calculate chestham.
+
+- **Worked example (graph nundi):** line meeda rendu points:
+  - Point 1: `x1 = 15`, `y1 = 20`
+  - Point 2: `x2 = 20`, `y2 = 30`
+  - Slope `m = (y2 - y1) / (x2 - x1) = (30 - 20) / (20 - 15) = 10 / 5 = 2`.
+
+- **Slope = 2 ante artham enti?**
+  - `x` -> 1 unit penchithe, `y` -> 2 units peruguthundi.
+  - Ee example lo: size 1 sqft penchithe, house price 2 (lakhs) peruguthundi.
+  - Slope positive (2) ante line paiki (upward) veltundi. Slope negative aithe line kindaki veltundi.
+
+- **y-intercept (c) ante enti?**
+  - Line y-axis ni ekkada cross chestundo aa value. Ante `x = 0` unnapudu `y` entha.
+  - Example: size 0 unnapudu base price (real ga size 0 undakapoina, line start point ni cheptundi).
+
+- **Ee graph lo y-intercept = 5 (ela vachchindi?):**
+  - Graph lo best fit line ni left vypu chusthe, adi y-axis (x = 0 line) ni **5** daggara touch chestundi.
+  - Ante size = 0 unnapudu, line prakaram price = 5. Ade **y-intercept c = 5**.
+  - Graph nundi direct ga chadavachu: line ekkada y-axis ni cross chestundo (x = 0 point), aa y value ye intercept. Ikkada adi 5.
+
+- **Graph (y-intercept = 5 chudandi):**
+
+  ```text
+  house price (y, lakhs)
+     ^
+  30 |                     x  (x2=20, y2=30)
+     |                  .-
+  20 |            x  .-      (x1=15, y1=20)
+     |          .-
+  10 |       .-
+   5 |----.-   <- line y-axis ni ikkada (x=0) touch chestundi => intercept = 5
+     | .-
+     +----|----|----|----|----> size (x, sqft)
+     0    5   10   15   20
+  ```
+
+- **Line equation ee graph ki:** slope `m = 2`, intercept `c = 5`, so:
+  - `price = 2*size + 5`.
+  - Check: size = 15 aithe `price = 2*15 + 5 = 35` (line meeda point; actual dot 20 daggara undi, endukante dots line meeda exact ga undavu, line average best fit).
+
+- **Full prediction example:** `price = 2*size + 5`.
+  - size = 40 aithe: `price = 2*40 + 5 = 80 + 5 = 85` (lakhs).
+
+- **Kid explanation (steps/metlu):** slope ante metla laantidi. Slope 2 ante "oka adugu munduku (x = 1) vesthe, rendu metlu paiki (y = 2)". Slope ekkuva aithe metlu steep (nikkaga), takkuva aithe metlu flat (parichi).
+  - **Intercept kid ga:** metlu ekkadi nundi start ayyayo (ground level) ade intercept. Ikkada metlu 5 daggara start ayyayi.
+
+---
+
+#### 2. Purpose of Linear Regression (Enduku vadatam?)
+
+> **Main Point:** oka number (continuous value) ni old data batti predict cheyyadam.
+
+- **Main purpose:** oka number (continuous value) ni predict cheyyadam.
+- **Enduku kavali:** future or unknown value ni old data batti guess cheyyadaniki.
+- **Kid examples:**
+  - Study hours batti exam marks predict.
+  - House area batti house price predict.
+  - Roju entha aadithe (practice) entha runs vasthayo predict.
+- **One line:** "input penchithe output ela marutundi" ani telusukoni, kotha input ki output cheppadame purpose.
+
+---
+
+#### 3. Assumptions of Linear Regression (Konni rules/nammakalu)
+
+> **Main Point:** data neat ga, straight ga unte Linear Regression baaga pani chestundi.
+
+Linear Regression baaga pani cheyyali ante konni conditions kavali. Ivi kid words lo:
+
+- **Straight-line relation:** input and output madhya nijamga straight relation undali (curve kaadu). Example: hours penchithe marks steady ga peragali.
+  - **Rule:** prathi independent column (X) target column (y) tho linear ga undali.
+  - **Example (House Price vs Age):** graph lo y-axis = house price, x-axis = age of house. Rendu types linear relations okay:
+    - **Positive (+ve) linear:** oka value penchithe target kuda peruguthundi (example: size penchithe price peruguthundi).
+    - **Negative (-ve) linear:** oka value penchithe target taggutundi (example: age of house penchithe price taggutundi).
+  - Ee rendu straight-line trends ni Linear Regression handle chestundi. Kani relation curve/zigzag aithe (straight kaadu), Linear Regression sarigga fit avvadu.
+
+  Graph (house price vs age):
+
+  ```text
+  house price (y)
+     ^
+     |\           /  +ve linear (value penchithe price perugutundi)
+     | \         /
+     |  \       /
+     |   \     /
+     |    \   /
+     |     \ /
+     |      X   <- rendu lines cross ayye point
+     |     / \
+     |    /   \
+     |   /     \
+     |  /       \   -ve linear (age penchithe price taggutundi)
+     | /         \
+     +-------------------> age (x)
+        1   5   10   15
+  ```
+- **Points too much scatter avvakudadu:** data points line chuttu daggara undali, chala chelli chedari (spread) undakudadu.
+- **Errors balanced ga undali:** konni points line paina, konni kinda, kani overall balance ga undali.
+- **No multicollinearity between independent columns:** rendu independent columns (X) okadaniki okati chala correlated ga undakudadu.
+  - **Ardham:** oka independent column penchithe inko independent column kuda same laga marithe (highly correlated), danini **multicollinearity** antaru. Idi model ni confuse chestundi.
+  - **Example:** house data lo "size" penchithe "# of rooms" kuda penchithe, ee rendu columns almost same information istunnayi. Appudu model ki "price meeda size effect enta, rooms effect enta" ani separate cheyyadam kastam avutundi.
+  - **Graph (size vs rooms - correlated aithe idi kanipistundi):**
+
+  ```text
+  # of rooms (y)
+     ^
+     |                 /
+     |               /
+     |             /
+     |           /
+     |         /
+     |       /
+     |     /   <- size penchithe rooms kuda perugutundi (strong correlation = multicollinearity)
+     |   /
+     | /
+     +-------------------> size (x)
+  ```
+
+  - **Fix ela?** correlated columns lo okati matrame unchadam, or Ridge/Lasso lantivi vadatam.
+  - **Kid explanation (twins story):** imagine class lo iddaru twins (Ravi and Ram) unnaru, vallu eppudu same answer chepthaaru. Teacher oka question adigithe, iddaru "10" ane chepthaaru. Ippudu teacher ki "sari answer Ravi valla vachchinda, Ram valla vachchinda?" ani teliyadu, endukante iddaru same cheppevaaru. Ade multicollinearity - rendu columns same information istunte, model ki "ye column valla result vachchindo" separate cheyyadam kastam.
+  - **Inko kid example (ice cream and sunglasses):** oka shop lo roju ice creams and sunglasses sales chuddam. Endakala (summer) ekkuva unte, rendu kuda ekkuva ammudu potai. So "ice cream sales" and "sunglasses sales" rendu together peruguthai (correlated). Manam sunglasses sales predict cheyyadaniki ice cream sales use chesthe, nijamga behind unde reason "heat", kani rendu columns same laga move avvadam valla model confuse avutundi.
+  - **Simple ga:** iddaru always kalisi move ayithe, evaru nijam ga important o cheppadam kastam. Anduke okate unchadam manchidi.
+- **One input inko input ni copy cheyyakudadu:** rendu inputs almost same aithe (height in cm and height in inches), confusion vastundi. Idi multicollinearity ke oka extreme example.
+- **No autocorrelation between errors:** oka row error inko row error tho correlated ga undakudadu. (Error ante actual value and predicted value madhya gap.)
+  - **Ardham:** prathi prediction error independent ga undali. Oka error batti next error ni guess cheyyagaligithe, danini **autocorrelation** antaru. Idi mostly time-series data lo (rojuvaari, nelavaari data) vastundi.
+  - **Example:** oka shop roju sales predict chesthunnam. Ee roju model tappu ga "ekkuva" predict cheste, repu, aa tarvata roju kuda "ekkuva" ye predict chesthu potundi. Ila errors oka pattern lo follow ayithe, adi autocorrelation. Model konni hidden trends (festival season, weekend effect) miss chesindi ani artham.
+  - **Graph (errors time tho pattern lo unte autocorrelation):**
+
+  ```text
+  error
+     ^
+     |    _          _
+     |   / \        / \
+     |  /   \      /   \
+     | /     \    /     \      <- errors oka wave/pattern lo repeat (autocorrelation - bad)
+     |/       \  /       \
+     +---------\/---------\----> time (day 1, 2, 3, ...)
+  ```
+
+  Correct case lo errors ila random ga (pattern lekunda) chelli chedari undali:
+
+  ```text
+  error
+     ^
+     |   .      .        .
+     |      .        .        .
+     | .        .  .      .
+     |    .  .       .  .
+     +----------------------------> time
+       (random scatter = no autocorrelation - good)
+  ```
+
+  - **Kid explanation (class noise story):** imagine class lo teacher lekapothe, oka pillavadu matladithe, pakkana unnavadu kuda matladtaadu, tarvata inkokadu... noise oka wave laga spread avutundi. Prathi student "silent ga" (independent ga) undali, kani okadi behavior inkokadi ni effect chesthe adi autocorrelation. Model lo kuda oka error next error ni effect cheyyakudadu.
+  - **Inko kid example (dominoes):** dominoes line lo okati padithe, next di kuda padutundi, aa tarvata di kuda. Ila okati inkodanini push chesthe adi autocorrelation. Manaki kavalsindi separate coins laga - okati padina next di padakudadu.
+  - **Fix ela?** time-based features add cheyyadam, lag features vadatam, or time-series models (ARIMA lantivi) vadatam.
+- **Kid line:** "data neat ga, straight ga unte Linear Regression happy ga pani chestundi. Data chaotic aithe adi confuse avutundi."
+
+---
+
+#### 4. How does Linear Regression work? (Ela pani chestundi?)
+
+> **Main Point:** best-fit line kosam error (gap) ni koddi koddi ga taggistu line ni adjust chestundi.
+
+Step by step, kid style:
+
+1. **Points pettu:** graph meeda anni data points (hours vs marks) pedatam.
+2. **Oka line geestundi:** model oka straight line try chestundi.
+3. **Error chustundi:** prathi point and line madhya gap (dooram) entha undo chustundi. Ee gap ne "error" antaru.
+4. **Line ni sarichestundi:** gap ekkuva unte, line ni konchem move chesi, gap taggistundi.
+5. **Best line:** anni points ki daggara ga unna best line dorikina varaku repeat chestundi.
+
+- **Kid example:** oka rope (thread) ni anni chukkalu madhyalo laagi, andariki daggaraga unde varaku adjust cheyyadam laantidi.
+- **Error measure:** gaps ni square chesi kaluputaru (chinna value baagundi). Danini "cost" antaru. Cost taggithe line manchidi.
+
+---
+
+#### 5. What is Gradient Descent? (Best line ela vethukutundi?)
+
+> **Main Point:** cost (error) ni step by step taggistu, best `m` and `c` values ki cherukune method.
+
+- **Problem:** best line kosam `m` and `c` values correct ga set cheyyali. Ela?
+- **Gradient Descent ante:** cost (error) ni slowly slowly tagginchukuntu, best `m` and `c` ki cherukune method.
+- **Kid example (konda digadam):** nuvvu oka konda (hill) paina unnav, kinda (bottom) ki cherali. Kallu moosukoni, prathi step lo "ekkada digithe kinda ki vellutano" akkade adugu pedatav. Slowly bottom ki cheruthav. Ade Gradient Descent - error hill lo bottom (lowest error) ki cheradam.
+- **Learning rate:** prathi step entha peddaga veyyalo cheppedi.
+  - Chinna steps -> slow kani safe.
+  - Pedda steps -> fast kani bottom ni miss avvachu (daati povachu).
+- **Repeat:** step by step error taggutu, best line dorukutundi.
+
+---
+
+#### 6. Evaluation Metrics of Linear Regression (Line entha manchido ela telustundi?)
+
+> **Main Point:** MAE, MSE, RMSE takkuva unte, R2 score 1 ki daggara unte model manchidi.
+
+Model prediction correct aa kaada measure cheyyadaniki numbers vadataru:
+
+- **MAE (Mean Absolute Error):** prediction and actual madhya average tappu (gap). Chinna aithe manchidi.
+  - Kid: "average ga entha marks tappu ga cheppanu" ane number.
+- **MSE (Mean Squared Error):** gaps ni square chesi average. Pedda tappulu ni ekkuva punish chestundi.
+- **RMSE (Root MSE):** MSE ki square root. Actual units lo error cheptundi (marks lo).
+- **R2 Score (R squared):** model data ni entha baaga explain chesindo cheptundi. 0 to 1 madhya.
+  - 1 ki daggara -> chala manchi model.
+  - 0 ki daggara -> weak model.
+  - Kid: "10 lo nenu 9 saarlu correct" laanti score.
+
+---
+
+#### 7. Bias-Variance Tradeoff (Underfitting and Overfitting)
+
+> **Main Point:** chala simple -> underfit, chala memorize -> overfit. Middle balance model best.
+
+Ee concept ni iddaru students tho cheptha:
+
+- **Underfitting (chala simple, bias ekkuva):**
+  - Model sarigga nerchukoledu. Line chala simple.
+  - Kid: oka student concept ardham chesukokunda, practice lo kuda tappu, exam lo kuda tappu.
+  - Result: training tappu, test kuda tappu.
+- **Overfitting (chala complex, variance ekkuva):**
+  - Model training data ni memorize chestundi, kani kotha data ki fail.
+  - Kid: oka student answers ni batti (memorize) pattadu, kani exam lo kotha question vasthe fail.
+  - Result: training super, test poor.
+- **Good fit (balance):**
+  - Model main pattern nerchukuntundi, kotha data meeda kuda baaga pani chestundi.
+  - Kid: concept ardham chesukoni, kotha questions kuda solve chese student.
+- **Tradeoff ante:** bias takkuva chesthe variance ekkuva avutundi, variance takkuva chesthe bias perugutundi. Rendinti madhya balance kavali. Ade "tradeoff".
+- **Kid summary:** "chala simple aithe underfit, chala midimelam (over smart memorize) aithe overfit. Middle balance manchidi."
+
+---
+
+#### Full mini-story to remember
+
+Oka pillavadu roju entha hours chadivithe entha marks vasthayo chustham (data). Oka straight line geesi (linear regression), aa line ni gradient descent tho best ga adjust chestham. Tarvata metrics (MAE, R2) tho line entha correct ani chustham. Line chala simple aithe underfit, chala memorize aithe overfit, so balance line best.
 
 ---
 
@@ -995,6 +1519,42 @@ Use:
 
 ---
 
+## 8.9 Ridge Regression
+
+- **Enti:** Linear Regression + oka penalty (L2 regularization) add chesina version.
+- **Enduku kavali:** model overfit avvakunda control cheyyadaniki, especially features ekkuva unnapudu.
+- **Eppudu use cheyyali:** features chala unnapudu, or features madhya correlation (multicollinearity) unnapudu.
+- **Example:** 50 features tho house price predict chesthunte, Ridge weights ni chinnaga unchi overfitting taggistundi.
+
+---
+
+## 8.10 Lasso Regression
+
+- **Enti:** Linear Regression + L1 penalty. Idi konni feature weights ni exact 0 chestundi.
+- **Enduku kavali:** unnecessary features ni auto ga remove chesi, important features ni matrame unchadaniki (feature selection).
+- **Eppudu use cheyyali:** chala features unnapudu, and avatilo konni matrame useful ani anukunnapudu.
+- **Example:** 100 features unte, Lasso only 10 important features ni unchi migilinavi 0 chestundi.
+
+---
+
+## 8.11 Naive Bayes
+
+- **Enti:** probability (Bayes theorem) base meeda pani chese classifier. Features independent ani assume chestundi.
+- **Enduku kavali:** fast, chala text data meeda baaga pani chestundi.
+- **Eppudu use cheyyali:** text classification, spam detection, sentiment analysis lantivi.
+- **Example:** email lo "free", "offer", "win" words unte spam probability ekkuva ani predict cheyyadam.
+
+---
+
+## 8.12 Boosting Models (ADA, Gradient, XG Boosting)
+
+- **Enti:** weak models (mostly small trees) ni sequence lo train chesi, previous mistakes ni next model correct chestundi.
+- **Enduku kavali:** chala high accuracy kavali anapudu, competitions lo top results istayi.
+- **Eppudu use cheyyali:** structured/tabular data meeda best performance kavali anapudu.
+- **Example:** XGBoost tho customer churn prediction, prathi step lo errors ni fix chesi accuracy penchadam.
+
+---
+
 ## 9. Features and Labels
 
 ML lo two important words:
@@ -1051,7 +1611,7 @@ Ade logic ikkada.
 
 ---
 
-## 11. Overfitting and Underfitting
+## 11. Overfitting, Underfitting and Bias-Variance
 
 ## Underfitting
 
@@ -1079,6 +1639,28 @@ flowchart TD
 	A[Underfitting] --> B[Balanced Fit]
 	B --> C[Overfitting]
 ```
+
+### Bias and Variance (same topic connection)
+
+Overfitting and underfitting behind unde reason ye Bias and Variance.
+
+#### Bias
+
+Too many wrong assumptions.
+Model simple ga undi patterns miss chesthundi.
+- High bias -> **Underfitting** (train and test rendu bad).
+
+#### Variance
+
+Training data changes ki too sensitive ga untundi.
+Model overfit avvachu.
+- High variance -> **Overfitting** (train good, test poor).
+
+#### Bias-Variance Tradeoff
+
+Target:
+- bias-variance balance maintain cheyyadam
+- bias takkuva chesthe variance perugutundi, variance takkuva chesthe bias perugutundi, so middle balance best.
 
 ---
 
@@ -1534,24 +2116,7 @@ I process repeat chestham.
 
 ---
 
-## 17. Bias and Variance
-
-### Bias
-
-Too many wrong assumptions.
-Model simple ga undi patterns miss chesthundi.
-
-### Variance
-
-Training data changes ki too sensitive ga untundi.
-Model overfit avvachu.
-
-Target:
-- bias-variance balance maintain cheyyadam
-
----
-
-## 18. Practical Example: Social Network Ads style problem
+## 17. Practical Example: Social Network Ads style problem
 
 Mee folder lo `Social_Network_Ads.csv` undi kabatti ila think cheyyachu.
 
@@ -1609,7 +2174,7 @@ print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred))
 
 ---
 
-## 19. ML Libraries You Should Know
+## 18. ML Libraries You Should Know
 
 ### NumPy
 - numerical arrays and math
@@ -1631,7 +2196,7 @@ print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred))
 
 ---
 
-## 20. Common Mistakes Beginners Chestharu
+## 19. Common Mistakes Beginners Chestharu
 
 1. Data cleaning skip cheyyadam
 2. Train and test data mix cheyyadam
@@ -1643,7 +2208,7 @@ print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred))
 
 ---
 
-## 21. When to Use Which Model?
+## 20. When to Use Which Model?
 
 ### Continuous value predict cheyyali ante
 - Linear Regression
@@ -1666,7 +2231,7 @@ print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred))
 
 ---
 
-## 22. Machine Learning vs Deep Learning vs Generative AI
+## 21. Machine Learning vs Deep Learning vs Generative AI
 
 ### Machine Learning
 - structured data meeda chala use avuthundi
@@ -1690,7 +2255,7 @@ Simple ga:
 
 ---
 
-## 23. Final Learning Roadmap for ML Only
+## 22. Final Learning Roadmap for ML Only
 
 ```mermaid
 flowchart TD
@@ -1720,7 +2285,7 @@ Simple order:
 
 ---
 
-## 24. Final Summary
+## 23. Final Summary
 
 Machine Learning lo most important enti ante:
 
@@ -1738,7 +2303,7 @@ One-line ga:
 
 ---
 
-## 25. Interview-style Short Definitions
+## 24. Interview-style Short Definitions
 
 ### Machine Learning
 Data nundi learn chesi predictions or decisions cheyyadam.
