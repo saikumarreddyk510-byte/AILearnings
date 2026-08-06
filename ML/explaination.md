@@ -1203,6 +1203,69 @@ print("RMSE:", rmse)
 - **Kid explanation (steps/metlu):** slope ante metla laantidi. Slope 2 ante "oka adugu munduku (x = 1) vesthe, rendu metlu paiki (y = 2)". Slope ekkuva aithe metlu steep (nikkaga), takkuva aithe metlu flat (parichi).
   - **Intercept kid ga:** metlu ekkadi nundi start ayyayo (ground level) ade intercept. Ikkada metlu 5 daggara start ayyayi.
 
+##### Slope and Intercept - Full Deep Dive (Enduku kavali, anni details)
+
+> **Main Point:** slope and intercept rendu kalisi best fit line ni fix chestai. Slope = line ela move avutundo (direction and steepness), intercept = line ekkada start avutundo (starting value). Ee rendu telisthe ye kotha input ki ayina output predict cheyyavachu.
+
+**A. Enduku slope and intercept rendu kavali?**
+
+- Line ni fully define cheyyadaniki rendu vishayalu kavali:
+  1. Line **ekkada start** avutundi? -> **intercept (c)**.
+  2. Line **ela valuthundi** (direction and steepness)? -> **slope (m)**.
+- Ee rendu lekapothe manam line geeyalem, so prediction cheyyalem. `y = m*x + c` lo `m` and `c` telisthe chalu, ye `x` ki ayina `y` compute cheyyavachu.
+- **Real ardham:** model "nerchukuntundi" ante actually best `m` and `c` values ni kanukovadam. Training complete ante = correct slope and intercept dorikayi ani.
+
+**B. Slope (m) - anni details**
+
+- **Ardham:** input (x) oka unit penchithe, output (y) entha marutundo cheppe rate. "x meeda y entha depend ayindo" ani strength.
+- **Sign (direction):**
+  - **Positive slope (m > 0):** x penchithe y peruguthundi (line paiki). Example: size penchithe price peruguthundi.
+  - **Negative slope (m < 0):** x penchithe y taggutundi (line kindaki). Example: age of house penchithe price taggutundi.
+  - **Zero slope (m = 0):** x maarina y maaradu (flat line). Ante aa input output ni effect cheyyadu.
+- **Magnitude (steepness):** value pedda (|m| ekkuva) aithe line steep (fast change). Value chinna aithe line flat (slow change). Example: m = 5 ante size 1 penchithe price 5 perugutundi (fast), m = 0.5 ante price 0.5 matrame (slow).
+- **Units:** slope units = `y units / x units`. Ee example lo `lakhs / sqft` (oka sqft penchithe entha lakhs perugutundo).
+- **Multiple features lo:** prathi input ki separate slope untundi (`m1, m2, m3...`). Prathi slope aa oka feature effect ni cheptundi (migta features constant unte). Vatini **coefficients** or **weights** antaru.
+
+**C. y-intercept (c) - anni details**
+
+- **Ardham:** `x = 0` unnapudu `y` value. Line y-axis ni ekkada touch chestundo adi.
+- **Enduku useful:** line ki oka **base/starting value** istundi. Slope matrame unte line origin (0,0) nundi start avali, kani real data ala undadu. Intercept line ni up/down shift chesi correct position ki teesukostundi.
+- **Real-world lo interpret:** oka sari intercept ki direct meaning untundi (size 0 base price), oka sari physical ga meaning undadu (size 0 house undadu), kani line ni correct ga fit cheyyadaniki maths ki avasaram.
+- **Intercept lekapothe (c = 0):** line always origin nundi vellali ani force chestham, appudu fit poor avvachu. Anduke intercept freedom istundi.
+
+**D. Model slope and intercept ni ela nerchukuntundi?**
+
+- Training lo model different `m`, `c` combinations try chesi, ye combination SSE (total squared error) ni minimum chestundo aa `m`, `c` ni final chestundi (Least Squares or Gradient Descent).
+- sklearn lo:
+  - `model.coef_` -> slope(s) `m`.
+  - `model.intercept_` -> intercept `c`.
+
+```python
+from sklearn.linear_model import LinearRegression
+
+X = [[12], [15], [7], [6], [25], [30], [18]]  # size
+y = [40, 50, 25, 22, 75, 80, 60]              # price
+
+model = LinearRegression()
+model.fit(X, y)
+
+print("Slope (m):", model.coef_[0])       # x oka unit penchithe y entha marutundo
+print("Intercept (c):", model.intercept_) # x = 0 unnapudu y value
+```
+
+**E. Ela okati lekunda okati pani cheyyadu (kid example):**
+
+- **Slope matrame (intercept lekunda):** oka bus speed telusu (slope) kani ekkadi nundi start ayindo teliyadu (intercept). Appudu 2 hours tarvata bus ekkada untundo cheppalem.
+- **Intercept matrame (slope lekunda):** bus start point telusu kani speed teliyadu, so tarvata ekkada untundo cheppalem.
+- **Rendu unte:** start point (intercept) + speed (slope) telisthe, ye time ki ayina bus position cheppagalam. Ade line rendintitho complete avutundi.
+
+**F. Quick summary table:**
+
+| Concept | Symbol | Ardham | Real example | Lekapothe |
+|---|---|---|---|---|
+| Slope | m | x 1 unit penchithe y entha marutundo | size +1 -> price +2 | change rate teliyadu |
+| Intercept | c | x = 0 unnapudu y value | size 0 base price = 5 | line start point teliyadu |
+
 ---
 
 #### 2. Purpose of Linear Regression (Enduku vadatam?)
@@ -1343,6 +1406,49 @@ Step by step, kid style:
   - Chinna steps -> slow kani safe.
   - Pedda steps -> fast kani bottom ni miss avvachu (daati povachu).
 - **Repeat:** step by step error taggutu, best line dorukutundi.
+
+##### Gradient Descent - Step Size Full Detail (Whiteboard nundi)
+
+> **Main Point:** Gradient Descent oka **U-shape (bowl) curve** (MSE vs m) meeda step by step digutu, error minimum ye ye point ki (best `m`) cherukune process. Prathi adugu size ni **step size (learning rate)** antaru.
+
+- **Graph ardham (bowl / parabola):**
+  - **Y-axis = MSE (error).** Peiki pothe error ekkuva, kindaki pothe error takkuva.
+  - **X-axis = m (slope) value** (0, 1, 2, 3, ... 18).
+  - Curve U-shape (bowl laantidi). Bowl **bottom** point daggara error minimum. Aa bottom ki correspond ayye `m` ye best slope.
+  - Ee example lo: start `m = 18` (curve top-left, high error) nundi start chesi, adugulu vestu bottom (error lowest) daggariki jaruthundi.
+
+- **Step size = 1 ante (image lo):**
+  - Prathi iteration lo `m` value ni oka fixed amount (step) tho update chestham.
+  - Chinna chinna hops (arc adugulu) ga curve meeda kindaki digutundi - image lo aa small loops ade.
+
+- **Process step by step:**
+  1. Random ga oka `m` teesuko (image lo `m = 18`).
+  2. Aa point daggara error (MSE) entha undo, slope (direction) ye vypu digutundo chudu.
+  3. `m` ni aa direction lo oka step move chey (error tagge vypu).
+  4. Malli error compute chey. Inka bottom ki raledu ante malli step vey.
+  5. Error almost maaradaniki ready ainapudu (bottom) aapey. Ade best `m`.
+
+- **Update rule (simple ga):** `m_new = m_old - (learning_rate * slope_of_error)`.
+  - `learning_rate` = step size. Idi peddada, chinnada ane daani meeda antha depend avutundi.
+
+**Enduku SMALL (chinna) step size kavali? (Detail):**
+
+- **Pedda step size aithe (over-shoot problem):**
+  - Adugu chala pedda aithe bottom ni daati avatali vypu velthav (miss). Malli venakki, malli munduki - curve lo **jump chestu untav**, bottom ki settle avvavu.
+  - Konni sarlu error taggakunda **perigipotundi** (diverge) - model ekkada fix avvadu.
+  - Kid: metla kindaki digetappudu chala pedda gantulu vesthe, adugu tappi kindaki padipotav (bottom miss).
+- **Chinna step size aithe (safe kani slow):**
+  - Prathi adugu chinnadi, so bottom ni miss avvakunda **slow ga, steady ga** cheruthav.
+  - Accurate ga lowest error point daggara aaguthav (stable).
+  - Downside: chala chinna aithe **time ekkuva** padutundi (chala iterations kavali).
+- **Anduke balance (sweet spot):** step size chala pedda vaddu (miss avutundi), chala chinna vaddu (slow). Madhyalo oka manchi value (example 0.01, 0.1) vadataru.
+  - Kid line: adugulu "chinnavi kani continuous" ga vesthe, safe ga bottom (best answer) ki cheruthav.
+
+**Chinna example (m nunchi prediction):**
+
+- Best slope dorikaka: `m = 2`, intercept `c = 0` (ee example lo).
+- Line: `y = 2*x + 0` => `y_pred = 2x`.
+- **Error = y_actual - y_pred.** Ee error ni prathi step lo taggistu, MSE bottom (minimum) ki cherukovadam ye Gradient Descent goal.
 
 ---
 

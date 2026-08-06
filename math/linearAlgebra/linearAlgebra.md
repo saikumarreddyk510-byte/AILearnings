@@ -327,6 +327,499 @@ Ikkada `A ~ B`, endukante `B` ni manam `A` nunchi **oka valid row operation** th
 - **Matrix Multiply:** first matrix columns = second matrix rows aithe matrame possible (below worked examples lo detail undi).
 - **Transpose:** rows and columns swap. `2 x 3` matrix transpose -> `3 x 2`.
 
+### Matrix Addition (Detail)
+
+#### Matrix Addition ante enti? (Definition)
+- **Matrix Addition** ante rendu matrices ni kalpadam, kani **same position (same row, same column) lo unna elements ni matrame add** cheyyadam.
+- Result matrix kuda **same dimension** lo untundi (rows and columns marav).
+- Rule (formula): `C[i][j] = A[i][j] + B[i][j]` (prathi position separately add).
+
+#### Main condition (chala important)
+- Rendu matrices ki **same order (same dimension)** undali. Ante rows count same, columns count same.
+- Example: `2 x 3` matrix ni inko `2 x 3` matrix tho matrame add cheyyagalam.
+- **Different dimensions** aithe (example `2 x 3` and `2 x 2`), addition **cheyyalem** (not defined).
+
+#### Step by step Worked Example 1 (2 x 2)
+```
+A = [[1, 2],        B = [[5, 6],
+     [3, 4]]             [7, 8]]
+```
+Prathi same position element add:
+- `[0][0]: 1 + 5 = 6`
+- `[0][1]: 2 + 6 = 8`
+- `[1][0]: 3 + 7 = 10`
+- `[1][1]: 4 + 8 = 12`
+
+Result:
+```
+A + B = [[6,  8],
+         [10, 12]]
+```
+
+#### Worked Example 2 (2 x 3)
+```
+A = [[2, 0, 1],        B = [[3, 4, 2],
+     [5, 6, 7]]             [1, 0, 8]]
+
+A + B = [[2+3, 0+4, 1+2],
+         [5+1, 6+0, 7+8]]
+      = [[5, 4,  3],
+         [6, 6, 15]]
+```
+
+#### Worked Example 3 (NOT possible - different order)
+```
+A = [[1, 2, 3],        B = [[1, 2],
+     [4, 5, 6]]             [3, 4]]
+```
+- `A` dimension = `2 x 3`, `B` dimension = `2 x 2`.
+- Columns count veru (3 vs 2), so `A + B` **cheyyalem** (undefined).
+
+#### Matrix Addition Properties (rules)
+- **Commutative:** `A + B = B + A` (order maarina result same).
+  - Example: `[[1,2]] + [[3,4]] = [[4,6]]` and `[[3,4]] + [[1,2]] = [[4,6]]` (same).
+- **Associative:** `(A + B) + C = A + (B + C)` (grouping maarina result same).
+- **Zero matrix (identity for addition):** matrix ki zero matrix add chesthe adi marani ga untundi. `A + 0 = A`.
+  - Example: `[[5,6],[7,8]] + [[0,0],[0,0]] = [[5,6],[7,8]]`.
+- **Additive inverse:** prathi matrix `A` ki oka `-A` untundi, `A + (-A) = 0` (zero matrix).
+  - Example: `[[2,3]] + [[-2,-3]] = [[0,0]]`.
+
+#### Enduku kavali? (Why we need matrix addition)
+- **Rendu datasets ni kalapadaniki:** same structure unna rendu tables values ni combine cheyyadam.
+  - Example: January sales matrix + February sales matrix = total sales.
+- **AI lo (chala important):** neural network lo `W*x + b` lo `b` (bias) ni add cheyyadam matrix/vector addition.
+- **Images lo:** rendu images ni blend cheyyadaniki, or brightness marchadaniki (`image + 50`) addition vadatam.
+- **Errors/updates accumulate cheyyadaniki:** gradients add chesi weights update cheyyadam.
+
+#### Real-time example
+- Oka shop lo 2 counters (Counter1, Counter2) unnayi, prathi one lo 2 items (biryani, coke) sales.
+  ```
+  Counter1 = [[10, 5]]   (10 biryani, 5 coke)
+  Counter2 = [[8,  7]]   (8 biryani, 7 coke)
+
+  Total = Counter1 + Counter2 = [[10+8, 5+7]] = [[18, 12]]
+  ```
+- Ante total 18 biryani, 12 coke. Rendu counters same structure (same items order) unnanduke add ayyindi.
+
+#### Kid explanation
+- Rendu same-size boxes (same rows/columns) unnayi anuko. Prathi cell lo unna toffees ni, aa same cell tho kalapadam ye matrix addition.
+- Box sizes veru aithe (oka box lo ekkuva gadi, inko dani lo takkuva) kalapalem - anduke same dimension rule.
+
+#### Python (numpy) code
+```python
+import numpy as np
+
+A = np.array([[1, 2], [3, 4]])
+B = np.array([[5, 6], [7, 8]])
+
+print(A + B)
+# [[ 6  8]
+#  [10 12]]
+```
+
+### Matrix Subtraction (Detail)
+
+#### Matrix Subtraction ante enti? (Definition)
+- **Matrix Subtraction** ante rendu matrices lo **same position (same row, same column) lo unna elements ni matrame subtract** cheyyadam.
+- Result matrix kuda **same dimension** lo untundi (rows and columns marav).
+- Rule (formula): `C[i][j] = A[i][j] - B[i][j]` (prathi position separately subtract).
+- Gurthu: `A - B` ante `A + (-B)` (B lo anni elements ki sign flip chesi add chesinatte).
+
+#### Main condition (addition laage)
+- Rendu matrices ki **same order (same dimension)** undali (rows count same, columns count same).
+- **Different dimensions** aithe subtraction **cheyyalem** (not defined).
+- **Order important:** addition lo `A + B = B + A`, kani subtraction lo `A - B` and `B - A` **veru veru** (commutative kaadu).
+
+#### Step by step Worked Example 1 (2 x 2)
+```
+A = [[9, 8],        B = [[5, 6],
+     [7, 4]]             [3, 1]]
+```
+Prathi same position element subtract:
+- `[0][0]: 9 - 5 = 4`
+- `[0][1]: 8 - 6 = 2`
+- `[1][0]: 7 - 3 = 4`
+- `[1][1]: 4 - 1 = 3`
+
+Result:
+```
+A - B = [[4, 2],
+         [4, 3]]
+```
+
+#### Worked Example 2 (2 x 3)
+```
+A = [[10, 5, 8],        B = [[3, 2, 6],
+     [7,  9, 4]]             [1, 0, 4]]
+
+A - B = [[10-3, 5-2, 8-6],
+         [7-1,  9-0, 4-4]]
+      = [[7, 3, 2],
+         [6, 9, 0]]
+```
+
+#### Order matters (A - B vs B - A)
+```
+A = [[9, 8],        B = [[5, 6],
+     [7, 4]]             [3, 1]]
+
+A - B = [[4,  2],       B - A = [[-4, -2],
+         [4,  3]]                [-4, -3]]
+```
+- `A - B` and `B - A` results opposite signs. So subtraction lo order chala important.
+
+#### Enduku kavali? (Why we need matrix subtraction)
+- **Difference/change kanukovadaniki:** rendu tables madhya teda (change) chudadam.
+  - Example: `This_month_sales - Last_month_sales` = entha perigindo/taggindo.
+- **Error calculate cheyyadaniki (AI lo chala important):** `Error = Actual - Predicted`. Idi matrix/vector subtraction.
+- **Images lo:** rendu images difference (motion detect, background remove) ki subtraction vadatam.
+- **Distance/gap ki:** rendu points/vectors madhya teda kanukovadaniki.
+
+#### Real-time example
+- Oka student ki 3 subjects lo target marks and actual marks unnayi.
+  ```
+  Target = [[90, 85, 80]]
+  Actual = [[75, 88, 70]]
+
+  Difference = Target - Actual = [[90-75, 85-88, 80-70]]
+             = [[15, -3, 10]]
+  ```
+- Ante Maths lo 15 takkuva, Physics lo 3 ekkuva (target daati), Chemistry lo 10 takkuva vachayi. Negative value ante target ni daatindi ani.
+
+#### Kid explanation
+- Rendu same-size boxes lo toffees unnayi anuko. Prathi cell lo, first box toffees nunchi second box toffees ni teesesthe (minus), migilina toffees ye subtraction result.
+- Box sizes veru aithe cheyyalem (same dimension rule addition laage).
+
+#### AI lo ee subtraction ekkada vadathamu? (Real situation + example)
+
+> **Situation:** AI model ni train chesetappudu, model prediction correct aa kaada ani telusukovali. Anduku **Error = Actual - Predicted** matrix subtraction vadathamu. Ee error batti model ni improve chestham (weights update).
+
+- **Scenario:** oka house price prediction model. 3 houses ki model price predict chesindi, mana daggara actual (real) prices kuda unnayi.
+  ```
+  Actual (real prices, lakhs)     = [[50], [80], [25]]
+  Predicted (model output, lakhs) = [[45], [90], [20]]
+
+  Error = Actual - Predicted = [[50-45],
+                                [80-90],
+                                [25-20]]
+        = [[ 5],
+           [-10],
+           [ 5]]
+  ```
+- **Ee error ardham enti?**
+  - House 1: `+5` -> model 5 lakhs takkuva cheppindi (under-predict).
+  - House 2: `-10` -> model 10 lakhs ekkuva cheppindi (over-predict).
+  - House 3: `+5` -> malli 5 lakhs takkuva.
+- **Enduku ee step important:** ee error matrix batti **loss** (MSE laantivi) calculate chestham, aa loss ni tagginchadaniki gradient descent tho weights update chestham. Ee "Actual - Predicted" subtraction lekapothe model tanu entha tappu chestundo teliyadu, so nerchukoledu.
+- **Inko real situation - image lo motion detect:** CCTV lo `Frame_now - Frame_before` (rendu images subtraction) cheste, ekkada change aindo (person move ayyadu) aa pixels highlight avuthayi. Migatha (no change) 0 avuthayi. Idi security cameras, self-driving cars lo motion detect ki vadathamu.
+
+#### Python (numpy) code
+```python
+import numpy as np
+
+A = np.array([[9, 8], [7, 4]])
+B = np.array([[5, 6], [3, 1]])
+
+print(A - B)
+# [[4 2]
+#  [4 3]]
+```
+
+### Matrix Multiplication (Detail)
+
+#### Matrix Multiplication ante enti? (Definition)
+- **Matrix Multiplication** ante addition/subtraction laaga same-position kaadu. Ikkada **first matrix lo prathi row ni, second matrix lo prathi column tho "dot product"** chestham (multiply chesi add).
+- Result lo prathi cell = oka row and oka column combine ayina value.
+- Rule (formula): `C[i][j] = (A row i) dot (B column j) = A[i][0]*B[0][j] + A[i][1]*B[1][j] + ...`
+
+#### Main condition (chala important - shape rule)
+- **First matrix columns count = Second matrix rows count** aithe matrame multiply cheyyagalam.
+- Shape rule: `A (m x n) * B (n x p) = C (m x p)`.
+  - Middle numbers (`n` and `n`) **match avvali**.
+  - Result shape = outer numbers (`m x p`).
+- Example: `A` (2 x 3) and `B` (3 x 2) -> middle 3 = 3 match -> result (2 x 2). OK.
+- Example: `A` (2 x 3) and `B` (2 x 3) -> middle 3 vs 2, match kaadu -> **cheyyalem**.
+
+#### Step by step Worked Example 1 (2 x 2 into 2 x 2)
+```
+A = [[1, 2],        B = [[1, 0],
+     [3, 4]]             [0, 1]]
+```
+Prathi cell = (A row) dot (B column):
+- `C[0][0] = (1*1) + (2*0) = 1 + 0 = 1`
+- `C[0][1] = (1*0) + (2*1) = 0 + 2 = 2`
+- `C[1][0] = (3*1) + (4*0) = 3 + 0 = 3`
+- `C[1][1] = (3*0) + (4*1) = 0 + 4 = 4`
+
+Result:
+```
+A * B = [[1, 2],
+         [3, 4]]
+```
+(Ikkada `B` identity matrix, anduke result `A` ye vachindi.)
+
+#### Worked Example 2 (chinna numbers)
+```
+A = [[1, 2],        B = [[2, 0],
+     [0, 1]]             [1, 3]]
+```
+- `C[0][0] = (1*2) + (2*1) = 2 + 2 = 4`
+- `C[0][1] = (1*0) + (2*3) = 0 + 6 = 6`
+- `C[1][0] = (0*2) + (1*1) = 0 + 1 = 1`
+- `C[1][1] = (0*0) + (1*3) = 0 + 3 = 3`
+
+Result:
+```
+A * B = [[4, 6],
+         [1, 3]]
+```
+
+#### Order matters (A*B vs B*A)
+- Matrix multiplication **commutative kaadu:** `A * B` and `B * A` **veru veru** (results different, konni sarlu B*A possible ye kaadu shape valid kakapothe).
+- Anduke order (ye matrix mundu) chala important.
+
+#### Matrix Multiplication Properties (rules)
+- **Not commutative:** `A * B != B * A` (generally).
+  - Example: `A = [[1, 2], [0, 1]]`, `B = [[1, 0], [3, 1]]`.
+    - `A * B = [[(1*1)+(2*3), (1*0)+(2*1)], [(0*1)+(1*3), (0*0)+(1*1)]] = [[7, 2], [3, 1]]`.
+    - `B * A = [[(1*1)+(0*0), (1*2)+(0*1)], [(3*1)+(1*0), (3*2)+(1*1)]] = [[1, 2], [3, 7]]`.
+    - `A * B != B * A` (results veru veru).
+- **Associative:** `(A * B) * C = A * (B * C)` (grouping maarina result same).
+  - Example: `A = [[1, 0], [0, 2]]`, `B = [[1, 1], [0, 1]]`, `C = [[2, 0], [0, 1]]`.
+    - `A * B = [[1, 1], [0, 2]]`, then `(A*B) * C = [[2, 1], [0, 2]]`.
+    - `B * C = [[2, 1], [0, 1]]`, then `A * (B*C) = [[2, 1], [0, 2]]`.
+    - Rendu same -> associative.
+- **Distributive:** `A * (B + C) = A*B + A*C`.
+  - Example: `A = [[1, 1], [0, 1]]`, `B = [[1, 0], [0, 1]]`, `C = [[2, 0], [0, 2]]`.
+    - `B + C = [[3, 0], [0, 3]]`, then `A * (B+C) = [[3, 3], [0, 3]]`.
+    - `A*B = [[1, 1], [0, 1]]`, `A*C = [[2, 2], [0, 2]]`, sum = `[[3, 3], [0, 3]]`.
+    - Rendu same -> distributive.
+- **Identity:** `A * I = A` and `I * A = A` (identity matrix "number 1" laaga).
+  - Example: `A = [[4, 5], [6, 7]]`, `I = [[1, 0], [0, 1]]`.
+    - `A * I = [[(4*1)+(5*0), (4*0)+(5*1)], [(6*1)+(7*0), (6*0)+(7*1)]] = [[4, 5], [6, 7]]` = `A`.
+    - `I * A` kuda `[[4, 5], [6, 7]]` = `A`.
+
+#### Enduku kavali? (Why we need matrix multiplication)
+- **Anni data ni oka sari lo transform cheyyadaniki:** matrix multiplication ante chala dot products oka sari lo. Anduke pedda data fast ga process avuthundi.
+- **AI lo core operation (main reason):** neural network lo prathi layer `W * x` oka matrix multiplication. Idi model lo lakshalasarlu jaruguthundi.
+- **Rotations/scaling (graphics):** images, 3D objects ni rotate/scale cheyyadaniki multiplication matrices vadatam.
+- **Combine two relationships:** oka table inko table tho combine chesi kotha result table teeyadaniki.
+
+#### AI lo ekkada vadathamu? (Real situation + example)
+
+> **Situation:** neural network lo oka layer output = inputs ni weights tho multiply chesi teeyadam (`output = W * x`). Idi anni neurons ki oka sari lo matrix multiplication tho jaruguthundi.
+
+- **Scenario:** oka neuron ki 2 inputs `x` unnayi, 2 neurons ki weights `W` unnayi (chinna whole numbers).
+  ```
+  W = [[1, 2],       x = [[1],
+       [3, 0]]            [2]]
+
+  output = W * x
+         = [[(1*1) + (2*2)],
+            [(3*1) + (0*2)]]
+         = [[1 + 4],
+            [3 + 0]]
+         = [[5],
+            [3]]
+  ```
+- **Ee output ardham:** neuron 1 value 5, neuron 2 value 3. Ee values next layer ki veltayi.
+- **Enduku important:** oka image ni classify cheyyali (cat/dog) ante, ee `W * x` type multiplications chala layers lo jaragi final answer vasthundi. Millions of these multiplications GPU oka sari lo (parallel) chestundi. Anduke matrix multiplication AI ki heart laantidi.
+
+#### Real-time example
+- Oka shop lo 2 customers, prathi okaru 2 items (biryani, coke) konnaru. Prathi item ki price undi.
+  ```
+  Quantities (2 customers x 2 items):     Prices (2 items x 1):
+  Q = [[2, 1],                             P = [[100],
+       [1, 3]]                                  [ 50]]
+
+  Bill = Q * P = [[(2*100) + (1*50)],
+                  [(1*100) + (3*50)]]
+               = [[200 + 50],
+                  [100 + 150]]
+               = [[250],
+                  [250]]
+  ```
+- Customer 1 bill = 250, Customer 2 bill = 250. Oka multiplication lo iddaru bills vachayi.
+
+#### Kid explanation
+- First matrix lo oka **row** (oka student marks laanti), second matrix lo oka **column** (aa subject weightage laanti) teesuko. Rendini position-position multiply chesi anni kalipithe oka cell value vasthundi.
+- Idi prathi row-column jodi ki cheste full result matrix vasthundi. Ante "row-tho-column mix" cheyyadam.
+
+#### Python (numpy) code
+```python
+import numpy as np
+
+A = np.array([[1, 2], [3, 4]])
+B = np.array([[5, 6], [7, 8]])
+
+print(A @ B)      # @ = matrix multiply
+# [[19 22]
+#  [43 50]]
+
+# Note: A * B (star) ante element-wise multiply (veru), A @ B ante matrix multiply.
+```
+
+#### Example Question (Algebra of Matrices) - solve chesi choodu
+
+> **Question:** Ee 2 matrices teesuko:
+> ```
+> A = [[2, 1],        B = [[1, 3],
+>      [0, 4]]             [2, 0]]
+> ```
+> Kindivi kanukko: (i) `A + B`  (ii) `A - B`  (iii) `A * B`.
+
+**Solution:**
+
+**(i) A + B (addition - same position kalupu):**
+```
+A + B = [[2+1, 1+3],
+         [0+2, 4+0]]
+      = [[3, 4],
+         [2, 4]]
+```
+
+**(ii) A - B (subtraction - same position teesivestham):**
+```
+A - B = [[2-1, 1-3],
+         [0-2, 4-0]]
+      = [[1, -2],
+         [-2, 4]]
+```
+
+**(iii) A * B (multiplication - row-tho-column dot product):**
+```
+A * B = [[(2*1)+(1*2), (2*3)+(1*0)],
+         [(0*1)+(4*2), (0*3)+(4*0)]]
+      = [[2+2, 6+0],
+         [0+8, 0+0]]
+      = [[4, 6],
+         [8, 0]]
+```
+
+- **Gurthupettuko:** addition/subtraction lo just same position values kalupu/teesivey, kani multiplication lo row-column dot product cheyyali. Anduke `A + B` and `A * B` results chala veru vachayi.
+
+#### Example Question 2 (Harder - scalar, mix operations, 3x3) - solve chesi choodu
+
+> **Question:** Ee 3 matrices teesuko:
+> ```
+> A = [[1, 2, 0],       B = [[2, 0, 1],       C = [[1, 1, 0],
+>      [0, 1, 3],            [1, 1, 0],             [0, 2, 1],
+>      [2, 0, 1]]            [0, 2, 1]]             [1, 0, 2]]
+> ```
+> Kindivi kanukko: (i) `2A - B`  (ii) `A * B`  (iii) `(A * B) + C`  (iv) verify `(A + B).T = A.T + B.T`.
+
+**Solution:**
+
+**(i) 2A - B (mundu scalar multiply, tarvata subtract):**
+```
+2A = [[2, 4, 0],
+      [0, 2, 6],
+      [4, 0, 2]]
+
+2A - B = [[2-2, 4-0, 0-1],
+          [0-1, 2-1, 6-0],
+          [4-0, 0-2, 2-1]]
+       = [[0,  4, -1],
+          [-1, 1,  6],
+          [4, -2,  1]]
+```
+
+**(ii) A * B (prathi row-tho prathi column dot product):**
+```
+Row 1 of A = [1, 2, 0]:
+  col1: (1*2)+(2*1)+(0*0) = 4
+  col2: (1*0)+(2*1)+(0*2) = 2
+  col3: (1*1)+(2*0)+(0*1) = 1
+
+Row 2 of A = [0, 1, 3]:
+  col1: (0*2)+(1*1)+(3*0) = 1
+  col2: (0*0)+(1*1)+(3*2) = 7
+  col3: (0*1)+(1*0)+(3*1) = 3
+
+Row 3 of A = [2, 0, 1]:
+  col1: (2*2)+(0*1)+(1*0) = 4
+  col2: (2*0)+(0*1)+(1*2) = 2
+  col3: (2*1)+(0*0)+(1*1) = 3
+
+A * B = [[4, 2, 1],
+         [1, 7, 3],
+         [4, 2, 3]]
+```
+
+**(iii) (A * B) + C (paina result ki C kalupu, same position):**
+```
+(A*B) + C = [[4+1, 2+1, 1+0],
+             [1+0, 7+2, 3+1],
+             [4+1, 2+0, 3+2]]
+          = [[5, 3, 1],
+             [1, 9, 4],
+             [5, 2, 5]]
+```
+
+**(iv) Verify (A + B).T = A.T + B.T:**
+```
+A + B = [[3, 2, 1],
+         [1, 2, 3],
+         [2, 2, 2]]
+
+(A + B).T = [[3, 1, 2],      (rows <-> columns swap)
+             [2, 2, 2],
+             [1, 3, 2]]
+
+A.T = [[1, 0, 2],       B.T = [[2, 1, 0],
+       [2, 1, 0],             [0, 1, 2],
+       [0, 3, 1]]             [1, 0, 1]]
+
+A.T + B.T = [[3, 1, 2],
+             [2, 2, 2],
+             [1, 3, 2]]
+```
+- Rendu results same vachayi -> `(A + B).T = A.T + B.T` **true** (transpose distributes over addition).
+
+- **Gurthupettuko:** `2A` ante prathi element ni 2 tho multiply (scalar). Order matter avutundi: mundu scalar/multiply, tarvata add/subtract cheyyali (BODMAS laaga). Transpose property `(A+B).T = A.T + B.T` epudu true, kani multiplication lo `(A*B).T = B.T * A.T` (order reverse avutundi, jagratha).
+
+#### Example Question 3 (Matrix Power - pattern kanukko) - MCQ
+
+> **Question:** If `A = [[1, 1], [0, 1]]`, then `A^n = ?`
+> - (a) `[[1, n], [0, 1]]`
+> - (b) `[[n, n], [0, n]]`
+> - (c) `[[n, 1], [0, n]]`
+> - (d) `[[1, 1], [0, n]]`
+
+**Solution (chinna powers cheddam, pattern chuddam):**
+
+`A^n` ante `A` ni `A` tho `n` sarlu multiply cheyyadam. Mundu `A^2` chuddam.
+
+**A^2 = A * A:**
+```
+A * A = [[(1*1)+(1*0), (1*1)+(1*1)],
+         [(0*1)+(1*0), (0*1)+(1*1)]]
+      = [[1, 2],
+         [0, 1]]
+```
+
+**A^3 = A^2 * A:**
+```
+A^2 * A = [[(1*1)+(2*0), (1*1)+(2*1)],
+           [(0*1)+(1*0), (0*1)+(1*1)]]
+        = [[1, 3],
+           [0, 1]]
+```
+
+**Pattern:**
+```
+A^1 = [[1, 1], [0, 1]]
+A^2 = [[1, 2], [0, 1]]
+A^3 = [[1, 3], [0, 1]]
+...
+A^n = [[1, n], [0, 1]]
+```
+
+- Top-right corner value `1, 2, 3, ...` ga penchutundi (ante `n`). Migatha positions constant (`1, 0, 1`).
+- **Answer: (a) `[[1, n], [0, 1]]`.**
+
+- **Gurthupettuko:** matrix power problems lo direct formula gurthu ledu ante, `A^2`, `A^3` chinna cases solve chesi pattern kanipettu. Idi exams lo ( smart trick) chala help avutundi.
+
 ### Transpose Matrix (Detail)
 - **Transpose** ante oka matrix lo **rows ni columns loki, columns ni rows loki** marchadam.
 - Symbol: `A.T` or `A'` (A transpose).
@@ -344,11 +837,57 @@ Ikkada `A ~ B`, endukante `B` ni manam `A` nunchi **oka valid row operation** th
 #### Transpose enduku kavali? (Why we need it)
 - **Shapes match cheyyadaniki:** matrix multiply cheyyali ante first matrix columns = second matrix rows kavali. Shapes match kakapothe, transpose chesi correct shape ki teesukuntam.
   - Example: `X` shape (100, 5), inko `X` tho multiply cheyyali ante `X.T` (5, 100) vadali -> `X.T * X` valid avuthundi.
+  - Chinna example: `A` shape (2, 3), inko `A` tho multiply cheyyali. `A * A` invalid (3 != 2). `A.T` (3, 2) teesukunte `A.T * A` -> (3,2)*(2,3) = (3,3) valid.
 - **Row data ni column data ga marchadaniki:** oka row vector ni column vector ga (or reverse) kavalante transpose vadatam.
+  - Example: `v = [[1, 2, 3]]` (1 row, 3 cols). `v.T = [[1], [2], [3]]` (3 rows, 1 col). Row ippudu column ayindi.
 - **Formulas lo common:** ML lo chala formulas transpose tho untai. Example: linear regression normal equation `w = (X.T * X)^-1 * X.T * y` lo `X.T` chala sarlu vasthundi.
+  - Example: `X = [[1, 2], [1, 3], [1, 4]]` (3, 2). `X.T = [[1, 1, 1], [2, 3, 4]]` (2, 3), so `X.T * X` -> (2, 2) small square matrix ki chinna avuthundi.
 - **Dot product / similarity ki:** rendu vectors dot product cheyyali ante oka daanini transpose chesi (`a.T * b`) multiply chestam.
+  - Example: `a = [[1], [2], [3]]`, `b = [[4], [5], [6]]`. `a.T * b = [[1, 2, 3]] * [[4], [5], [6]] = [[(1*4)+(2*5)+(3*6)]] = [[32]]`.
 - **Data reshape ki:** oka dataset lo rows and columns role marchali ante (features <-> samples) transpose handy.
+  - Example: `D = [[10, 20], [30, 40], [50, 60]]` (3 samples, 2 features). `D.T = [[10, 30, 50], [20, 40, 60]]` (2 features, 3 samples) - ippudu prathi row oka feature.
 - **Real-time example:** Excel lo oka report lo names row lo unnayi, kani meeku names column lo kavali. "Paste Special -> Transpose" cheste rows and columns swap avuthai. Ade matrix transpose.
+
+#### Properties of Transpose (rules + examples)
+
+Ee properties `A = [[1, 2], [3, 4]]`, `B = [[5, 6], [7, 8]]` teesukoni chuddam.
+
+- **1. Double transpose = original:** `(A.T).T = A`.
+  - `A.T = [[1, 3], [2, 4]]`, malli transpose `(A.T).T = [[1, 2], [3, 4]] = A`.
+  - Ante rendu sarlu transpose cheste malli original vasthundi.
+
+- **2. Transpose of sum:** `(A + B).T = A.T + B.T`.
+  - `A + B = [[6, 8], [10, 12]]`, dani transpose = `[[6, 10], [8, 12]]`.
+  - `A.T + B.T = [[1, 3], [2, 4]] + [[5, 7], [6, 8]] = [[6, 10], [8, 12]]`. Rendu same.
+
+- **3. Transpose of scalar multiply:** `(k * A).T = k * (A.T)` (k oka number).
+  - `k = 2`: `2A = [[2, 4], [6, 8]]`, transpose = `[[2, 6], [4, 8]]`.
+  - `2 * (A.T) = 2 * [[1, 3], [2, 4]] = [[2, 6], [4, 8]]`. Rendu same.
+
+- **4. Transpose of product (ORDER REVERSE avutundi):** `(A * B).T = B.T * A.T`.
+  - `A * B = [[19, 22], [43, 50]]`, transpose = `[[19, 43], [22, 50]]`.
+  - `B.T * A.T = [[5, 7], [6, 8]] * [[1, 3], [2, 4]] = [[19, 43], [22, 50]]`. Rendu same.
+  - **Jagratha:** `(A*B).T` ante `A.T * B.T` KAADU, order reverse chesi `B.T * A.T` avvali.
+
+- **5. Transpose of identity:** `I.T = I` (identity matrix transpose ade identity).
+  - `I = [[1, 0], [0, 1]]`, transpose kuda `[[1, 0], [0, 1]] = I`.
+
+- **6. Symmetric case:** oka matrix symmetric ayithe `A.T = A` (transpose ade matrix).
+  - Example: `[[2, 5], [5, 9]].T = [[2, 5], [5, 9]]` (same).
+
+- **Gurthupettuko:** addition/scalar lo transpose easy ga distribute avutundi, kani **multiplication lo order reverse** (`(AB).T = B.T A.T`) - idi exams and ML formulas lo chala important.
+
+#### Python (numpy) code - transpose properties verify
+```python
+import numpy as np
+
+A = np.array([[1, 2], [3, 4]])
+B = np.array([[5, 6], [7, 8]])
+
+print(np.array_equal((A.T).T, A))            # True  -> (A.T).T = A
+print(np.array_equal((A + B).T, A.T + B.T))  # True  -> (A+B).T = A.T + B.T
+print(np.array_equal((A @ B).T, B.T @ A.T))  # True  -> (A*B).T = B.T * A.T
+```
 
 ### Symmetric Matrix
 - **Symmetric matrix** ante oka **square matrix**, deeni transpose ade matrix ki equal: `A.T = A`.
@@ -382,6 +921,142 @@ Ikkada `A ~ B`, endukante `B` ni manam `A` nunchi **oka valid row operation** th
 - **Symmetric vs Skew-Symmetric (gurthu):**
   - Symmetric: `A[i][j] = A[j][i]` (same value).
   - Skew-symmetric: `A[i][j] = -A[j][i]` (opposite value), diagonal = 0.
+
+### Hermitian Matrix (Detail)
+
+- **Hermitian matrix** ante oka **square matrix** with **complex numbers** (numbers with `i`, where `i = sqrt(-1)`), deeni **conjugate transpose** ade matrix ki equal: `A = (A.T with conjugate)`.
+- Rule: `A[i][j] = conjugate(A[j][i])` (mirror position lo value, kani `i` sign flip chesinadi).
+- Ante Hermitian anedi symmetric matrix ki **complex-number version**.
+
+#### Mundu: Complex number and Conjugate ante enti?
+- **Complex number:** oka number `a + bi` form lo (example `2 + 3i`). `a` = real part, `b` = imaginary part, `i = sqrt(-1)`.
+- **Conjugate:** oka complex number lo imaginary part sign flip cheste conjugate vasthundi.
+  - `conjugate(2 + 3i) = 2 - 3i`.
+  - `conjugate(1 - 4i) = 1 + 4i`.
+  - `conjugate(-i) = i`.
+  - Real number ki (`i` lekapothe) conjugate ade number (`conjugate(5) = 5`).
+
+#### Conjugate transpose (A*) ante enti?
+- 2 steps: (1) **Transpose** cheyyi (rows <-> columns swap), (2) prathi element ni **conjugate** cheyyi (`i` sign flip).
+- Symbol: `A*` or `A^H` (A Hermitian / conjugate transpose).
+- Hermitian condition: `A* = A` (conjugate transpose ade original matrix).
+
+#### Worked Example (whiteboard nundi)
+```
+A = [[ 1,      2 - 3i,  1 - 4i],
+     [ 2 + 3i, 0,       -i    ],
+     [ 1 + 4i, i,       0     ]]
+```
+
+**Step 1 - Transpose (rows <-> columns swap):**
+```
+A.T = [[ 1,      2 + 3i,  1 + 4i],
+       [ 2 - 3i, 0,       i     ],
+       [ 1 - 4i, -i,      0     ]]
+```
+
+**Step 2 - Conjugate prathi element (i sign flip):**
+```
+A* = [[ 1,      2 - 3i,  1 - 4i],
+      [ 2 + 3i, 0,       -i    ],
+      [ 1 + 4i, i,       0     ]]
+```
+
+- Ippudu chudu: `A* = A` (original matrix ye malli vachindi). Anduke **A oka Hermitian matrix**.
+
+#### Rendu key points (gurthupettuko)
+- **Diagonal anni REAL numbers (imaginary part 0):** endukante `A[i][i] = conjugate(A[i][i])` avvali, adi real ayithe ne saadhyam. (Example lo diagonal = `1, 0, 0` - anni real.)
+- **Mirror positions conjugates:** `A[0][1] = 2 - 3i` and `A[1][0] = 2 + 3i` (oka daaniki inkoti conjugate).
+- Real numbers ye unte (imaginary part 0), Hermitian anedi normal **symmetric matrix** avuthundi. So symmetric anedi Hermitian ki special case.
+
+#### Symmetric vs Hermitian (compare)
+- **Symmetric:** real numbers, `A.T = A` (just transpose = same).
+- **Hermitian:** complex numbers, `A* = A` (conjugate transpose = same, ante transpose + i sign flip).
+
+#### AI/math lo ekkada vadathamu?
+- **Quantum computing:** quantum states and operators Hermitian matrices tho represent chestaru (physics lo energy/observables anni Hermitian).
+- **Signal processing / Fourier:** complex-valued signals tho panichesetappudu Hermitian matrices vasthayi.
+- **Eigenvalues real:** Hermitian matrix ki eigenvalues eppudu real numbers (idi chala useful property optimization/physics lo).
+- Deep learning lo direct ga takkuva, kani advanced math (spectral methods, PCA complex version) lo important.
+
+#### Python (numpy) code - Hermitian check
+```python
+import numpy as np
+
+A = np.array([[1,      2 - 3j, 1 - 4j],
+              [2 + 3j, 0,      -1j   ],
+              [1 + 4j, 1j,     0     ]])
+
+# conjugate transpose = A.conj().T  (or A.conj().T == A*)
+A_star = A.conj().T
+
+print(np.array_equal(A, A_star))   # True -> Hermitian
+```
+- Note: Python lo `i` ni `j` tho rastaru (`3j` ante `3i`).
+
+### Skew-Hermitian Matrix (Detail)
+
+- **Skew-Hermitian matrix** ante oka **square matrix** with **complex numbers**, deeni **conjugate transpose = negative of original**: `A* = -A`.
+- Rule: `A[i][j] = -conjugate(A[j][i])` (mirror position value ki conjugate teesi, minus sign pettadam).
+- Idi **Hermitian ki opposite version**, and **skew-symmetric matrix ki complex-number version**.
+
+#### Rendu key points (gurthupettuko)
+- **Diagonal anni purely imaginary (or 0):** `A[i][i] = -conjugate(A[i][i])` avvali. Idi imaginary number (`bi` form, example `2i`) or `0` ayithe ne saadhyam. (Real part eppudu 0.)
+- **Mirror positions:** `A[i][j]` and `A[j][i]` - okati inkoti conjugate ki negative.
+
+#### Worked Example
+```
+A = [[ 2i,      3 + 4i,  1 - 2i],
+     [-3 + 4i,  0,       5i    ],
+     [-1 - 2i,  5i,      i     ]]
+```
+
+**Step 1 - Transpose (rows <-> columns swap):**
+```
+A.T = [[ 2i,      -3 + 4i,  -1 - 2i],
+       [ 3 + 4i,  0,        5i     ],
+       [ 1 - 2i,  5i,       i      ]]
+```
+
+**Step 2 - Conjugate prathi element (i sign flip) => A*:**
+```
+A* = [[ -2i,     -3 - 4i,  -1 + 2i],
+      [ 3 - 4i,  0,        -5i    ],
+      [ 1 + 2i,  -5i,      -i     ]]
+```
+
+**Step 3 - Check A* = -A ?**
+```
+-A = [[ -2i,     -3 - 4i,  -1 + 2i],
+      [ 3 - 4i,  0,        -5i    ],
+      [ 1 + 2i,  -5i,      -i     ]]
+```
+- `A* = -A` (rendu same) -> **A oka Skew-Hermitian matrix**.
+- Diagonal chudu: `2i, 0, i` - anni purely imaginary (real part 0). Correct.
+
+#### Compare table (4 types oksaari)
+- **Symmetric:** real, `A.T = A`.
+- **Skew-Symmetric:** real, `A.T = -A`, diagonal = 0.
+- **Hermitian:** complex, `A* = A`, diagonal = real.
+- **Skew-Hermitian:** complex, `A* = -A`, diagonal = purely imaginary (or 0).
+
+#### AI/math lo ekkada vadathamu?
+- **Quantum mechanics:** skew-Hermitian matrices `i` tho multiply cheste Hermitian avuthayi, so quantum operators lo vasthayi.
+- **Eigenvalues purely imaginary:** skew-Hermitian matrix eigenvalues eppudu purely imaginary (or 0) - idi stability analysis lo useful.
+- **Rotations / Lie algebra:** advanced math lo rotations describe cheyyadaniki skew-Hermitian/skew-symmetric matrices vadatam.
+
+#### Python (numpy) code - Skew-Hermitian check
+```python
+import numpy as np
+
+A = np.array([[ 2j,      3 + 4j,  1 - 2j],
+              [-3 + 4j,  0,       5j    ],
+              [-1 - 2j,  5j,      1j    ]])
+
+A_star = A.conj().T          # conjugate transpose
+
+print(np.array_equal(A_star, -A))   # True -> Skew-Hermitian
+```
 
 ### AI lo matrices enduku important?
 - Full dataset oka **matrix** (`X`): rows = examples, columns = features.
