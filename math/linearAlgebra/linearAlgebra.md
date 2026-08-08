@@ -376,6 +376,9 @@ A = [[1, 2, 3],        B = [[1, 2],
 - Columns count veru (3 vs 2), so `A + B` **cheyyalem** (undefined).
 
 #### Matrix Addition Properties (rules)
+
+> **[IMPORTANT]** Ee 4 properties matrix addition ki base rules. Exams and AI formulas lo eppudu vasthayi, so gurthupettuko.
+
 - **Commutative:** `A + B = B + A` (order maarina result same).
   - Example: `[[1,2]] + [[3,4]] = [[4,6]]` and `[[3,4]] + [[1,2]] = [[4,6]]` (same).
 - **Associative:** `(A + B) + C = A + (B + C)` (grouping maarina result same).
@@ -383,6 +386,18 @@ A = [[1, 2, 3],        B = [[1, 2],
   - Example: `[[5,6],[7,8]] + [[0,0],[0,0]] = [[5,6],[7,8]]`.
 - **Additive inverse:** prathi matrix `A` ki oka `-A` untundi, `A + (-A) = 0` (zero matrix).
   - Example: `[[2,3]] + [[-2,-3]] = [[0,0]]`.
+
+#### Cheatsheet (gurthupettukovadaniki easy trick)
+
+| Property | Rule (formula) | One-line gurthu | Chinna example |
+|----------|----------------|-----------------|----------------|
+| Commutative | `A + B = B + A` | **C**ommutative = **C**hange order, same answer | `[[1,2]]+[[3,4]] = [[3,4]]+[[1,2]]` |
+| Associative | `(A+B)+C = A+(B+C)` | **A**ssociative = brackets **A**nywhere | `([[1]]+[[2]])+[[3]] = [[1]]+([[2]]+[[3]])` |
+| Zero matrix | `A + 0 = A` | Zero add chesthe **no change** (0 = "number 1 of addition") | `[[5,6]]+[[0,0]] = [[5,6]]` |
+| Additive inverse | `A + (-A) = 0` | Sign flip cheste **cancel** (sunna) | `[[2,3]]+[[-2,-3]] = [[0,0]]` |
+
+- **Memory trick (2 words):** "**C**hange & **A**nywhere" (Commutative = Change order, Associative = brackets Anywhere). Zero and inverse ni "add 0 = same, add opposite = 0" ani gurthupettuko.
+- **Ottisari gurthu:** addition anni "friendly" rules follow avuthundi (order, grouping easy). Multiplication laaga strict kaadu. Anduke addition simple.
 
 #### Enduku kavali? (Why we need matrix addition)
 - **Rendu datasets ni kalapadaniki:** same structure unna rendu tables values ni combine cheyyadam.
@@ -467,6 +482,35 @@ A - B = [[4,  2],       B - A = [[-4, -2],
          [4,  3]]                [-4, -3]]
 ```
 - `A - B` and `B - A` results opposite signs. So subtraction lo order chala important.
+
+#### Matrix Subtraction Properties (rules)
+
+> **[IMPORTANT]** Addition laaga subtraction "friendly" kaadu. Order and grouping matter avuthundi, jagratha.
+
+- **NOT commutative:** `A - B != B - A` (order maarithe answer marutundi, opposite signs).
+  - Example: `[[9,8]] - [[5,6]] = [[4,2]]` kani `[[5,6]] - [[9,8]] = [[-4,-2]]`.
+- **NOT associative:** `(A - B) - C != A - (B - C)`.
+  - Example: `A=[[8]], B=[[3]], C=[[2]]`. `(8-3)-2 = 3` kani `8-(3-2) = 7`. Veru veru.
+- **Zero matrix:** `A - 0 = A` (zero teesivesthe no change), kani `0 - A = -A` (order maarithe negative).
+  - Example: `[[5,6]] - [[0,0]] = [[5,6]]`, and `[[0,0]] - [[5,6]] = [[-5,-6]]`.
+- **Self subtraction = zero:** `A - A = 0` (same matrix teesivesthe zero matrix).
+  - Example: `[[7,3]] - [[7,3]] = [[0,0]]`.
+- **Addition tho relation:** `A - B = A + (-B)` (subtraction ante negative ni add cheyyadam).
+  - Example: `[[9,8]] - [[5,6]] = [[9,8]] + [[-5,-6]] = [[4,2]]`.
+- **Same order condition:** rendu matrices same shape (order) unte ne subtract cheyyagalam.
+
+#### Cheatsheet (subtraction gurthupettukovadaniki)
+
+| Property | Rule | One-line gurthu | Chinna example |
+|----------|------|-----------------|----------------|
+| Not commutative | `A - B != B - A` | Order **maarithe** sign flip | `[[9,8]]-[[5,6]]` vs `[[5,6]]-[[9,8]]` |
+| Not associative | `(A-B)-C != A-(B-C)` | Brackets **matter** | `(8-3)-2=3` vs `8-(3-2)=7` |
+| Zero (one side) | `A - 0 = A`, `0 - A = -A` | 0 teesthe same, 0 nunchi teesthe negative | `[[5]]-[[0]]=[[5]]` |
+| Self subtract | `A - A = 0` | Same matrix teesthe **sunna** | `[[7,3]]-[[7,3]]=[[0,0]]` |
+| Add relation | `A - B = A + (-B)` | Minus ante **negative add** | `[[9]]-[[5]] = [[9]]+[[-5]]` |
+
+- **Memory trick:** subtraction ni "**one-way street**" anuko - order and direction matter (`A - B` != `B - A`). Addition "two-way" (free), subtraction "one-way" (strict).
+- **Quick tip:** ye subtraction problem ni `A + (-B)` ga marchi addition laaga solve cheyyochu. Anduke rules gurthu lekapothe idi safe way.
 
 #### Enduku kavali? (Why we need matrix subtraction)
 - **Difference/change kanukovadaniki:** rendu tables madhya teda (change) chudadam.
@@ -1057,6 +1101,357 @@ A_star = A.conj().T          # conjugate transpose
 
 print(np.array_equal(A_star, -A))   # True -> Skew-Hermitian
 ```
+
+### Determinant (Detail) - Story Style lo
+
+#### Katha (story) tho start cheddam
+
+> Oka village lo "Determia" ane oka magic gadi (box) undi. Ee box lo meeru oka square matrix pedithe, adi meeku **oka single number** icchestundi. Aa number ni **determinant** antaru (symbol `det(A)` or `|A|`).
+>
+> Aa magic number cheppedi enti? "Ee matrix balamaindaa (strong), leda balaheenamaindaa (weak)?" Number `0` kakapothe matrix strong (invertible - deeni reverse cheyyochu). Number `0` ayithe matrix weak (singular - reverse cheyyalem, information poyindi).
+
+- Ante determinant ante oka square matrix ni represent chese **oka single special number**.
+- **Main gurthu:** determinant only **square matrix** ki ne untundi (rows = columns). Rectangle matrix ki determinant undadu.
+
+#### Kid version (chinna pilla ki cheppinattu)
+
+- Oka matrix ni oka **rubber sheet** anuko. Determinant ante "aa sheet ni matrix entha **stretch** or **shrink** chestundo" cheppe number.
+- `det = 1` ante size same (no change).
+- `det = 2` ante area **2 rettlu** (double) ayindi.
+- `det = 0` ante sheet ni **flat** ga nokkesaaru (area sunna ayindi) - anduke information poyindi, reverse cheyyalem.
+- `det` negative (`-3` laaga) ante sheet **flip** (mirror) ayi 3 rettlu stretch ayindi.
+
+#### 2x2 matrix determinant (easy formula)
+
+```
+A = [[a, b],
+     [c, d]]
+
+det(A) = (a * d) - (b * c)
+```
+
+- **Trick (cross multiply):** main diagonal (`a*d`) product nunchi, other diagonal (`b*c`) product teesivey. "**Cross** chesi, **minus**."
+
+**Worked Example 1:**
+```
+A = [[3, 8],
+     [4, 6]]
+
+det(A) = (3 * 6) - (8 * 4) = 18 - 32 = -14
+```
+
+**Worked Example 2:**
+```
+B = [[2, 0],
+     [1, 5]]
+
+det(B) = (2 * 5) - (0 * 1) = 10 - 0 = 10
+```
+
+> **[QUIZ 1]** `C = [[4, 2], [3, 1]]`. `det(C) = ?`
+> <details><summary>Answer chudu</summary>
+>
+> `det(C) = (4 * 1) - (2 * 3) = 4 - 6 = -2`.
+> </details>
+
+#### 3x3 matrix determinant (kaasta pedda, kani easy trick tho)
+
+Ee matrix teesuko:
+```
+A = [[a, b, c],
+     [d, e, f],
+     [g, h, i]]
+```
+
+**Rule (expand along top row):** prathi top element ki, aa element unna row and column ni cover chesi, migilina 2x2 determinant teesuko. Signs `+ - +` order lo.
+
+```
+det(A) = a * det([[e, f], [h, i]])
+       - b * det([[d, f], [g, i]])
+       + c * det([[d, e], [g, h]])
+```
+
+**Worked Example:**
+```
+A = [[1, 2, 3],
+     [4, 5, 6],
+     [7, 8, 10]]
+
+det(A) = 1 * ((5*10) - (6*8))     ->  1 * (50 - 48) = 1 * 2  =  2
+       - 2 * ((4*10) - (6*7))     ->  2 * (40 - 42) = 2 * -2 = -(-4) = +4
+       + 3 * ((4*8)  - (5*7))     ->  3 * (32 - 35) = 3 * -3 = -9
+
+det(A) = 2 + 4 - 9 = -3
+```
+
+- **Sign pattern gurthu (checkerboard):**
+  ```
+  + - +
+  - + -
+  + - +
+  ```
+
+> **[QUIZ 2]** Sign pattern lo, 3x3 matrix middle element (`e`) ki sign enti (`+` or `-`)?
+> <details><summary>Answer chudu</summary>
+>
+> `+` (middle position `[1][1]` ki plus). Checkerboard lo corner and center anni `+`.
+> </details>
+
+#### Minors and Cofactors (elements ki)
+
+> **Story:** oka element ni "star" anuko. Aa star unna **row and column ni cover** chesi (chethi tho daachi), migilina chinna matrix determinant teesukunte - adi aa element ki **Minor**. Aa Minor ki correct sign (`+` or `-`) pettinaka - adi **Cofactor**.
+
+**Minor (M) ante enti?**
+- Oka element `A[i][j]` ki minor: aa element unna **row `i` and column `j`** ni teesivesi, migilina matrix determinant.
+- Symbol: `M(i,j)`.
+
+**Cofactor (C) ante enti?**
+- Cofactor = Minor ki sign apply chesindi. Formula:
+  ```
+  C(i,j) = (-1)^(i+j) * M(i,j)
+  ```
+- Simple ga: checkerboard sign (`+ - +`) minor ki multiply cheyyadam.
+  ```
+  + - +
+  - + -
+  + - +
+  ```
+
+**2x2 matrix ki Minor and Cofactor (easy start):**
+- 2x2 lo oka element ki minor: aa element unna row and column teesivesthe, **oka single element** migulutundi. Aa single element ye minor (single number ki determinant ade number).
+- Sign pattern (2x2):
+  ```
+  + -
+  - +
+  ```
+- **Example:**
+  ```
+  A = [[3, 5],
+       [2, 7]]
+  ```
+  - `A[0][0] = 3` ki minor: row 0, column 0 teesivey -> migilindi `7`. So `M(0,0) = 7`. Cofactor `C(0,0) = (-1)^(0+0) * 7 = +7`.
+  - `A[0][1] = 5` ki minor: row 0, column 1 teesivey -> migilindi `2`. So `M(0,1) = 2`. Cofactor `C(0,1) = (-1)^(0+1) * 2 = -2`.
+  - `A[1][0] = 2` ki minor: row 1, column 0 teesivey -> migilindi `5`. So `M(1,0) = 5`. Cofactor `C(1,0) = (-1)^(1+0) * 5 = -5`.
+  - `A[1][1] = 7` ki minor: row 1, column 1 teesivey -> migilindi `3`. So `M(1,1) = 3`. Cofactor `C(1,1) = (-1)^(1+1) * 3 = +3`.
+- **Cross-check with determinant:** `det(A) = A[0][0]*C(0,0) + A[0][1]*C(0,1) = (3*7) + (5*-2) = 21 - 10 = 11`. Direct formula tho kuda `(3*7)-(5*2) = 21-10 = 11`. Rendu same.
+
+**Worked Example** (3x3 tho):
+```
+A = [[1, 2, 3],
+     [4, 5, 6],
+     [7, 8, 10]]
+```
+
+- **Element `A[0][0] = 1` ki minor:** row 0, column 0 teesivey ->
+  ```
+  [[5, 6],
+   [8, 10]]   ->  M(0,0) = (5*10) - (6*8) = 50 - 48 = 2
+  ```
+  Cofactor: `C(0,0) = (-1)^(0+0) * 2 = (+1) * 2 = 2`.
+
+- **Element `A[0][1] = 2` ki minor:** row 0, column 1 teesivey ->
+  ```
+  [[4, 6],
+   [7, 10]]   ->  M(0,1) = (4*10) - (6*7) = 40 - 42 = -2
+  ```
+  Cofactor: `C(0,1) = (-1)^(0+1) * (-2) = (-1) * (-2) = 2`.
+
+- **Element `A[0][2] = 3` ki minor:** row 0, column 2 teesivey ->
+  ```
+  [[4, 5],
+   [7, 8]]    ->  M(0,2) = (4*8) - (5*7) = 32 - 35 = -3
+  ```
+  Cofactor: `C(0,2) = (-1)^(0+2) * (-3) = (+1) * (-3) = -3`.
+
+**Determinant with cofactors (connection):**
+- Determinant = oka row (or column) elements ni vaati cofactors tho multiply chesi add cheyyadam.
+  ```
+  det(A) = A[0][0]*C(0,0) + A[0][1]*C(0,1) + A[0][2]*C(0,2)
+         = (1 * 2) + (2 * 2) + (3 * -3)
+         = 2 + 4 - 9 = -3
+  ```
+- Ade answer (`-3`) mundu vachindi. Ante determinant anedi cofactors tho ne calculate avuthundi.
+
+**Minor vs Cofactor (teda gurthu):**
+- **Minor** = just chinna determinant (sign ledu).
+- **Cofactor** = minor + checkerboard sign (`(-1)^(i+j)`).
+- Ante: `Cofactor = sign * Minor`.
+
+> **[QUIZ - minor/cofactor]** `A = [[1,2,3],[4,5,6],[7,8,10]]` lo element `A[1][0] = 4` ki minor `M(1,0)` and cofactor `C(1,0)` enti?
+> <details><summary>Answer chudu</summary>
+>
+> Row 1, column 0 teesivey -> `[[2,3],[8,10]]`. `M(1,0) = (2*10)-(3*8) = 20-24 = -4`.
+> Sign: `C(1,0) = (-1)^(1+0) * (-4) = (-1)*(-4) = 4`.
+> </details>
+
+#### Cheatsheet (Minor and Cofactor)
+
+| Term | Meaning | Formula | Gurthu |
+|------|---------|---------|--------|
+| Minor `M(i,j)` | Row `i`, col `j` teesivesi migilina det | small determinant | "cover row+column, det teesuko" |
+| Cofactor `C(i,j)` | Minor + sign | `(-1)^(i+j) * M(i,j)` | "minor ki checkerboard sign" |
+| Sign rule | `+ - +` checkerboard | `i+j` even -> `+`, odd -> `-` | corners and center `+` |
+| det (via cofactors) | row/col dot cofactors | `sum(A[i][j] * C(i,j))` | "element * cofactor, add" |
+
+**Tip to remember:** "**Minor** = **hide** the cross (row + column), take small det. **Cofactor** = minor + **sign**." `i+j` add chesi even aithe `+`, odd aithe `-`.
+
+#### Why do we need minors and cofactors? Where in AI?
+
+> **Oka line lo:** minors and cofactors anevi determinant and inverse ni step-by-step build cheyyadaniki "building blocks" laantivi. Pedda matrix ni chinna chinna pieces ga break chesi solve cheyyadaniki vadatam.
+
+**Enduku kavali? (purpose)**
+- **1. Pedda determinant calculate cheyyadaniki:** 3x3, 4x4 laanti pedda matrices determinant direct ga cheyyalemu. Cofactor expansion (elements * cofactors add) tho chinna 2x2 pieces ga break chesi solve chestam.
+- **2. Inverse matrix kanukovadaniki:** matrix inverse formula lo cofactors direct ga vasthayi.
+  ```
+  A^-1 = (1 / det(A)) * adjugate(A)
+  ```
+  Ikkada `adjugate` = cofactors matrix ni transpose chesindi. Ante inverse cheyyali ante cofactors kavali.
+- **3. Adjugate (adjoint) build cheyyadaniki:** anni elements cofactors calculate chesi, oka matrix ga petti, transpose cheste adjugate vasthundi. Idi inverse lo core step.
+
+**AI/ML lo ekkada vadatam? (real usage)**
+- **Linear regression (normal equation):** best-fit line weights formula `w = (X.T * X)^-1 * X.T * y` lo `(...)^-1` (inverse) undi. Aa inverse cofactors/determinant meeda aadhaarapadi untundi. Determinant `0` aithe inverse ledu, so model ee approach lo solve avvadu.
+- **Invertible aa kaada check:** `det = 0` (cofactor-based) aithe matrix singular, so AI lo `(X.T * X)` invert cheyyalem (features linear ga dependent ayithe idi jarugutundi).
+- **Covariance matrix inverse:** Gaussian models, Mahalanobis distance, PCA laantivi lo covariance matrix inverse kavali. Adi cofactor/determinant meeda aadhaarapadi untundi.
+- **Small transforms (graphics/robotics):** chinna 2x2, 3x3 matrices inverse (rotate/scale undo cheyyadaniki) cofactor method tho fast ga chestaru.
+
+**Real-world lo practical note:** actual big AI systems lo cofactor method direct ga vadaru (chala slow for large matrices). Baduluga LU decomposition laanti fast methods vadatharu. Kani **concept** (inverse exists aa leda, determinant enti) ardham chesukovadaniki minors/cofactors base. Ante "why it works" ardham cheyyadaniki ivi important, "how fast" ki veru methods.
+
+#### Determinant Properties (rules) with examples
+
+- **1. Identity matrix ki det = 1:** `det(I) = 1`.
+  - Example: `det([[1,0],[0,1]]) = (1*1)-(0*0) = 1`.
+- **2. Oka row/column anni 0 ayithe det = 0:** `det = 0`.
+  - Example: `det([[5, 7], [0, 0]]) = (5*0)-(7*0) = 0`.
+- **3. Rendu rows same ayithe det = 0:** (duplicate row = weak matrix).
+  - Example: `det([[2, 3], [2, 3]]) = (2*3)-(3*2) = 0`.
+- **4. Transpose det same:** `det(A) = det(A.T)`.
+- **5. Product rule:** `det(A * B) = det(A) * det(B)`.
+- **6. Triangular matrix det = diagonal product:** diagonal values multiply cheste chalu.
+  - Example: `det([[2, 9], [0, 3]]) = 2 * 3 = 6` (kinda 0 unnanduna diagonal product).
+- **7. Rendu rows (or columns) interchange chesthe, det value same kani SIGN change avuthundi:** ante rows swap chesthe answer ki `-` (minus) vasthundi (magnitude same).
+  - Example (rows swap chesi chuddam):
+    ```
+    A = [[1,  2],          det(A) = (1*-1) - (2*3) = -1 - 6 = -7
+         [3, -1]]
+
+    B = [[2,  1],   (A lo rows swap chesina rupam)
+         [-1, 3]]          det(B) = (2*3) - (1*-1) = 6 - (-1) = +7
+    ```
+  - `det(A) = -7`, `det(B) = +7`. Value `7` same, kani sign flip ayindi (`-` nunchi `+`).
+
+- **8. Oka row (or column) ni number `k` tho multiply chesthe, det value `k` rettlu (k times) avuthundi:** ante oka row/column anni `k` tho multiply chesthe, determinant kuda `k` tho multiply ayindi.
+  - Example (column 1 ni `k = 2` tho multiply):
+    ```
+    A = [[1, 5],           det(A) = (1*-1) - (5*2) = -1 - 10 = -11
+         [2, -1]]
+
+    B = [[2, 5],   (A lo column 1 ni 2 tho multiply: [1,2] -> [2,4])
+         [4, -1]]          det(B) = (2*-1) - (5*4) = -2 - 20 = -22
+    ```
+  - `det(B) = -22 = 2 * (-11) = 2 * det(A)`. Ante column ni 2 tho multiply chesthe, det kuda 2 rettlu ayindi.
+  - **Gurthu:** full matrix (n x n) ni `k` tho multiply chesthe (anni rows), det `k^n` rettlu avuthundi (prathi row nunchi oka `k`). Oka single row/column aithe just `k` rettlu.
+
+- **9. Oka row (or column) lo prathi element rendu terms sum ga rasthe, determinant ni RENDU determinants sum ga split cheyyochu:** ante oka row `(a+x, b+y, c+z)` laaga unte, aa determinant = (aa row `a,b,c` unna det) + (aa row `x,y,z` unna det). Migatha rows same untayi.
+  - Example (top row split: `[2-1, 1+1, 1+0]` = `[2,1,1]` and `[-1,1,0]`):
+    ```
+    LHS = | 2-1  1+1  1+0 |     = | 1  2  1 |
+          |  3    2    1  |       | 3  2  1 |
+          |  1    5   -1  |       | 1  5 -1 |
+
+    det(LHS) = 1*(-2-5) - 2*(-3-1) + 1*(15-2)
+             = -7 + 8 + 13 = 14
+    ```
+    Ippudu rendu determinants ga split:
+    ```
+    Part I = | 2  1  1 |        Part II = | -1  1  0 |
+             | 3  2  1 |                  |  3  2  1 |
+             | 1  5 -1 |                  |  1  5 -1 |
+
+    det(I)  = 2*(-2-5) - 1*(-3-1) + 1*(15-2) = -14 + 4 + 13 = 3
+    det(II) = -1*(-2-5) - 1*(-3-1) + 0*(15-2) = 7 + 4 + 0 = 11
+    ```
+  - `det(I) + det(II) = 3 + 11 = 14 = det(LHS)`. Rendu match -> property true.
+  - **Gurthu:** idi only **oka** row (or column) split ki. Rendu rows oksari split cheyyakudadu.
+
+> **[QUIZ 3]** `det([[7, 1], [7, 1]]) = ?` (hint: rendu rows same).
+> <details><summary>Answer chudu</summary>
+>
+> `0` (rendu rows same ayithe determinant eppudu 0).
+> </details>
+
+#### Cheatsheet (determinant ni gurthupettukovadaniki)
+
+| Concept | Rule / Formula | One-line gurthu |
+|---------|----------------|-----------------|
+| 2x2 det | `(a*d) - (b*c)` | **Cross** chesi **minus** |
+| 3x3 sign | `+ - +` top row | Checkerboard `+ - +` |
+| det = 0 | matrix weak (singular) | Reverse cheyyalem, "flat sheet" |
+| det != 0 | matrix strong (invertible) | Reverse cheyyochu |
+| Duplicate row | det = 0 | Same row = **copy** = weak |
+| Identity | `det(I) = 1` | No stretch, size same |
+| Triangular | diagonal product | Diagonal values multiply |
+
+#### Tips to remember (easy tricks)
+
+- **2x2 tip:** "**X** gurthu" - matrix meeda oka X geeyi. Down-diagonal (`a*d`) plus, up-diagonal (`b*c`) minus. `X` chesi cross-multiply.
+- **det = 0 tip:** "0 ante **hero weak**" - matrix reverse (inverse) cheyyalem. Movie lo hero power poyinattu.
+- **Story tip:** determinant = "stretch factor". `2` ante double, `0` ante squished flat, negative ante flip.
+- **Duplicate tip:** rendu rows (or columns) same ga kanipisthe, calculate cheyyakunda ne `det = 0` ani cheppochu.
+
+#### Enduku kavali? (Why determinant matters in AI/math)
+
+- **Inverse undaa leda cheppadaniki:** `det != 0` ayithe ne matrix inverse untundi. AI lo `(X.T * X)^-1` laanti formulas ki idi important.
+- **Equations solve cheyyadaniki:** linear equations system solution unda leda determinant cheptundi (Cramer's rule).
+- **Area/volume scaling:** graphics/transform lo shape entha stretch/shrink ayindo determinant cheptundi.
+- **Stability check:** matrix "weak" (singular) aithe calculations break avuthayi, determinant mundu warning istundi.
+
+#### Why do we need it? What's the purpose? (deep ga, simple ga)
+
+> **Oka line lo:** determinant ante oka matrix ki "**health report card**" laantidi. Aa matrix ni multiply/inverse/solve cheyyagalama ledaa, and adi entha strong undo - anni oka single number lo cheptundi.
+
+**1. Purpose - "reverse cheyyagalama?" (invertibility check)**
+- Manam AI lo chala sarlu matrix ni **undo** (reverse) cheyyali. Example: prediction nunchi malli original data ki vellalante inverse kavali.
+- Kani anni matrices reverse cheyyalemu. Determinant `0` aithe reverse **saadhyam kaadu** (information poyindi).
+- **Real analogy:** oka smoothie chesaka, malli original fruits ni separate cheyyalemu (det = 0 laantidi). Kani oka box lo items neat ga unte, malli teeyochu (det != 0).
+
+**2. Purpose - "equations ki answer undaa?" (solution exists?)**
+- Rendu unknowns tho 2 equations unte, vaatiki oka unique answer undaa leda cheptundi determinant.
+- `det != 0` -> **oka clear answer** untundi. `det = 0` -> **answer ledu or infinite answers** (confusion).
+- **Real analogy:** 2 clues tho oka mystery solve cheyyali. Clues clear ga veru veru unte (det != 0) answer dorukutundi. Clues same/useless aithe (det = 0) solve cheyyalemu.
+
+**3. Purpose - "shape entha marindi?" (area/volume scaling)**
+- Oka transformation (rotate/stretch) matrix apply cheste, shape area entha rettlu ayindo determinant absolute value cheptundi.
+- `|det| = 3` -> area 3 rettlu. `det = 0` -> shape flat ayindi (area sunna).
+- **Real analogy:** photo ni zoom chesinappudu entha pedda ayindo cheppe number laantidi.
+
+**4. Purpose - "matrix strong aa weak aa?" (stability)**
+- AI training lo matrix "weak" (det almost 0) aithe calculations unstable avuthayi (numbers explode or NaN).
+- Determinant chusi mundu ne "ee matrix tho jagratta" ani telusukovacchu.
+
+**Chinna gurthu (summary):** determinant `0` = **danger** (weak, no inverse, no unique solution). Determinant `0` kaadu = **safe** (strong, invertible, unique solution untundi). Anduke matrix tho pani cheyyemundu determinant oka sari check cheyyadam manchidi.
+
+#### Python (numpy) code - determinant
+
+```python
+import numpy as np
+
+A = np.array([[3, 8],
+              [4, 6]])
+
+print(np.linalg.det(A))   # -14.0 (2x2 example)
+
+B = np.array([[1, 2, 3],
+              [4, 5, 6],
+              [7, 8, 10]])
+
+print(round(np.linalg.det(B)))   # -3 (3x3 example)
+```
+
+> **[QUIZ 4 - final]** Oka matrix `det = 0` unte, daaniki inverse untundaa?
+> <details><summary>Answer chudu</summary>
+>
+> Undadu. `det = 0` ante matrix singular (weak), inverse ledu. Inverse undalante `det != 0` avvali.
+> </details>
 
 ### AI lo matrices enduku important?
 - Full dataset oka **matrix** (`X`): rows = examples, columns = features.

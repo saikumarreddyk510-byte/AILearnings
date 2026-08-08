@@ -118,32 +118,6 @@ Aa pattern batti new email spam aa kaada ani guess chestundi.
 
 ---
 
-## ML ni inka simple story laga artham chesukundam
-
-Suppose nuvvu oka chinna shop owner.
-Nee daggara old customers data undi:
-
-- Age
-- Salary
-- Product purchase chesara leda
-
-Ippudu new customer vachadu.
-Question:
-
-**Ee customer product koneda?**
-
-Old data chusi pattern kanukoni, new customer gurinchi prediction cheyyadam = Machine Learning.
-
-### Story format
-
-1. Past lo jarigina examples collect chestham
-2. Aa examples nundi common pattern identify chestham
-3. New person/value/input vachinappudu guess chestham
-
-Idi exact ga ML core idea.
-
----
-
 ## ML lo 3 main words first ardham chesuko
 
 ### 1. Data
@@ -305,28 +279,6 @@ Anduke people antaru:
 
 Meaning:
 - bad data isthe bad result vastundi
-
----
-
-## ML ni beginner ela think cheyyali?
-
-Machine Learning anedi magic kaadu.
-
-Adi just:
-- examples chustundi
-- pattern kanukuntundi
-- next answer predict chestundi
-
-### One-line kid version
-
-**Machine Learning ante computer ki examples chupinchi, aa examples nundi nerpinchadam.**
-
-Traditional programming lo manam rules write chestham.
-Machine Learning lo manam data istam, model aa data nundi rules learn chestundi.
-
-Example:
-- Traditional program: "if marks > 35 pass"
-- ML program: previous student data batti "ee student pass avuthada?" ani predict chestundi
 
 ---
 
@@ -575,15 +527,6 @@ Example split:
 - 15% validation
 - 15% test
 
-### Small story example
-
-Suppose nuvvu cricket aadatam nerchukuntunnav.
-
-- Practice lo 100 balls adav -> training
-- Coach konni extra balls tho test chesthadu -> validation style check
-- Match lo actual performance -> test
-
-Match lo baaga aadithe meaning real ga nerchukunnav.
 
 ### Why test set must be unseen?
 
@@ -1416,6 +1359,30 @@ Step by step, kid style:
   - **X-axis = m (slope) value** (0, 1, 2, 3, ... 18).
   - Curve U-shape (bowl laantidi). Bowl **bottom** point daggara error minimum. Aa bottom ki correspond ayye `m` ye best slope.
   - Ee example lo: start `m = 18` (curve top-left, high error) nundi start chesi, adugulu vestu bottom (error lowest) daggariki jaruthundi.
+
+- **Graph (MSE vs m - bowl shape, step by step digadam):**
+
+  ```text
+  MSE (error)
+     ^
+  high|  o (start: m=18, error ekkuva)
+      |   \
+      |    \  o  <- step 1 (m taggindi, error taggindi)
+      |     \  \
+      |      \  o  <- step 2
+      |       \  \
+      |        \  o  <- step 3 (adugulu chinna avutunnai bottom daggara)
+      |         \  \
+      |          \ o o  <- steps 4,5 (bottom daggara slow)
+   low|___________\_o_______________
+      +----------------------------------> m (slope)
+        2   4   6   8  10  12  14  16  18
+                    ^
+                    |
+              best m (bottom = MSE minimum)
+  ```
+
+  (o = prathi step lo m position. Start high error nundi, adugulu vestu bottom = lowest error ki cheruthundi. Bottom daggara adugulu chinna avutunnai.)
 
 - **Step size = 1 ante (image lo):**
   - Prathi iteration lo `m` value ni oka fixed amount (step) tho update chestham.
