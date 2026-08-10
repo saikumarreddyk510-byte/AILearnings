@@ -1551,6 +1551,11 @@ Disadvantage:
 SVM main idea:
 - Classes ni best boundary tho separate cheyyadam
 
+**Key terms:**
+- **Hyperplane:** classes ni separate chese boundary line (2D lo line, higher dimensions lo plane).
+- **Support Vectors:** hyperplane ki chala daggara unna data points — ee points matrame boundary position ni decide chestai (migilina points ni ignore cheyyachu).
+- **Margin:** hyperplane nundi daggara support vectors varaku unna distance. SVM ee margin ni **maximum** ga chese best hyperplane ni vethukutundi (margin ekkuva unte, kotha data meeda model confident ga classify chestundi).
+
 Use:
 - Classification problems
 
@@ -1593,6 +1598,8 @@ Use:
 ---
 
 ## 8.9 Ridge Regression
+
+> **Regularization ante enti?** Model weights (coefficients) chala pedda avvakunda, cost function ki oka extra **penalty** add chesi control cheyyadam. Weights chinnaga unte model simple avutundi, overfitting takkuva avutundi.
 
 - **Enti:** Linear Regression + oka penalty (L2 regularization) add chesina version.
 - **Enduku kavali:** model overfit avvakunda control cheyyadaniki, especially features ekkuva unnapudu.
@@ -1655,6 +1662,341 @@ Examples:
 | Age | Salary | Purchased |
 |---|---|---|
 | 25 | 30000 | 0 |
+
+---
+
+# K-Nearest Neighbors (K-NN)
+
+K-NN ante oka **simple, powerful classification (and regression) algorithm**. Idea chala easy: **"nee chuttu unna daggari neighbors ela unnaro, nuvvu kuda alane untaav"** — friends batti person ni guess cheyyadam laantidi.
+
+> **`K = Hyperparameter`** — enni neighbors (K value) chudalo manam **mundu decide chestham** (model nerchukodu). Example: K=3 ante **3 daggari points** chusi decide cheyyadam.
+>
+> **K eppudu positive integer** (K = 1, 2, 3, 4, ...) — negative leda decimal (0.5, -2) values allow avvavu. Enni neighbors chudalo count kabatti, **whole positive number** matrame untundi.
+
+---
+
+## Example Dataset (Loan Eligibility)
+
+Whiteboard lo unna data — **Credit Score** and **Income** batti oka person ki **Loan eligible** aa kaadaa ani predict cheyyadam.
+
+| # | Credit Score | Income (Lakhs) | Loan Eligible |
+|:-:|:------------:|:--------------:|:-------------:|
+| 1 | 600 | 5.5 | No |
+| 2 | 720 | 12.5 | Yes |
+| 3 | 810 | 15 | Yes |
+| 4 | 550 | 5 | No |
+| 5 | 650 | 7.5 | No |
+| 6 | 750 | 13 | Yes |
+| 7 | 700 | 10 | Yes |
+
+- **Independent variables (Features / X):** `Credit Score`, `Income` — ivi manam input ga isthe.
+- **Target (Label / y):** `Loan Eligible` — idi predict cheyyalsina answer.
+- **`Loan Eligible` = Categorical** (Yes / No) → so idi **Classification** problem.
+
+### Kid Analogy
+- Kotha person vasthe → **credit score** and **income** chusi, **similar (daggari) people** ela unnaro chudadam.
+- Aa daggari people **ekkuva mandi "Yes"** ante → kotha person ki kuda **"Yes"**.
+- Ekkuva mandi **"No"** ante → **"No"**. Idi "majority vote".
+
+---
+
+## Ee Section lo Nerchukune 4 Topics (Agenda)
+
+Whiteboard lo raasina agenda — ee order lo K-NN complete ga nerchukuntham:
+
+1. **What is Agenda of K-NN?** — K-NN enti, enduku vadatam (basic idea).
+2. **Working Principle (step by step)** — K-NN internally ela pani chestundo, step by step.
+3. **Model Evaluation Techniques** — model entha baaga chesindo ela measure cheyyali (accuracy, confusion matrix, etc.).
+4. **Practical Implementation** — Python (scikit-learn) tho real code lo K-NN apply cheyyadam.
+
+---
+
+## 1. Agenda of K-NN (Basic Idea)
+
+- **Enti:** K-NN oka **supervised learning** algorithm. Labelled data (answers telisina data) tho train avutundi.
+- **Enduku vadatam:** oka kotha point ye **class** (category) ki chendutundo predict cheyyadaniki.
+- **Core idea:** *"Similar things stay close together"* — oka laanti points **daggara** untai. So daggari neighbors chusi decide cheyyachu.
+- **Lazy learner:** K-NN **train time lo em nerchukodu** — anni data ni just **gurthu pettukuntundi** (store). Actual pani **prediction time lo** jarugutundi (distances calculate chesi).
+
+> **Classification + Regression:** K-NN rendintiki work avutundi — Classification lo **majority vote**, Regression lo **average** teeskuntundi.
+
+---
+
+## 2. Working Principle (Step by Step)
+
+### Step 1: Preparing the Data (Scatter Plot lo chudadam)
+
+Mundu mana data ni oka **graph (scatter plot)** meeda pedatam — prathi person oka **point** avutundi:
+
+- **X-axis (horizontal)** = `Credit Score` (500, 550, 600, 650, 700, 750...).
+- **Y-axis (vertical)** = `Income (Lakhs)` (5, 7, 9, 11, 13, 15...).
+- **Prathi point color** = class (Loan Eligible):
+  - 🔴 **Red points** = **No** (loan raadu) — takkuva credit score + takkuva income.
+  - 🟣 **Purple points** = **Yes** (loan vastundi) — ekkuva credit score + ekkuva income.
+
+```
+Income (L)
+  15 |                          🟣  🟣
+  13 |                       🟣
+  11 |                    🟣
+   9 |
+   7 |            🔴 🔴
+   5 |        🔴
+     +----------------------------------→ Credit Score
+       500  550  600  650  700  750
+```
+
+**Idi chusi emi ardham avutundi?**
+- **Left-bottom** (takkuva score, takkuva income) → **🔴 No** group.
+- **Right-top** (ekkuva score, ekkuva income) → **🟣 Yes** group.
+- Rendu groups **separate ga** (daggari daggari) untai → K-NN ki idi perfect. Kotha point ye group daggara padite, ade class.
+
+> **Enduku ee step mukhyam:** Data ni visualize chesthe, **groups ela unnai**, **overlap undaa**, **outliers unnaya** ani telustundi. K-NN "daggari points" batti pani chestundi kabatti, ee spatial view chala help avutundi.
+
+---
+
+### Step 2: Calculate Distance (Test data ki training data tho)
+
+Ippudu manaki **kotha 2 people** vachcharu, vaari **Loan Eligible?** ani teliyadu — vaallani **Test data** antam:
+
+| | Credit Score | Income (Lakhs) | Loan Eligible |
+|:-:|:------------:|:--------------:|:-------------:|
+| **t1** | 730 | 18 | ? |
+| **t2** | 660 | 8 | ? |
+
+> **Idea:** Test data lo unna **prathi row**, training data lo unna **prathi row** tho **distance calculate chestundi**. Ala prathi test point ki, **anni 7 training points** ki entha daggara undo telustundi.
+
+#### Euclidean Distance Formula
+
+Rendu points (`p` and `q`) madhya distance kanukkovadaniki:
+
+$$D(p, q) = \sqrt{\sum_{i=1}^{n} (p_i - q_i)^2}$$
+
+- **`p`, `q`** — rendu points (example: oka training row, oka test row).
+- **`n`** — features count (ikkada n=2: Credit Score, Income).
+- **`(p_i - q_i)^2`** — prathi feature lo difference ni **square** cheyyadam (negative poyi, big differences ni penalize cheyyadaniki).
+- **`√`** — anni squared differences ni add chesi, **square root** teeskovadam — idi actual "straight-line distance".
+
+#### Worked Example: Test1 (730, 18) vs anni 7 Training rows
+
+**Training row 1** (Credit Score=600, Income=5.5) vs **Test1** (730, 18):
+
+$$D(Tr_1, Te_1) = \sqrt{(600-730)^2 + (5.5-18)^2} = 130.6$$
+
+Ade formula ni migilina **6 training rows** ki kuda apply chesthe:
+
+| Training Row | (Credit Score, Income) | Distance from Test1 |
+|:-------------:|:-----------------------:|:--------------------:|
+| Tr1 | (600, 5.5) | 130.60 |
+| Tr2 | (720, 12.5) | 11.41 |
+| Tr3 | (810, 15) | 80.06 |
+| Tr4 | (550, 5) | 180.47 |
+| Tr5 | (650, 7.5) | 80.64 |
+| Tr6 | (750, 13) | 20.62 |
+| Tr7 | (700, 10) | 31.05 |
+
+#### Final Table (Distance column add chesaka)
+
+Ee distances ni original training table lo **kotha column** ga add chesthe:
+
+| # | Credit Score | Income (Lakhs) | Loan Eligible | Dist (from Test1) |
+|:-:|:------------:|:---------------:|:--------------:|:------------------:|
+| 1 | 600 | 5.5 | No | 130.6 |
+| 2 | 720 | 12.5 | Yes | 11.41 |
+| 3 | 810 | 15 | Yes | 80.06 |
+| 4 | 550 | 5 | No | 180.47 |
+| 5 | 650 | 7.5 | No | 80.64 |
+| 6 | 750 | 13 | Yes | 20.62 |
+| 7 | 700 | 10 | Yes | 31.05 |
+
+**Idi chusi emi cheyyali?** — ee **Dist** column ni **chinna nunchi pedda** ki sort cheyyi (Step 3 — Sort cheyyi). Chinna distance unna row ye Test1 ki **daggari neighbor**. Row 2 (Dist=11.41) **most daggari** — so K=3 tho chusthe, top 3 daggari rows (Row 2, Row 6, Row 7 — anni **Yes**) → Test1 ki prediction = **Yes**.
+
+> Ade process **Test2 (660, 8)** ki kuda repeat cheyyali — separate ga anni training rows tho distance calculate chesi, daggari K neighbors batti predict cheyyali.
+
+---
+
+### Step 3: Sort by Ascending Order (Rank ivvadam)
+
+Anni 7 distances ni **ascending order** lo (chinna nunchi pedda ki) arrange chesthe, prathi row ki oka **Rank** vastundi:
+
+| # | Credit Score | Income (Lakhs) | Loan Eligible | Dist | Rank |
+|:-:|:------------:|:---------------:|:--------------:|:-----:|:----:|
+| 1 | 600 | 5.5 | No | 130.6 | 6 |
+| 2 | 720 | 12.5 | Yes | 11.41 | **1** |
+| 3 | 810 | 15 | Yes | 80.06 | 4 |
+| 4 | 550 | 5 | No | 180 | 7 |
+| 5 | 650 | 7.5 | No | 80.64 | 5 |
+| 6 | 750 | 13 | Yes | 20 | **2** |
+| 7 | 700 | 10 | Yes | 31 | **3** |
+
+- **Rank 1** = chinna-most distance (Row 2, Dist=11.41) → Test1 ki **most daggari** neighbor.
+- **Rank 7** = pedda-most distance (Row 4, Dist=180) → Test1 ki **most far** point.
+- Idi chesthe, ye rows Test1 ki daggara unnayo, ye rows dooram unnayo clean ga telustundi.
+
+### Step 4: Top K Nearest Neighbors ni teeskovadam
+
+- **K → Top K Nearest Neighbors (values)** — Rank prakaram, **modati K rows** ni teeskuni, migilinavi ignore chestham.
+- Ikkada **K = 3** ani decide chesukunnam (circle chesina value).
+- So **Rank 1, 2, 3** unna rows matrame teeskuntam:
+
+| Rank | Row | Loan Eligible |
+|:----:|:---:|:--------------:|
+| 1 | Row 2 (720, 12.5) | Yes |
+| 2 | Row 6 (750, 13) | Yes |
+| 3 | Row 7 (700, 10) | Yes |
+
+### Majority Voting (Tree diagram tho)
+
+Ee top-K (K=3) neighbors ni **classes prakaram group** chesi, ye class ki **ekkuva votes** vachaayo chuddam:
+
+```
+              (K = 3)
+                |
+        --------------------
+        |                   |
+      Yes                   No
+    (3 votes)             (0 votes)
+```
+
+- **3 neighbors lo → anni 3 "Yes"** class ki veltaayi, **"No" ki 0 votes**.
+- **Majority vote = Yes** (3 > 0) → so final prediction = **Yes**.
+- Idi **majority voting** ani antaru — K neighbors ni classes prakaram split chesi, **ekkuva vote vachina class** ni final answer ga teeskovadam.
+
+- Ee top-3 lo **anni "Yes"** → majority vote = **Yes** → Test1 (730, 18) ki prediction = **Loan Eligible: Yes** ✅.
+
+---
+
+## Importance of K Value (Enduku K chala mukhyam?)
+
+K-NN lo **K** ye **most important hyperparameter** — idi wrong ga pettesthe, model tappu ga predict chestundi. Enduku mukhyamo, ela choose cheyyalo chuddam:
+
+### K enduku important?
+
+1. **Model behavior ni control chestundi** — K value batti model **simple** (smooth) or **complex** (sensitive) avutundi.
+2. **Overfitting vs Underfitting decide chestundi** — chinna K = overfitting risk, pedda K = underfitting risk.
+3. **Noise/Outliers ni handle cheyyadam** — correct K unte, oka-two wrong/noisy points model ni confuse cheyyavu.
+4. **Accuracy meeda direct effect** — different K values tho accuracy maarutundi, so best K select cheyyadam model performance ki key.
+
+### K chinna unte (Example: K = 1)
+
+- Kevalam **1 nearest neighbor** matrame chusi decide chestundi.
+- **Chala sensitive** — daggarlo unna oka **outlier/noise point** unte, ade wrong ga follow chestundi.
+- **Overfitting** avvachu — training data ni **exact ga gurthu pettukuntundi** (memorize), kani kotha (unseen) data meeda baaga perform cheyyadu.
+
+### K pedda unte (Example: K = 15, chala pedda)
+
+- Chala **ekkuva neighbors** ni kaluputundi — decision **over-smooth** avutundi.
+- **Underfitting** avvachu — chinna, important patterns ni **miss** chestundi, anni points ni okate laaga treat chestundi.
+- Different classes madhya **boundary blur** aipotundi — accuracy takkuva avvachu.
+
+### K ni ela choose cheyyali? (How to choose K)
+
+1. **Odd number pettadam better** (K = 3, 5, 7, ...) — classification lo **tie (equal vote)** raakunda undataniki. Example: K=2 lo 1 vote "Yes", 1 vote "No" aithe decide cheyyalem — kabatti **K ni odd ga pettadam** ee tie problem ni avoid chestundi.
+2. **sqrt(n) rule (thumb rule)** — total training samples (`n`) ki **square root** ni approximate K ga teesukovadam common practice. Example: n=100 aithe, K ≈ 10 (odd ki round: 9 or 11).
+3. **Cross-Validation tho test cheyyadam** — different K values (3, 5, 7, 9...) tho model run chesi, **best accuracy/lowest error** icche K ni select cheyyadam — ide **most reliable** method.
+4. **Dataset size batti decide cheyyadam:**
+   - **Chinna dataset** → chinna K (3, 5) — ekkuva neighbors teesukunte migilina anni points dooram ainaa kuda kalipesukuntundi.
+   - **Pedda dataset** → koncham pedda K (7, 9, 11) — noise ni better handle chestundi.
+5. **Domain knowledge** — data lo entha noise unde, classes entha clear ga separate ga unnayo batti kuda judge cheyyachu.
+
+### Kid Analogy (K value)
+
+- **K=1** = friend group lo **oka friend ni matrame** adagadam — aa okka friend tappu chepthe, nuvvu kuda tappu decision teeskuntaav.
+- **K=15** = **mothaम class ni** adagadam — ekkuva mandi confuse aithe, correct answer dilute aipotundi.
+- **K=3, 5 (balanced)** = **konchem mandi close friends ni** adagadam — accurate kuda, fair kuda.
+
+> **Quick Rule:** Confusion unte, **odd K** tho start cheyyandi (K=5 common default), tarvata **Cross-Validation** tho best K ni fine-tune cheyyandi.
+
+---
+
+## 3. Model Evaluation Techniques
+
+K-NN model entha baaga predict chestundo measure cheyyadaniki (classification):
+
+- **Accuracy** — total predictions lo enni correct: $\frac{correct}{total}$.
+- **Confusion Matrix** — actual vs predicted table (True/False Positives & Negatives).
+- **Precision** — model "Yes" ani cheppinavi lo entha **nijamga Yes**.
+- **Recall** — nijamga "Yes" unna vaatilo entha model **pattukundi**.
+- **F1-Score** — Precision and Recall rendintini balance chese single score.
+- **Train-Test Split / Cross Validation** — data ni train + test ga vibhajinchi, unseen data meeda check cheyyadam (data leakage avoid).
+
+> **Feature Scaling MUST:** K-NN **distance** meeda depend avutundi. Credit Score (600-810) and Income (5-15) chala different scales lo unnai → **StandardScaler / MinMaxScaler** tho scale cheyyakapothe, pedda number (Credit Score) dominate chestundi. So **scaling mandatory**.
+
+---
+
+## 4. Practical Implementation (Python + scikit-learn)
+
+```python
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+# Step 1: Whiteboard dataset
+data = {
+    "CreditScore": [600, 720, 810, 550, 650, 750, 700],
+    "Income":      [5.5, 12.5, 15, 5, 7.5, 13, 10],
+    "LoanEligible":["No", "Yes", "Yes", "No", "No", "Yes", "Yes"]
+}
+df = pd.DataFrame(data)
+
+# Step 2: Features (X) and Target (y)
+X = df[["CreditScore", "Income"]]
+y = df["LoanEligible"]
+
+# Step 3: Train-Test split
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=42
+)
+
+# Step 4: Feature Scaling (K-NN ki MUST - distance based)
+sc = StandardScaler()
+X_train = sc.fit_transform(X_train)   # train meeda fit + transform
+X_test  = sc.transform(X_test)        # test meeda transform only
+
+# Step 5: K-NN model (K = 3)
+model = KNeighborsClassifier(n_neighbors=3)
+model.fit(X_train, y_train)
+
+# Step 6: Predictions
+y_pred = model.predict(X_test)
+
+# Step 7: Evaluation
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print("\nConfusion Matrix:\n", confusion_matrix(y_test, y_pred))
+print("\nReport:\n", classification_report(y_test, y_pred))
+
+# Step 8: Kotha person ki predict cheyyadam
+new_person = sc.transform([[690, 9]])   # Credit Score=690, Income=9
+print("Loan Eligible?", model.predict(new_person)[0])
+```
+
+### Code lo prathi step enduku?
+- **`StandardScaler`** — features ni same scale loki (K-NN distance fair ga undadaniki).
+- **`KNeighborsClassifier(n_neighbors=3)`** — K=3 tho model create.
+- **`fit(X_train, y_train)`** — training data store cheyyadam (lazy learner).
+- **`predict(X_test)`** — test points ki daggari 3 neighbors chusi majority vote.
+- **`new_person`** — kotha input ni kuda **same scaler** tho transform chesi predict.
+
+---
+
+## K-NN — Quick Summary (Gurthu pettuko)
+
+| Point | Value |
+|-------|-------|
+| **Type** | Supervised (Classification + Regression) |
+| **Idea** | Daggari K neighbors chusi majority vote / average |
+| **K** | Hyperparameter (manam set chestham, odd number better) |
+| **Distance** | Euclidean (mostly) |
+| **Scaling** | **MUST** (distance based algorithm) |
+| **Learning** | Lazy learner (train lo store, predict lo work) |
+| **Best for** | Chinna/medium datasets, clear patterns |
+| **Weakness** | Pedda data lo **slow** (anni distances calculate cheyyali) |
+
+> **Final gurthu:** K-NN = *"Cheppu nee friends evaru, nuvvu evaru ani cheptaa."* Daggari neighbors batti decide — simple kani effective.
+
 | 40 | 80000 | 1 |
 
 Ikkada:
@@ -1743,21 +2085,38 @@ Metrics problem type batti change avuthayi.
 
 ## 12.1 Classification Metrics
 
+### Confusion Matrix Terms (TP, TN, FP, FN)
+
+Ee 4 terms anni classification metrics ki base. Prathi prediction ni rendu things tho compare chestham: **Actual** (nijam) vs **Predicted** (model cheppindi).
+
+- **TP (True Positive):** Actual **Yes**, model predicted **Yes** — correct.
+- **TN (True Negative):** Actual **No**, model predicted **No** — correct.
+- **FP (False Positive):** Actual **No**, kani model **Yes** ani wrong ga predict chesindi.
+- **FN (False Negative):** Actual **Yes**, kani model **No** ani wrong ga miss chesindi.
+
 ### Accuracy
 
 Correct predictions / total predictions
+
+$$Accuracy = \frac{TP + TN}{TP + TN + FP + FN}$$
 
 ### Precision
 
 Positive ani cheppina vatilo entha correct?
 
+$$Precision = \frac{TP}{TP + FP}$$
+
 ### Recall
 
 Actual positives lo entha capture chesam?
 
+$$Recall = \frac{TP}{TP + FN}$$
+
 ### F1-score
 
-Precision and recall balance metric
+Precision and recall balance metric (harmonic mean).
+
+$$F1 = 2 \times \frac{Precision \times Recall}{Precision + Recall}$$
 
 ### Confusion Matrix
 
@@ -1766,6 +2125,8 @@ Shows:
 - True Negative
 - False Positive
 - False Negative
+
+Ee 4 values ni oka 2x2 table (rows = actual, columns = predicted) laaga arrange chesthe, adi **Confusion Matrix**.
 
 ### Example use case
 
@@ -1806,8 +2167,8 @@ Bad data unte good model kuda fail avvachu.
 - mean/median/mode fill cheyyachu
 
 #### Encoding categorical data
-- label encoding
-- one-hot encoding
+- **label encoding:** category ni oka number ga marchadam (example: Low=0, Medium=1, High=2). Categories madhya **order/rank** unnappudu (ordinal data) bagundi.
+- **one-hot encoding:** prathi category ki separate 0/1 column create cheyyadam (example: City_Hyd, City_Chennai). Categories madhya order lekapothe (nominal data) idi correct choice — order lekunda direct numbers (0,1,2) isthe model wrong ranking assume chestundi.
 
 #### Feature scaling
 
@@ -2168,8 +2529,8 @@ Examples:
 Veetini tuning chesi performance improve cheyyachu.
 
 Methods:
-- Grid Search
-- Random Search
+- **Grid Search:** possible hyperparameter values anni combinations ni systematic ga try chesi, best combination ni kanukkovadam. Thorough kani slow (values ekkuva unte chala time padutundi).
+- **Random Search:** anni combinations try cheyyakunda, random ga konni combinations select chesi try cheyyadam. Grid Search kanna fast, chala time large search spaces ki better.
 
 ---
 
@@ -2276,7 +2637,7 @@ print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred))
 3. Overfitting ni ignore cheyyadam
 4. Wrong metric use cheyyadam
 5. Feature scaling avasaram unna place lo cheyyakapovadam
-6. Imbalanced data ni ignore cheyyadam
+6. Imbalanced data ni ignore cheyyadam — **imbalanced data** ante oka class rows chala ekkuva, inko class rows chala takkuva unte (example: 950 "No Disease" vs 50 "Disease"). Ala unte model majority class ni matrame nerchukuni, accuracy high ga kanipinchina minority class ni sarigga predict cheyyaledu.
 7. Business problem ardham kakunda direct algorithm run cheyyadam
 
 ---
