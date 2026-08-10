@@ -1,0 +1,344 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+//
+// JobPilot data model — Phase 1.
+// Dev datasource is SQLite (see prisma.config.ts / DATABASE_URL). SQLite has no
+// native `enum` or `String[]` support in Prisma, so:
+//   - enum-like fields are plain `String` columns, validated in app code via the
+//     shared Zod enums in `src/lib/enums.ts` (never trust the DB column alone).
+//   - list-shaped fields (skills, excluded companies, etc.) are `Json`.
+// Moving to Postgres later is additive (native enums/arrays can be introduced
+// without touching call sites, since the Zod contract stays the same).
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// ───────────────────────── Identity ─────────────────────────
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  preference           UserPreference?
+  masterResumes        MasterResume[]
+  searchProfiles       SearchProfile[]
+  jobMatches           JobMatch[]
+  applications         Application[]
+  jobSourceConnections JobSourceConnection[]
+  aiExecutions         AIExecution[]
+  auditEvents          AuditEvent[]
+  createdJobs          Job[]                 @relation("JobCreatedBy")
+}
+
+model UserPreference {
+  id                    String   @id @default(cuid())
+  userId                String   @unique
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  salaryCurrency        String   @default("USD")
+  notifyByEmail         Boolean  @default(true)
+  defaultSearchRadiusKm Int?
+  extra                 Json? // forward-compatible bag for future preference fields
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+// ───────────────────────── Résumé ─────────────────────────
+
+model MasterResume {
+  id               String   @id @default(cuid())
+  userId           String
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  originalFileName String
+  originalMimeType String
+  originalFileData Bytes // populated once Phase 2 upload/parsing lands
+  extractedText    String?
+  status           String   @default("UPLOADED") // ResumeStatus (src/lib/enums.ts)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  facts    ResumeFact[]
+  versions ResumeVersion[]
+
+  @@index([userId])
+}
+
+model ResumeFact {
+  id             String       @id @default(cuid())
+  masterResumeId String
+  masterResume   MasterResume @relation(fields: [masterResumeId], references: [id], onDelete: Cascade)
+  type           String // ResumeFactType: CONTACT | SUMMARY | SKILL | WORK_HISTORY | PROJECT | EDUCATION | CERTIFICATION
+  content        Json
+  verified       Boolean      @default(false)
+  locked         Boolean      @default(false) // AI must never modify a locked fact
+  sortOrder      Int          @default(0)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([masterResumeId])
+}
+
+model ResumeVersion {
+  id             String       @id @default(cuid())
+  masterResumeId String
+  masterResume   MasterResume @relation(fields: [masterResumeId], references: [id], onDelete: Cascade)
+  versionNumber  Int
+  snapshot       Json // assembled structured resume at this point in time
+  createdAt      DateTime     @default(now())
+
+  tailoredResumes TailoredResume[]
+
+  @@unique([masterResumeId, versionNumber])
+}
+
+// ───────────────────────── Search profile ─────────────────────────
+
+model SearchProfile {
+  id                  String   @id @default(cuid())
+  userId              String
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name                String
+  targetRoleTitles    Json // string[]
+  alternateRoleTitles Json? // string[]
+  requiredSkills      Json? // string[]
+  optionalSkills      Json? // string[]
+  locations           Json? // string[]
+  workplaceTypes      Json? // WorkplaceType[]
+  minSalary           Int?
+  employmentTypes     Json?
+  experienceLevel     String?
+  preferredIndustries Json?
+  excludedCompanies   Json?
+  requiredKeywords    Json?
+  excludedKeywords    Json?
+  sponsorshipRequired Boolean  @default(false)
+  maxPostingAgeDays   Int?
+  searchFrequency     String   @default("DAILY") // SearchFrequency
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([userId])
+}
+
+// ───────────────────────── Jobs ─────────────────────────
+
+model Job {
+  id                     String    @id @default(cuid())
+  source                 String // JobSourceType: mock | manual_url | manual_paste | csv_import | ...
+  sourceJobId            String
+  sourceUrl              String
+  applicationUrl         String?
+  company                String
+  title                  String
+  description            String
+  location               String?
+  workplaceType          String? // WorkplaceType
+  salaryMin              Int?
+  salaryMax              Int?
+  employmentType         String?
+  requiredSkills         Json?
+  preferredSkills        Json?
+  experienceRequirements String?
+  educationRequirements  String?
+  sponsorshipInfo        String?
+  datePosted             DateTime?
+  dateDiscovered         DateTime  @default(now())
+  applicationDeadline    DateTime?
+  attribution            String? // source terms/attribution text where required
+  contentFingerprint     String // hash used for deduplication
+  raw                    Json?
+  // Null = shared/global (mock or a future permitted API). Non-null = a
+  // manual/CSV-imported job, private to the user who added it — a pasted
+  // job description is often not meant to be public. See
+  // src/server/data/jobs.ts for the visibility rule this backs.
+  createdByUserId        String?
+  createdBy              User?     @relation("JobCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+
+  requirements JobRequirement[]
+  matches      JobMatch[]
+  applications Application[]
+
+  @@unique([source, sourceJobId])
+  @@index([contentFingerprint])
+  @@index([createdByUserId])
+}
+
+model JobRequirement {
+  id       String  @id @default(cuid())
+  jobId    String
+  job      Job     @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  type     String // JobRequirementType: SKILL | EDUCATION | EXPERIENCE | CERTIFICATION
+  text     String
+  required Boolean @default(true)
+
+  @@index([jobId])
+}
+
+// ───────────────────────── Matching / tailoring ─────────────────────────
+
+model JobMatch {
+  id                  String       @id @default(cuid())
+  userId              String
+  user                User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobId               String
+  job                 Job          @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  score               Int
+  matchedRequirements Json
+  missingRequirements Json
+  transferableSkills  Json
+  hardFilterFailures  Json
+  concerns            Json
+  explanation         String
+  aiExecutionId       String?
+  aiExecution         AIExecution? @relation(fields: [aiExecutionId], references: [id])
+  createdAt           DateTime     @default(now())
+
+  tailoredResumes TailoredResume[]
+  coverLetters    CoverLetter[]
+
+  @@index([userId, jobId])
+}
+
+model TailoredResume {
+  id                 String        @id @default(cuid())
+  jobMatchId         String
+  jobMatch           JobMatch      @relation(fields: [jobMatchId], references: [id], onDelete: Cascade)
+  baseVersionId      String
+  baseVersion        ResumeVersion @relation(fields: [baseVersionId], references: [id])
+  content            Json
+  recommendedChanges Json // {section, originalText, proposedText, reason, supportingFactIds, confidence}[]
+  status             String        @default("DRAFT") // ApplicationStatus-style review status
+  versionNumber      Int           @default(1)
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+
+  reviewDecisions ReviewDecision[]
+  applications    Application[]
+}
+
+model CoverLetter {
+  id            String   @id @default(cuid())
+  jobMatchId    String
+  jobMatch      JobMatch @relation(fields: [jobMatchId], references: [id], onDelete: Cascade)
+  content       String
+  status        String   @default("DRAFT")
+  versionNumber Int      @default(1)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  applications Application[]
+}
+
+model ReviewDecision {
+  id               String         @id @default(cuid())
+  tailoredResumeId String
+  tailoredResume   TailoredResume @relation(fields: [tailoredResumeId], references: [id], onDelete: Cascade)
+  changePath       String // identifies which recommendedChanges[] entry this applies to
+  decision         String // ReviewDecisionType: ACCEPTED | REJECTED | EDITED
+  editedText       String?
+  decidedByUserId  String
+  createdAt        DateTime       @default(now())
+
+  @@index([tailoredResumeId])
+}
+
+// ───────────────────────── Applications ─────────────────────────
+
+model Application {
+  id                    String          @id @default(cuid())
+  userId                String
+  user                  User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobId                 String
+  job                   Job             @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  tailoredResumeId      String?
+  tailoredResume        TailoredResume? @relation(fields: [tailoredResumeId], references: [id])
+  coverLetterId         String?
+  coverLetter           CoverLetter?    @relation(fields: [coverLetterId], references: [id])
+  status                String          @default("DRAFT") // ApplicationStatus (src/lib/enums.ts)
+  matchScoreSnapshot    Int?
+  dateApplied           DateTime?
+  followUpDate          DateTime?
+  notes                 String?
+  contactInfo           Json?
+  interviewDates        Json?
+  submissionConfirmedAt DateTime?
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
+
+  events ApplicationEvent[]
+
+  @@unique([userId, jobId]) // prevents duplicate applications to the same job
+}
+
+model ApplicationEvent {
+  id            String      @id @default(cuid())
+  applicationId String
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  fromStatus    String?
+  toStatus      String
+  message       String?
+  createdAt     DateTime    @default(now())
+
+  @@index([applicationId])
+}
+
+// ───────────────────────── Integrations / observability ─────────────────────────
+
+model JobSourceConnection {
+  id           String    @id @default(cuid())
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sourceType   String // JobSourceType: MOCK | MANUAL_URL | MANUAL_PASTE | CSV_IMPORT | API_<NAME> | EMAIL
+  config       Json? // encrypted at rest once real credentials are stored (Phase 3+)
+  status       String    @default("ACTIVE")
+  lastSyncedAt DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([userId])
+}
+
+model AIExecution {
+  id                String   @id @default(cuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  purpose           String // AIExecutionPurpose: MATCH_ANALYSIS | RESUME_TAILORING | COVER_LETTER
+  provider          String
+  model             String
+  promptVersion     String
+  inputSummary      String? // redacted, never raw résumé/job text
+  tokenUsage        Json?
+  costEstimateCents Int?
+  status            String   @default("SUCCEEDED")
+  createdAt         DateTime @default(now())
+
+  jobMatches JobMatch[]
+
+  @@index([userId])
+}
+
+model AuditEvent {
+  id         String   @id @default(cuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action     String
+  entityType String
+  entityId   String?
+  metadata   Json?
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([entityType, entityId])
+}
