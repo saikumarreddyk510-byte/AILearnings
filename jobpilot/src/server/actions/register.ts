@@ -6,6 +6,8 @@ import { redirect } from "next/navigation";
 import { AuthError } from "next-auth";
 import { signIn } from "@/server/auth/config";
 import { createUser, findUserByEmail } from "@/server/data/users";
+import { checkRateLimit } from "@/lib/rate-limit";
+import { env } from "@/lib/env";
 
 /**
  * Credentials has no built-in sign-up flow, so registration is a plain
@@ -48,6 +50,18 @@ export async function registerUser(
   }
 
   const { name, email, password } = validated.data;
+
+  // Checked only after shape validation succeeds — a malformed request
+  // never consumes an attempt. Keyed by the submitted email (spec
+  // SECURITY: "Add request validation and rate limiting").
+  const rateLimit = checkRateLimit(`register:${email.toLowerCase()}`, {
+    limit: env.RATE_LIMIT_REGISTER_MAX_ATTEMPTS,
+    windowMs: env.RATE_LIMIT_REGISTER_WINDOW_MS,
+  });
+  if (!rateLimit.allowed) {
+    const seconds = Math.ceil(rateLimit.retryAfterMs / 1000);
+    return { message: `Too many attempts. Try again in ${seconds}s.` };
+  }
 
   const existing = await findUserByEmail(email);
   if (existing) {

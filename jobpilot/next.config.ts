@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Lean, self-contained Docker images (see Dockerfile) — traces only the
+  // node_modules this app actually needs into .next/standalone.
+  output: "standalone",
   experimental: {
     serverActions: {
       // Résumé uploads (RESUME_MAX_UPLOAD_BYTES, default 5MB) need headroom

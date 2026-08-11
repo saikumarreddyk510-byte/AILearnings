@@ -37,6 +37,7 @@ const ERROR_LABEL: Record<string, string> = {
   NO_VERIFIED_RESUME: "Something went wrong looking up your résumé.",
   JOB_NOT_FOUND: "This job could not be found.",
   PROFILE_NOT_FOUND: "That search profile could not be found.",
+  RATE_LIMITED: "Too many requests — please wait a moment and try again.",
 };
 
 export function MatchAnalysisPanel({

@@ -103,6 +103,30 @@ export const REVIEW_DECISION_TYPES = ["ACCEPTED", "REJECTED", "EDITED"] as const
 export const ReviewDecisionTypeSchema = z.enum(REVIEW_DECISION_TYPES);
 export type ReviewDecisionType = z.infer<typeof ReviewDecisionTypeSchema>;
 
+// ── Application tracker outcomes (spec section I) — the only statuses
+// recordApplicationOutcomeForUser accepts as a `toStatus`. APPLIED /
+// READY_TO_APPLY / SUBMISSION_CONFIRMED are deliberately excluded: those
+// only ever happen through the dedicated confirm-submission path
+// (src/server/data/applications.ts), never this free-form one. ──
+export const TRACKED_OUTCOME_STATUSES = ["REJECTED", "INTERVIEW", "OFFER", "WITHDRAWN"] as const;
+export const TrackedOutcomeStatusSchema = z.enum(TRACKED_OUTCOME_STATUSES);
+export type TrackedOutcomeStatus = z.infer<typeof TrackedOutcomeStatusSchema>;
+
+// ── Tailored résumé / cover letter review status (spec section G, scoped
+// to the artifact itself — NOT the Application lifecycle above, which is
+// owned by Phase 6) ──
+export const TAILORED_ARTIFACT_STATUSES = ["DRAFT", "APPROVED"] as const;
+export const TailoredArtifactStatusSchema = z.enum(TAILORED_ARTIFACT_STATUSES);
+export type TailoredArtifactStatus = z.infer<typeof TailoredArtifactStatusSchema>;
+
+// The only ResumeFactType values the AI may propose a text rewrite for
+// (spec F: "Preserve employers, titles, dates, education, and
+// certifications unless the user edits them" — CONTACT/EDUCATION/
+// CERTIFICATION are never AI-tailorable).
+export const TAILORABLE_FACT_TYPES = ["SUMMARY", "SKILL", "WORK_HISTORY", "PROJECT"] as const;
+export const TailorableFactTypeSchema = z.enum(TAILORABLE_FACT_TYPES);
+export type TailorableFactType = z.infer<typeof TailorableFactTypeSchema>;
+
 // ── AI execution (spec section J: AI safety and quality) ──
 export const AI_EXECUTION_PURPOSES = [
   "MATCH_ANALYSIS",

@@ -11,6 +11,10 @@ export async function findUserByEmail(email: string) {
   return db.user.findUnique({ where: { email } });
 }
 
+export async function findUserById(id: string) {
+  return db.user.findUnique({ where: { id } });
+}
+
 export async function createUser(input: {
   email: string;
   passwordHash: string;

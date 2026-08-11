@@ -18,3 +18,13 @@ const registry = new Map<string, JobSource>([["MOCK", new MockJobSource()]]);
 export function getJobSource(sourceType: string): JobSource | null {
   return registry.get(sourceType) ?? null;
 }
+
+/**
+ * Every registered JobSource, for callers that need to enumerate them (e.g.
+ * proving no registered source supports automatic application submission —
+ * see tests/unit/applications/no-automatic-submission.test.ts) without
+ * reaching into the module-private `registry` map.
+ */
+export function listRegisteredJobSources(): JobSource[] {
+  return Array.from(registry.values());
+}

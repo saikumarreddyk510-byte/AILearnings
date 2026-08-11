@@ -10,6 +10,14 @@ export async function getLatestJobMatchForUser(jobId: string, userId: string) {
   });
 }
 
+/** Ownership-checked lookup by JobMatch id, including its Job — used by Phase 5 tailoring. */
+export async function getJobMatchByIdForUser(jobMatchId: string, userId: string) {
+  return db.jobMatch.findFirst({
+    where: { id: jobMatchId, userId },
+    include: { job: true },
+  });
+}
+
 export interface CreateJobMatchInput {
   score: number;
   matchedRequirements: string[];

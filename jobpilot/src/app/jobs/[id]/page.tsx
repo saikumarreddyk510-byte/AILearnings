@@ -4,6 +4,7 @@ import { getJobByIdVisibleToUser, getJobRequirementsForJob } from "@/server/data
 import { getLatestJobMatchForUser } from "@/server/data/matches";
 import { listSearchProfilesForUser } from "@/server/data/search-profiles";
 import { getLatestVerifiedResumeForUser } from "@/server/data/resumes";
+import { getLatestTailoredResumeForJobMatch } from "@/server/data/tailored-resumes";
 import { toStringArray } from "@/lib/matching/json-utils";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -14,6 +15,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { MatchAnalysisPanel } from "./match-analysis-panel";
+import { TailoringPanel } from "./tailoring-panel";
+import { ApplicationPanel } from "./application-panel";
 
 export default async function JobDetailPage(props: PageProps<"/jobs/[id]">) {
   const { id } = await props.params;
@@ -31,6 +34,11 @@ export default async function JobDetailPage(props: PageProps<"/jobs/[id]">) {
   ]);
   const requirements = requirementsResult ?? [];
   const isDuplicateNotice = searchParams?.duplicate === "1";
+
+  const tailoredResume = latestMatch
+    ? await getLatestTailoredResumeForJobMatch(latestMatch.id, userId)
+    : null;
+  const hasApprovedTailoredResume = tailoredResume?.status === "APPROVED";
 
   const requiredSkills = toStringArray(job.requiredSkills);
   const preferredSkills = toStringArray(job.preferredSkills);
@@ -180,6 +188,10 @@ export default async function JobDetailPage(props: PageProps<"/jobs/[id]">) {
             : null
         }
       />
+
+      <TailoringPanel jobMatchId={latestMatch?.id ?? null} />
+
+      <ApplicationPanel jobId={job.id} hasApprovedTailoredResume={hasApprovedTailoredResume} />
     </div>
   );
 }

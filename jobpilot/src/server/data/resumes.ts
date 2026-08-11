@@ -140,6 +140,22 @@ export async function listResumeVersionsForUser(masterResumeId: string, userId: 
 }
 
 /**
+ * The most recent ResumeVersion snapshot for a résumé — the frozen basis
+ * that Phase 5 tailoring pins a TailoredResume to (via
+ * TailoredResume.baseVersionId), so a concurrent résumé edit during review
+ * can never move the ground truth out from under an in-progress review.
+ */
+export async function getLatestResumeVersionForUser(masterResumeId: string, userId: string) {
+  const resume = await getMasterResumeByIdForUser(masterResumeId, userId);
+  if (!resume) return null;
+
+  return db.resumeVersion.findFirst({
+    where: { masterResumeId },
+    orderBy: { versionNumber: "desc" },
+  });
+}
+
+/**
  * Toggles a fact's lock. This is the *only* function that changes a fact's
  * locked state — replaceResumeFactsForUser below never touches it.
  */
@@ -283,6 +299,7 @@ export async function createResumeVersionForUser(
         snapshot: {
           extractedText: resume.extractedText,
           facts: facts.map((f) => ({
+            id: f.id,
             type: f.type,
             content: f.content,
             verified: f.verified,

@@ -1,0 +1,19 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      # Overrides whatever's in .env — the SQLite file lives in the named
+      # volume below so it survives rebuilds/restarts.
+      DATABASE_URL: "file:/data/jobpilot.db"
+    volumes:
+      - sqlite-data:/data
+    restart: unless-stopped
+
+volumes:
+  sqlite-data:

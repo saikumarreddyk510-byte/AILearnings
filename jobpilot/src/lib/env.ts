@@ -37,6 +37,16 @@ const envSchema = z.object({
     .positive()
     .default(1 * 1024 * 1024),
   JOB_CSV_MAX_ROWS: z.coerce.number().int().positive().default(200),
+
+  // Rate limiting (spec SECURITY: "Add request validation and rate
+  // limiting") — see src/lib/rate-limit.ts. In-memory/single-process by
+  // design; tune windows here, not by editing call sites.
+  RATE_LIMIT_SIGNIN_MAX_ATTEMPTS: z.coerce.number().int().positive().default(5),
+  RATE_LIMIT_SIGNIN_WINDOW_MS: z.coerce.number().int().positive().default(60_000),
+  RATE_LIMIT_REGISTER_MAX_ATTEMPTS: z.coerce.number().int().positive().default(5),
+  RATE_LIMIT_REGISTER_WINDOW_MS: z.coerce.number().int().positive().default(600_000),
+  RATE_LIMIT_AI_MAX_REQUESTS: z.coerce.number().int().positive().default(10),
+  RATE_LIMIT_AI_WINDOW_MS: z.coerce.number().int().positive().default(60_000),
 });
 
 export type Env = z.infer<typeof envSchema>;

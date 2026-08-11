@@ -4,6 +4,7 @@ import { requireUserId } from "@/server/auth/session";
 import { listMasterResumesForUser } from "@/server/data/resumes";
 import { listJobsVisibleToUser } from "@/server/data/jobs";
 import { listSearchProfilesForUser } from "@/server/data/search-profiles";
+import { listApplicationsForUser } from "@/server/data/applications";
 import { signOutAction } from "@/server/actions/sign-out";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,10 +21,11 @@ export default async function DashboardPage() {
   // reached here.
   const userId = await requireUserId();
   const session = await auth();
-  const [resumes, jobs, searchProfiles] = await Promise.all([
+  const [resumes, jobs, searchProfiles, applications] = await Promise.all([
     listMasterResumesForUser(userId),
     listJobsVisibleToUser(userId),
     listSearchProfilesForUser(userId),
+    listApplicationsForUser(userId),
   ]);
 
   return (
@@ -34,15 +36,20 @@ export default async function DashboardPage() {
             Welcome, {session?.user?.name ?? session?.user?.email}
           </h1>
           <p className="text-muted-foreground">
-            Matching and application tracking land in later phases — for now,
-            verify your résumé, describe the roles you want, and add jobs.
+            Verify your résumé, describe the roles you want, add jobs, analyze and
+            tailor for the ones that fit, and track every application you start.
           </p>
         </div>
-        <form action={signOutAction}>
-          <Button type="submit" variant="outline">
-            Sign out
+        <div className="flex items-center gap-2">
+          <Button size="sm" variant="outline" render={<Link href="/settings" />}>
+            Settings
           </Button>
-        </form>
+          <form action={signOutAction}>
+            <Button type="submit" variant="outline">
+              Sign out
+            </Button>
+          </form>
+        </div>
       </div>
 
       <Card>
@@ -104,6 +111,23 @@ export default async function DashboardPage() {
           </div>
           <Button size="sm" render={<Link href="/jobs" />}>
             {jobs.length === 0 ? "Add a job" : "View jobs"}
+          </Button>
+        </CardHeader>
+        <CardContent />
+      </Card>
+
+      <Card>
+        <CardHeader className="flex-row items-center justify-between space-y-0">
+          <div>
+            <CardTitle>Applications</CardTitle>
+            <CardDescription>
+              {applications.length === 0
+                ? "None started yet — approve a tailored résumé on a job to begin."
+                : `${applications.length} application(s) tracked.`}
+            </CardDescription>
+          </div>
+          <Button size="sm" render={<Link href="/applications" />}>
+            {applications.length === 0 ? "View tracker" : "Open tracker"}
           </Button>
         </CardHeader>
         <CardContent />

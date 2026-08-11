@@ -40,7 +40,10 @@ function buildPlaceholder(
     case "RESUME_TAILORING":
       return { recommendedChanges: [] };
     case "COVER_LETTER":
-      return { coverLetter: "" };
+      return {
+        coverLetter: "No real AI provider is configured (AI_PROVIDER=mock).",
+        supportingFactIds: [],
+      };
     default:
       return {};
   }
