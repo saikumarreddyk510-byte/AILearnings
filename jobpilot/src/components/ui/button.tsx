@@ -55,4 +55,19 @@ function Button({
   )
 }
 
+// Note on the "Base UI: ... nativeButton ..." console warning seen in dev
+// for every `<Button render={<Link .../>}>` in this app: Base UI's
+// `nativeButton={false}` "fix" doesn't just silence the warning — it makes
+// Base UI inject `role="button"` onto the rendered element (see
+// node_modules/@base-ui/react/internals/use-button/useButton.mjs), which
+// strips the <a>'s natural `role="link"`. That's a real, user-facing
+// accessibility change (screen readers announce "button" instead of
+// "link") across every navigational button in the app, not just a lint
+// fix — and it broke two e2e tests that correctly assert `role: "link"`
+// (tests/e2e/home.spec.ts, tests/e2e/job-match-analysis.spec.ts). Left at
+// Base UI's default (`nativeButton: true`) on purpose: the console warning
+// is dev-only noise, whereas silently reclassifying hundreds of real links
+// as buttons for assistive technology is not an acceptable trade to make
+// just to clear a warning.
+
 export { Button, buttonVariants }

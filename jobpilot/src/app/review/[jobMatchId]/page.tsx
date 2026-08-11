@@ -7,9 +7,12 @@ import {
 } from "@/server/data/tailored-resumes";
 import { getLatestCoverLetterForJobMatch } from "@/server/data/cover-letters";
 import { getLatestVerifiedResumeForUser } from "@/server/data/resumes";
+import { getApplicationByJobIdForUser } from "@/server/data/applications";
 import { parseResumeVersionSnapshot } from "@/lib/resume/version-snapshot";
 import { getTailorableFieldText } from "@/lib/tailoring/field-mapping";
 import { toStringArray } from "@/lib/matching/json-utils";
+import { buildJobWizardSteps } from "@/lib/wizard-steps";
+import { WizardProgress } from "@/components/wizard-progress";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { EnforcedChange } from "@/lib/tailoring/schemas";
@@ -22,11 +25,19 @@ export default async function ReviewPage(props: PageProps<"/review/[jobMatchId]"
   const jobMatch = await getJobMatchByIdForUser(jobMatchId, userId);
   if (!jobMatch) notFound();
 
-  const [tailoredResume, coverLetter, verifiedResume] = await Promise.all([
+  const [tailoredResume, coverLetter, verifiedResume, application] = await Promise.all([
     getLatestTailoredResumeForJobMatch(jobMatchId, userId),
     getLatestCoverLetterForJobMatch(jobMatchId, userId),
     getLatestVerifiedResumeForUser(userId),
+    getApplicationByJobIdForUser(jobMatch.jobId, userId),
   ]);
+
+  const wizardSteps = buildJobWizardSteps({
+    jobId: jobMatch.jobId,
+    jobMatchId,
+    tailoredResumeStatus: (tailoredResume?.status as "DRAFT" | "APPROVED" | undefined) ?? null,
+    hasApplication: application !== null,
+  });
 
   const decisions = tailoredResume
     ? await getLatestDecisionsByChangePath(tailoredResume.id)
@@ -58,6 +69,8 @@ export default async function ReviewPage(props: PageProps<"/review/[jobMatchId]"
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-6 py-16">
+      <WizardProgress steps={wizardSteps} />
+
       <div>
         <h1 className="text-2xl font-semibold">
           Review &amp; tailor — {jobMatch.job.title} at {jobMatch.job.company}
@@ -103,6 +116,7 @@ export default async function ReviewPage(props: PageProps<"/review/[jobMatchId]"
 
       <ReviewPanel
         jobMatchId={jobMatchId}
+        jobId={jobMatch.jobId}
         hasVerifiedResume={verifiedResume !== null}
         tailoredResume={
           tailoredResume ? { id: tailoredResume.id, status: tailoredResume.status, changes } : null

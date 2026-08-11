@@ -2,6 +2,9 @@ import { notFound } from "next/navigation";
 import { requireUserId } from "@/server/auth/session";
 import { getJobByIdVisibleToUser } from "@/server/data/jobs";
 import { getApplicationByJobIdForUser } from "@/server/data/applications";
+import { getLatestJobMatchForUser } from "@/server/data/matches";
+import { buildJobWizardSteps } from "@/lib/wizard-steps";
+import { WizardProgress } from "@/components/wizard-progress";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -23,10 +26,23 @@ export default async function ApplicationConfirmationPage(
   const job = await getJobByIdVisibleToUser(jobId, userId);
   if (!job) notFound();
 
-  const application = await getApplicationByJobIdForUser(jobId, userId);
+  const [application, latestMatch] = await Promise.all([
+    getApplicationByJobIdForUser(jobId, userId),
+    getLatestJobMatchForUser(jobId, userId),
+  ]);
+
+  const wizardSteps = buildJobWizardSteps({
+    jobId,
+    jobMatchId: application?.tailoredResume?.jobMatchId ?? latestMatch?.id ?? null,
+    tailoredResumeStatus:
+      (application?.tailoredResume?.status as "DRAFT" | "APPROVED" | undefined) ?? null,
+    hasApplication: application !== null,
+  });
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-6 py-16">
+      <WizardProgress steps={wizardSteps} />
+
       <div>
         <h1 className="text-2xl font-semibold">
           Apply — {job.title} at {job.company}

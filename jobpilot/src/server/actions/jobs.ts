@@ -5,6 +5,7 @@ import { requireUserId } from "@/server/auth/session";
 import { ManualJobEntrySchema } from "@/lib/jobs/schemas";
 import { normalizeJobInput } from "@/lib/jobs/normalize";
 import { parseJobsCsv } from "@/lib/jobs/csv";
+import { analyzeJobMatch } from "@/lib/matching/analyze";
 import {
   createJobsFromCsvForUser,
   createManualJobForUser,
@@ -64,6 +65,20 @@ export async function createManualJobAction(
   });
 
   const result = await createManualJobForUser(userId, normalized, parsed.data.entryMode);
+
+  // Best-effort wizard convenience: run the match analysis immediately so
+  // the score is already on the page when the user lands on it, instead of
+  // requiring a separate "Analyze this job" click. Never blocks job
+  // creation — a user with no verified résumé yet (or any other analysis
+  // failure) still gets their job created and redirected normally; the
+  // manual "Analyze this job" button on that page remains the fallback.
+  if (!result.duplicate) {
+    try {
+      await analyzeJobMatch({ userId, jobId: result.job.id, searchProfileId: null });
+    } catch {
+      // Swallowed on purpose — see comment above.
+    }
+  }
 
   redirect(`/jobs/${result.job.id}${result.duplicate ? "?duplicate=1" : ""}`);
 }

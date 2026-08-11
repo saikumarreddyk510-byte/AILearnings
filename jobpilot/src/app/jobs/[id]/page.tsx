@@ -5,7 +5,10 @@ import { getLatestJobMatchForUser } from "@/server/data/matches";
 import { listSearchProfilesForUser } from "@/server/data/search-profiles";
 import { getLatestVerifiedResumeForUser } from "@/server/data/resumes";
 import { getLatestTailoredResumeForJobMatch } from "@/server/data/tailored-resumes";
+import { getApplicationByJobIdForUser } from "@/server/data/applications";
 import { toStringArray } from "@/lib/matching/json-utils";
+import { buildJobWizardSteps } from "@/lib/wizard-steps";
+import { WizardProgress } from "@/components/wizard-progress";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -39,12 +42,22 @@ export default async function JobDetailPage(props: PageProps<"/jobs/[id]">) {
     ? await getLatestTailoredResumeForJobMatch(latestMatch.id, userId)
     : null;
   const hasApprovedTailoredResume = tailoredResume?.status === "APPROVED";
+  const application = await getApplicationByJobIdForUser(id, userId);
+
+  const wizardSteps = buildJobWizardSteps({
+    jobId: job.id,
+    jobMatchId: latestMatch?.id ?? null,
+    tailoredResumeStatus: (tailoredResume?.status as "DRAFT" | "APPROVED" | undefined) ?? null,
+    hasApplication: application !== null,
+  });
 
   const requiredSkills = toStringArray(job.requiredSkills);
   const preferredSkills = toStringArray(job.preferredSkills);
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-6 py-16">
+      <WizardProgress steps={wizardSteps} />
+
       {isDuplicateNotice && (
         <div className="rounded-lg border bg-muted px-4 py-3 text-sm">
           This job was already in your list — showing the existing entry.

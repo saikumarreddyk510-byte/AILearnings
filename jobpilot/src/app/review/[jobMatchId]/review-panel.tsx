@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -64,11 +65,13 @@ const APPROVE_ERROR_LABEL: Record<string, string> = {
 
 export function ReviewPanel({
   jobMatchId,
+  jobId,
   hasVerifiedResume,
   tailoredResume,
   coverLetter,
 }: {
   jobMatchId: string;
+  jobId: string;
   hasVerifiedResume: boolean;
   tailoredResume: TailoredResumeState | null;
   coverLetter: CoverLetterState | null;
@@ -253,6 +256,9 @@ export function ReviewPanel({
                     </Button>
                   )}
                 </div>
+                <Button variant="outline" render={<Link href={`/applications/${jobId}`} />}>
+                  Continue to application →
+                </Button>
               </div>
             ) : (
               <>
