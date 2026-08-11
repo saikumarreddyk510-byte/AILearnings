@@ -2005,6 +2005,328 @@ Ikkada:
 
 ---
 
+# Support Vector Machine (SVM) — Algorithm 3
+
+SVM (full form: **Support Vector Machine**) ante oka **powerful classification algorithm** (regression ki kuda vadatam, kani mostly **classification** ki famous). Idi mana third major algorithm deep-dive (Linear Regression, K-NN tarvata).
+
+> **SVM main idea (oka line lo):** rendu classes ni separate chese **best boundary (line/plane)** ni kanukkovadam — aa boundary rendu groups ki **maximum gap (margin)** icche laaga undali.
+
+---
+
+## Data ela untundi? (2 Types)
+
+SVM ni ardham chesukovadaniki, mundu **data ela untundo** telusukovali. Data rendu rakalu:
+
+### 1. Linearly Separable (Straight line tho separate avuthundi)
+
+- Rendu classes ni **oka straight line** (2D lo line, 3D lo plane) tho **clean ga separate cheyyagalam**.
+- Line ki oka vaipu oka class, inko vaipu inko class — **overlap ledu**.
+
+```
+Feature 2
+   ^
+   |   +  +          (class A = "+" points, top-left lo group)
+   |  + + +      /
+   |   + +      /
+   |          /   <- oka straight line rendu groups ni clean ga separate chestundi
+   |        /
+   |       /   x  x      (class B = "x" points, bottom-right lo group)
+   |      /  x  x  x
+   |     /    x  x
+   +----------------------> Feature 1
+```
+
+- **Ikkada:** oka straight line geesi, "+" class ni "x" class nunchi fully separate cheyyachu. Idi **Linearly Separable**.
+- **SVM ee case lo direct ga best line (hyperplane)** ni kanukkuntundi.
+
+### 2. Non-Linearly Separable (Straight line tho separate avvadu)
+
+- Classes **mix ayipoyi** untai — **oka straight line tho separate cheyyalemu**.
+- Points ala scatter ayyi untai ki, ye straight line geesina, rendu vaipula rendu classes kalisi untai.
+
+```
+Feature 2
+   ^
+   |      x   +  x
+   |    +  x + x  +      <- "+" and "x" points mixed ga unnayi
+   |   x  +  x  +  x        straight line tho clean ga separate cheyyalemu
+   |    +  x  +  x
+   |      x  +  x
+   +----------------------> Feature 1
+```
+
+- **Ikkada:** ye straight line geesina, rendu vaipula "+" and "x" rendu untai — clean separation possible kaadu. Idi **Non-Linearly Separable**.
+- **Ee case lo SVM oka trick vadutundi** — **Kernel trick** (data ni higher dimension loki teeskuni velli, akkada straight line/plane tho separate cheyyadam). Kernel details tarvata section lo.
+
+---
+
+## Straight Line (Hyperplane) enti?
+
+- Whiteboard lo "straight line" ani raasindi — SVM lo ee separating line ni **Hyperplane** antaru.
+- **2D data** (2 features) → hyperplane oka **line**.
+- **3D data** (3 features) → hyperplane oka **plane** (flat sheet).
+- **More dimensions** → hyperplane oka **higher-dimensional flat surface** (imagine cheyyadam kastam, kani math same).
+
+Ee terms (Hyperplane, Support Vectors, Margin) gurinchi detail "8.6 Support Vector Machine (SVM)" section lo unnai — akkada refer cheyyi.
+
+---
+
+## Enduku "best" line? (Multiple lines possible)
+
+Linearly separable data lo, rendu classes ni separate chese lines **chala undachu** (infinite). Kani SVM **oke best line** ni enchukuntundi:
+
+- **Best line = rendu classes madhya maximum gap (margin) icche line.**
+- Margin ekkuva unte → kotha (unseen) data vachina, model **confident ga, correct ga** classify chestundi.
+- Margin takkuva (line oka class ki chala daggara) unte → chinna change tho kuda misclassify avvachu.
+
+**Kid Analogy:**
+- Rendu warring groups (students) madhyalo oka **rope (line)** veyyali anuko.
+- Rope ni oka group ki chala daggara veste, aa group anger avuthundi (risky).
+- Rope ni **rendu groups ki equal distance (madhyalo)** veste, adi **fair and safe** — ade SVM chese pani (maximum margin).
+
+---
+
+## Working Principle (W.P) — Step by Step
+
+> **Agenda (goal):** *"Draw a straight line with **max distance** between data."* — ante rendu classes ni separate chese line ni geeyadam, kani aa line rendu groups ki **maximum gap** icche laaga undali.
+
+SVM internally ela aa best line ni kanukkuntundo, **4 steps** lo chuddam. (Whiteboard lo linearly separable example — "+" class top-left, "x" class bottom-right.)
+
+### Step 1: Identify the closest data points from BOTH classes
+
+- Rendu classes lo, oka daaniki inko class **chala daggara unna points** ni gurthinchadam.
+- Ee **closest / border-lo unna points** ni **Support Vectors** antaru (SVM peru ikkade nunchi vachindi!).
+- Migilina (lopala, deep-lo unna) points important kaadu — **border points matrame** line position ni decide chestai.
+
+```
+Feature 2 (y)
+   ^
+   |   x  x  x
+   |  x  x  x
+   |   x  (X)  <- "x" class lo closest point (support vector, circled)
+   |        \
+   |         \        (P) <- "+" class lo closest point (support vector, circled)
+   |          + + +
+   |         + + + +
+   +--------------------------> Feature 1 (x)
+```
+
+### Step 2: Draw parallel straight lines passing through those two points (boundaries)
+
+- Step 1 lo dorikina **rendu closest points (support vectors)** gunda, **rendu parallel straight lines** geeyadam.
+- Ee rendu lines = **boundaries** (margin edges). Oka line "+" class border ni touch chestundi, inko line "x" class border ni.
+- Rendu lines **parallel** (same slope) ga untai.
+
+```
+Feature 2 (y)
+   ^          line_A (x-class boundary)
+   |   x  x  /
+   |  x  x  /  x
+   |   x  (X)             <- boundary line_A support vector (x-class) gunda velthundi
+   |      /  \
+   |     /    \ line_B (+-class boundary)
+   |    /   (P)           <- boundary line_B support vector (+-class) gunda velthundi
+   |   /    + + +
+   |  /    + + + +
+   +--------------------------> Feature 1 (x)
+```
+
+### Step 3: Calculate distance between the parallel lines, choose the pair with MAX distance
+
+- Ala parallel boundary lines **chala jodi (pairs)** geeyachu (different support-vector jodilu tho).
+- Prathi jodi ki, aa **rendu parallel lines madhya distance (D)** ni calculate cheyyadam.
+- **Ye jodi lines madhya distance (D) maximum undo**, aa jodi ni SVM **enchukuntundi**.
+- Ee **D = margin width** (rendu boundaries madhya total gap).
+
+```
+Feature 2 (y)
+   ^        line_A
+   |   x  x /
+   |  x  x /              <- upper boundary (x-class)
+   |   x (X)
+   |     /  ^
+   |    /   | D  (distance between the 2 parallel boundaries = margin)
+   |   /    v
+   |  / (P)               <- lower boundary (+-class)
+   | /   + + +   line_B
+   |/   + + + +
+   +--------------------------> Feature 1 (x)
+
+   Different support-vector pairs -> different D. SVM picks the pair with the LARGEST D.
+```
+
+### Step 4: The final decision line = middle of the margin (D / 2)
+
+- Best jodi (max D) dorikaka, **actual separating line (hyperplane)** ni **rendu boundaries madhyalo** — exactly **D/2** distance lo — geeyadam.
+- Ee middle line ye **final decision boundary** — kotha point vasthe, ee line ki **ye vaipu padithe** aa class ani predict.
+- Rendu boundaries ki **equal distance (D/2)** lo undadam valla, margin **rendu vaipula equal** — idi max-margin classifier.
+
+```
+Feature 2 (y)
+   ^        line_A (upper boundary)
+   |   x  x /
+   |  x  x / /  decision line (middle, at D/2 from each boundary)
+   |   x (X)/
+   |     / /  ^
+   |    / /   | D/2   <- decision line to each boundary = D/2 (equal both sides)
+   |   / /    v
+   |  /(P)/
+   | / +/+ +   line_B (lower boundary)
+   |/  /+ + +
+   +--------------------------> Feature 1 (x)
+```
+
+**Summary (4 steps oka chota):**
+
+| Step | Pani (what happens) |
+|:----:|---------------------|
+| 1 | Rendu classes nunchi **closest points** (support vectors) identify cheyyadam |
+| 2 | Aa points gunda **parallel boundary lines** geeyadam |
+| 3 | Boundaries madhya **distance (D)** calc chesi, **max D** unna jodi enchukovadam |
+| 4 | **D/2** — middle lo final **decision line (hyperplane)** geeyadam |
+
+> **Oka line lo working principle:** *support vectors → parallel boundaries → max gap (D) → middle line (D/2) = best classifier.*
+
+---
+
+## Kernel Trick — Non-Linearly Separable data ni handle cheyyadam
+
+Paina 4 steps anni **linearly separable** data ki (straight line tho separate cheyyagalige data). Kani konni sarlu data **non-linearly separable** — ye straight line geesina separate cheyyalemu. Alaanti time lo SVM oka clever trick vadutundi: **Kernel Trick**.
+
+### Problem: Non-linearly separable data (straight line pani cheyyadu)
+
+- Whiteboard example: **"x" class middle lo** (oka circle laaga group), and **"+" class chuttu** (outside) untai.
+- Idi 2D lo — ye straight line geesina, circle lopala "x", bayata "+" — rendu kalisipotai. **Straight line saripodu.**
+
+```
+Feature 2 (y = Height)
+   ^
+   |    +  +  +  +
+   |  +   x  x  x   +
+   |  +  x  x  x  x  +      <- "x" class MIDDLE lo (circle laaga), "+" class chuttu
+   |  +   x  x  x   +          ye straight line geesina separate cheyyalemu
+   |    +  +  +  +
+   +--------------------------> Feature 1 (x = width)
+```
+
+### Idea: 2-D → 3-D (oka kotha dimension add cheyyadam)
+
+- **Kernel trick** ante: data ni **higher dimension** loki teeskuni vellayadam — akkada adi **linearly separable** avuthundi.
+- Whiteboard lo dimensions:
+  - **x → width**
+  - **y → Height**
+  - **z → Depth** (kotha 3rd dimension = "**Space**")
+- 2D lo circle laaga unna data ni, **3rd dimension (z = depth)** add chesi 3D loki teeste — "x" points (middle) **paiki (or kindaki) lift** ayyi, "+" points nunchi **separate** ayipotai.
+
+```
+   2-D (flat, non-separable)          3-D (z = depth add chesaka, separable)
+   +  +  +  +                                 z (depth)
+ +   x x x   +                                 ^        . . +  +      <- "+" points kinda level lo
+ +  x x x x  +      --- kernel --->            |      x  x  x         <- "x" points paiki lift ayyayi
+ +   x x x   +        (add z)                  |   ___________  <- oka FLAT PLANE tho rendu ni separate cheyyachu
+   +  +  +  +                                  +---------------------> (x, y plane)
+```
+
+- Ippudu 3D lo, oka **flat plane** (2D hyperplane) tho "x" and "+" ni **clean ga separate cheyyachu** — ante data 3D lo **linearly separable** ayipoyindi.
+
+### Full flow (whiteboard prakaram)
+
+```
+2-D data (non-separable)
+     |  kernel trick (add "space"/depth dimension)
+     v
+3-D data (now linearly separable)
+     |  apply the 4 steps (support vectors -> boundaries -> max D -> D/2)
+     v
+best separating plane in 3-D
+     |  bring the boundary back down
+     v
+3-D  ->  2-D  (2D lo adi oka CURVE/circle laaga kanipisthundi)
+```
+
+- **Step-by-step:**
+  1. **2-D → 3-D:** kernel tho kotha dimension (space/depth) add cheyyadam.
+  2. **3-D lo linearly separable** ayindi → **4 steps** (mundu nerchukunna working principle) apply cheyyadam.
+  3. Best separating **plane** (3D hyperplane) dorukutundi.
+  4. Aa boundary ni malli **3-D → 2-D** loki tecchi chuste, adi 2D lo oka **curve (circle laaga)** kanipisthundi — original "x" middle, "+" outside ni chuttu separate chestundi.
+
+### "Kernel Trick" enduku "trick"?
+
+- Nijam ga anni points ni higher dimension loki convert chesi, akkada calculations cheyyadam **chala costly** (time + memory).
+- **Kernel function** oka **math shortcut** — actual ga higher dimension coordinates compute cheyyakundane, "higher dimension lo distance/dot product entha untundo" **direct ga** calculate chestundi.
+- Anduke deeni "**trick**" antaru — **higher dimension benefit vasthundi, kani higher dimension cost undadu.**
+- Common kernels: **Linear, Polynomial, RBF (Radial Basis Function / Gaussian)**. RBF chala popular (circle/complex shapes ki baaga pani chestundi).
+
+> **Oka line lo Kernel Trick:** *straight line pani cheyyani data ni, oka kotha dimension loki teeskuni velli akkada straight plane tho separate chesi, malli venakki teeskuravadam — costly math lekunda.*
+
+---
+
+## SVM Hyperparameters (C and gamma)
+
+**Hyperparameters** = model training **mundu** manam set chese settings (model vaatini nerchukodu — manam ivvali). SVM lo tune cheyyalsina main **2 hyperparameters: `C` and `gamma`.** Rendu kalisi **bias-variance tradeoff** ni control chestai.
+
+### 1. `C` — Penalty for misclassification
+
+- `C` cheppedi: model **misclassification (tappu classify)** ni entha strict ga treat chestundo — ante tappulaki entha **penalty** pettalo.
+- **Small C (example `C = 0.01`):** penalty **takkuva** → konni points tappu ga classify aina paravaledu → **wide margin, soft boundary** → too simple → **underfit** risk.
+- **Large C (example `C = 100`):** penalty **ekkuva** → prathi point correct ga classify cheyyali ani force → **narrow margin, hard boundary** → training data ki chala tight → **overfit** risk.
+
+```
+C = 0.01  (low penalty)        C = 100  (high penalty)
+soft margin, misses allowed    hard margin, every point matters
+  x x | + +                       x x|+ +
+  x x | + +   <- wide gap         x x|+ +   <- narrow gap, boundary hugs points
+   (underfit side)                 (overfit side)
+```
+
+### 2. `gamma` — Decision Boundary shape (handle)
+
+- `gamma` cheppedi: **oka single training point** decision boundary ni **entha dooram varaku influence** chestundo — ante boundary entha **curvy/wiggly** ga untundo. (Mostly **RBF kernel** tho vadatam.)
+- **Small gamma (example `gamma = 0.01`):** prathi point ki **far-reaching, broad influence** → boundary **smooth, almost straight** → too simple → **underfit**.
+- **Large gamma (example `gamma = 10`):** prathi point ki **chinna, local influence** → boundary **chala wiggly** (prathi point chuttu tightly wrap avuthundi) → **overfit**.
+
+```
+gamma = 0.01 (smooth)          gamma = 10 (wiggly)
+  ______                          _/\__/\_
+ /  smooth boundary              /  tightly wraps each point \
+(underfit)                      (overfit)
+```
+
+### Bias-Variance Tradeoff connection
+
+- Rendu `C` and `gamma` **bias-variance tradeoff** ni handle chestai:
+  - **Chinna C / chinna gamma** → **high bias → underfit** (too simple, training and test rendu poor).
+  - **Pedda C / pedda gamma** → **high variance → overfit** (training super, kotha data meeda fail).
+  - **Middle (balanced) values** → best **generalization** (kotha data meeda kuda baaga pani chestundi).
+- Correct `C`, `gamma` ni guess cheyyakunda, **Grid Search / Cross-Validation** tho tune chestham (mundu "Hyperparameters" and "Cross Validation" sections lo chusam).
+
+### Summary Table
+
+| Hyperparameter | Chinna value | Pedda value |
+|----------------|--------------|-------------|
+| **C** (penalty) | `0.01` → soft margin, tolerant → **underfit** | `100` → hard margin, strict → **overfit** |
+| **gamma** (boundary) | `0.01` → smooth boundary → **underfit** | `10` → wiggly boundary → **overfit** |
+
+> **Gurthu:** `C` = "tappulaki entha penalty", `gamma` = "boundary entha curvy". Rendintini **balance** chesthe best model. Next: **Practical** (scikit-learn code lo `SVC(C=..., gamma=..., kernel='rbf')`).
+
+---
+
+## Quick Summary (SVM Intro)
+
+| Point | Value |
+|-------|-------|
+| **Full form** | Support Vector Machine |
+| **Type** | Supervised (mostly Classification) |
+| **Idea** | Classes ni max-margin hyperplane tho separate cheyyadam |
+| **Linearly Separable** | Straight line tho clean separation possible |
+| **Non-Linearly Separable** | Straight line saripodu → Kernel trick kavali |
+| **Boundary** | Hyperplane (2D=line, 3D=plane) |
+| **Best when** | Clear margin/gap between classes unnappudu |
+
+> **Final gurthu:** SVM = *"Rendu classes madhyalo, maximum gap icche best line (hyperplane) geeyadam."* Data linearly separable aithe direct line, kaakapothe kernel trick.
+
+---
+
 ## 10. Training, Validation, Testing
 
 ### Training Data
