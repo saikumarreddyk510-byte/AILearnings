@@ -6,7 +6,6 @@
 
 **Simple definition:** Numbers ni **groups (vectors, matrices) laaga arrange chesi**, vaati meeda add, multiply, transform laanti calculations cheyyadame linear algebra.
 
-
 - Oka single number = **Scalar**.
   Example: `age = 25` (oka single number).
 - Numbers oka line laaga = **Vector**.
@@ -122,6 +121,124 @@ AI/ML lo **anni data numbers ga convert avuthundi**, and aa numbers matrices/vec
 | Matrix Multiplication | Rows x Columns combine | Neural network layers |
 | Transpose | Rows and columns swap | Shape adjust cheyyadaniki |
 | Eigenvalue / Eigenvector | Matrix special directions | PCA, dimensionality reduction |
+
+---
+
+## Key Concepts with Worked Examples
+
+Prati concept ki oka chinna real example tho chuddam.
+
+### 1) Scalar (single number)
+- Example: `learning_rate = 0.01`.
+- AI lo: training speed control cheyyadaniki oka single number.
+- **Real-time example:** meeru shop lo konna oka item price = `Rs 50`. Adi oka single number, ade scalar.
+- **Explain:** scalar ki direction/list undadu, just oka value. Temperature `30 degrees`, meeru speed `60 kmph` anni scalars.
+
+### 2) Vector (list of numbers)
+- Example: oka house data `[1200, 3, 2]` = (area sqft, bedrooms, bathrooms).
+- AI lo: oka data point / oka word embedding.
+- Vector addition example:
+  `[2, 3] + [1, 4] = [3, 7]` (same positions add avuthayi).
+- **Real-time example:** oka Swiggy/Zomato order `[2, 1, 3]` = (2 biryani, 1 coke, 3 roti). Oka order ni describe cheyyadaniki multiple numbers oka line lo.
+- **Explain:** oka single number tho order cheppalem, so list (vector) vadatam. GPS location `[17.3, 78.4]` (latitude, longitude) kuda oka vector.
+
+### 3) Matrix (rows x columns)
+- Example: 2 houses data:
+  ```
+  [[1200, 3, 2],
+   [1500, 4, 3]]
+  ```
+- Shape = (2 rows, 3 columns) = (2, 3).
+- AI lo: full dataset `X` or weights `W`.
+- **Real-time example:** oka class attendance register. Prathi row = oka student, prathi column = oka day. Cell lo present(1)/absent(0).
+  ```
+  Student   Mon Tue Wed
+  Ravi   -> [ 1,  0,  1]
+  Sita   -> [ 1,  1,  1]
+  Kiran  -> [ 0,  1,  1]
+  ```
+- **Explain:** oka table lo rows and columns tho full information store avuthundi. Excel sheet, cricket score card, bank statement anni matrices laantivi.
+
+### 4) Tensor (3D+ numbers)
+- Tensor ante matrices ni stack chesi (paina paina petti) build chesina multi-dimensional numbers box.
+- **Small concrete example:** oka chinna 2x2 color image tiskundam. Prathi pixel ki 3 values untayi (Red, Green, Blue). So idi shape (3, 2, 2) tensor.
+  ```
+  Red channel:        Green channel:      Blue channel:
+  [[255, 100],        [[0,   50],         [[10,  20],
+   [ 40, 200]]         [30, 220]]          [90, 130]]
+  ```
+  - Red matrix -> prathi pixel entha erra unnado.
+  - Green matrix -> entha green.
+  - Blue matrix -> entha blue.
+  - Ee 3 matrices kalipi = 1 tensor (oka full color image).
+- **Shape ela chaduvutam?**
+  - Oka number = **scalar** -> shape ().
+  - `[85, 90]` = **vector** -> shape (2,).
+  - `[[1,2],[3,4]]` = **matrix** -> shape (2, 2).
+  - Paina 3 channel image = **tensor** -> shape (3, 2, 2).
+- **Batch example (AI lo real usage):** 100 color images, prathi 28x28 pixels, 3 colors -> shape (100, 3, 28, 28).
+  - 100 = enni images (batch size).
+  - 3 = colors (R, G, B).
+  - 28, 28 = height, width.
+- AI lo: images, videos (extra time dimension), and training batches anni tensors laaga store avuthai. Anduke library peru kuda "**TensorFlow**" and "PyTorch tensor".
+- **Real-time example:** meeru phone lo teesina oka photo. Adi screen meeda color ga kanipisthundi, kani internal ga adi 3 number grids (Red, Green, Blue) = oka tensor. Video ante ee photos chala frames stack ayyi, extra time dimension add avuthundi.
+- **Explain:** manaki photo color ga kanipisthundi, kani computer ki adi just numbers box. Prathi pixel ki 3 numbers, anni kalipi tensor.
+
+### 5) Dot Product (multiply then add)
+- Formula: `a·b = a1*b1 + a2*b2 + ...`
+- Example: `[1, 2, 3] · [4, 5, 6] = (1*4) + (2*5) + (3*6) = 4 + 10 + 18 = 32`.
+- AI lo: oka neuron output calculate cheyyadaniki (inputs * weights).
+- **Real-time example:** shopping bill. Items quantity `[2, 1, 3]` (biryani, coke, roti), prices `[120, 40, 15]`.
+  Total bill = `(2*120) + (1*40) + (3*15) = 240 + 40 + 45 = 325`. Idi exact ga dot product.
+- **Explain:** rendu lists ni position-position multiply chesi, anni kalipi oka single total number ki teesukostam. Bill total, weighted marks anni dot product.
+
+### 6) Matrix Multiplication
+- Rule: A(rows x k) * B(k x cols) = C(rows x cols). Middle numbers match avvali.
+- Example:
+  ```
+  A = [[1, 2],        B = [[5, 6],
+       [3, 4]]             [7, 8]]
+
+  A * B = [[1*5 + 2*7, 1*6 + 2*8],
+           [3*5 + 4*7, 3*6 + 4*8]]
+        = [[19, 22],
+           [43, 50]]
+  ```
+- AI lo: oka full layer output (`W * x`) ilage calculate avuthundi.
+- **Real-time example:** oka shop lo 2 customers, prathi okaru 2 items konnaru. Quantities matrix ni prices tho multiply chesthe, prathi customer total bill matrix laaga vasthundi. Oka sari lo anni customers bills calculate cheyyadam idi.
+- **Explain:** matrix multiplication ante just chala dot products oka sari lo cheyyadam. Anduke AI lo oka batch data anta oka multiply lo process avuthundi (fast).
+
+### 7) Transpose (rows and columns swap)
+- Example:
+  ```
+  A = [[1, 2, 3],        A.T = [[1, 4],
+       [4, 5, 6]]               [2, 5],
+                                [3, 6]]
+  ```
+- Shape (2, 3) -> (3, 2).
+- AI lo: shapes match cheyyadaniki (matrix multiply valid avvadaniki).
+- **Real-time example:** Excel lo oka table ni rotate chesinattu. Rows lo unna data ni columns loki, columns lo unna data ni rows loki marchadam. Names row lo unte, transpose chesthe names column loki veltayi.
+- **Explain:** data content same, kani arrangement (rows <-> columns) marutundi. Report format marchadaniki idi use avuthundi.
+
+### 8) Identity Matrix (diagonal 1s)
+- Example:
+  ```
+  I = [[1, 0],
+       [0, 1]]
+  ```
+- Rule: `A * I = A` (number `1` laaga behave chestundi).
+- AI lo: math proofs, matrix inverse concepts.
+- **Real-time example:** number `1` tho multiply chesthe value marani laaga (`50 * 1 = 50`), identity matrix tho multiply chesina matrix marani ga untundi.
+- **Explain:** identity matrix matrix world lo "number 1" laantidi. Emi effect ledu, but math rules and inverse calculations ki base.
+
+### 9) Eigenvalue / Eigenvector
+- Idea: matrix `A` ni oka special vector `v` meeda apply chesthe, direction marakunda just length matrame marutundi.
+- Formula: `A·v = lambda·v` (lambda = eigenvalue).
+- Simple example: `A = [[2, 0], [0, 3]]`, vector `v = [1, 0]`.
+  `A·v = [2, 0] = 2 * [1, 0]` -> eigenvalue `lambda = 2`.
+- AI lo: **PCA** lo important directions (max variance) kanukkovadaniki.
+- **Real-time example:** meeru oka rubber sheet ni stretch chesthe, konni directions ekkuva stretch avuthayi, konni takkuva. Ekkuva stretch aye direction = eigenvector, entha stretch = eigenvalue.
+- **Explain:** oka pedda data lo "most important direction" (ekkuva information unna direction) ni pattukovadaniki eigenvectors help chestai. Anduke face recognition, recommendation systems lo PCA vadatam.
 
 ---
 
@@ -1379,6 +1496,116 @@ A = [[1, 2, 3],
 > `0` (rendu rows same ayithe determinant eppudu 0).
 > </details>
 
+### Solved Example 1: Solve the Equation (Whiteboard nundi)
+
+**Problem:** Solve the equation:
+
+```
+| x+a   b     c   |
+| c     x+b   a   |  = 0
+| a     b     x+c |
+```
+
+**Step 1: Column operation `C1 -> C1+C2+C3`**
+
+Column 1 lo prathi row ki, aa row lo unna 3 elements ni add chestham (anni rows lo result same: `x+a+b+c`):
+
+```
+Delta = | x+a+b+c   b     c   |
+        | x+a+b+c   x+b   a   |   , C1 -> C1+C2+C3
+        | x+a+b+c   b     x+c |
+```
+
+**Step 2: Common term `(x+a+b+c)` ni column 1 nunchi factor out cheyyadam**
+
+```
+= (x+a+b+c) | 1   b     c   |
+            | 1   x+b   a   |
+            | 1   b     x+c |
+```
+
+**Step 3: Row operations `R2 -> R2-R1` and `R3 -> R3-R1`**
+
+```
+= (x+a+b+c) | 1   b     c    |
+            | 0   x     a-c  |   R2 -> R2-R1
+            | 0   0     x    |   R3 -> R3-R1
+```
+
+**Step 4: Triangular matrix determinant = diagonal product**
+
+```
+= (x+a+b+c) [x^2 - 0] = (x+a+b+c) * x^2
+```
+
+**Step 5: Equation solve cheyyadam**
+
+```
+LHS = x^2 (x+a+b+c) = 0
+```
+
+- `x^2 = 0`  ->  `x = 0`
+- `(x+a+b+c) = 0`  ->  `x = -(a+b+c)`
+
+**Final Answer:** `x = 0` or `x = -(a+b+c)`
+
+---
+
+### Solved Example 2: Trigonometric Determinant Equation (Whiteboard nundi)
+
+**Problem:** `theta` value `0` and `pi/2` madhya undi, ee equation ni satisfy chestundi:
+
+```
+| 1+sin^2(theta)   cos^2(theta)      4sin(4*theta)   |
+| sin^2(theta)     1+cos^2(theta)    4sin(4*theta)   |  = 0
+| sin^2(theta)     cos^2(theta)      1+4sin(4*theta) |
+```
+
+Options: (a) `3*pi/24`  (b) `5*pi/24`  (c) `11*pi/24`  (d) `pi/24`
+
+**Step 1: Row operations `R1 -> R1-R2` and `R2 -> R2-R3`**
+
+```
+| 1   -1   0                     |
+| 0    1   -1                    |  = 0
+| sin^2(theta)  cos^2(theta)  1+4sin(4*theta) |
+```
+
+**Step 2: Column 1 ni expand cheyyadam**
+
+```
+1 * [1*(1+4sin(4*theta)) - (-1)*cos^2(theta)] + 1 * [sin^2(theta)] = 0
+```
+
+**Step 3: Simplify (sin^2(theta) + cos^2(theta) = 1 use chesi)**
+
+```
+1 + 4sin(4*theta) + cos^2(theta) + sin^2(theta) = 0
+1 + 4sin(4*theta) + 1 = 0
+2 + 4sin(4*theta) = 0
+1 + 2sin(4*theta) = 0
+sin(4*theta) = -1/2
+```
+
+**Step 4: `4*theta` ni solve cheyyadam**
+
+`theta` range `0` to `pi/2` kabatti, `4*theta` range `0` to `2*pi` (`0 <= 4*theta <= 2*pi`). `sin(4*theta) = -1/2` avvali ante (3rd and 4th quadrants):
+
+```
+4*theta = pi + pi/6  or  2*pi - pi/6
+        = 7*pi/6      or  11*pi/6
+```
+
+**Step 5: `theta` ki divide cheyyadam**
+
+```
+theta = 7*pi/24  or  11*pi/24
+```
+
+**Final Answer:** Options lo `7*pi/24` ledu, kani `11*pi/24` undi -> **Answer: (c) 11*pi/24**.
+
+---
+
 #### Cheatsheet (determinant ni gurthupettukovadaniki)
 
 | Concept | Rule / Formula | One-line gurthu |
@@ -1453,6 +1680,468 @@ print(round(np.linalg.det(B)))   # -3 (3x3 example)
 > Undadu. `det = 0` ante matrix singular (weak), inverse ledu. Inverse undalante `det != 0` avvali.
 > </details>
 
+### Rank of a Matrix (Whiteboard nundi)
+
+**Definition (formal):** A positive integer `r` is said to be the **rank** of a non-zero matrix `A`, if:
+1. There exists **atleast one minor** in `A` of order `r` which is **not zero**.
+2. **Every minor** in `A` of order **greater than `r`** is **zero**.
+
+It is written as `rho(A) = r`. For a **zero matrix**, the rank of the matrix is **zero**.
+
+#### Simple ga ardham chesukundam (word by word)
+
+- **"Minor of order `r`" ante enti?** Matrix nunchi eppudaina `r` rows and `r` columns teesukoni build chesina **`r x r` chinna square piece ki determinant**. Example: `3 x 3` matrix nunchi ye `2` rows and ye `2` columns teesukunna, aa `2x2` piece determinant = **order 2 minor**.
+  - Order 1 minor = matrix lo oka single element (`1x1` determinant = aa element value).
+  - Order 2 minor = matrix nunchi teesukunna `2x2` piece determinant.
+  - Order 3 minor = `3x3` piece determinant. Ila matrix full size varaku vellochu.
+- **Rank ante okka maatalo (one line):** matrix lo "**zero kaani determinant vachche pedda-lo-pedda square piece**" size ye rank.
+- **Rule 1 (kanuko - "at least this much strength undi"):** size `r` ki, **kaneesam oka** minor `0` **kaadu** ani chupinchali (matrix ki `r` varaku "useful/independent" information undi ani prove).
+- **Rule 2 (limit pettu - "idi kanna ekkuva ledu"):** size `r` kanna **pedda** (`r+1`, `r+2`, ...) unna **prathi** minor `0` avvali (matrix `r` kanna ekkuva independent info ledu ani prove).
+- Ee rendu rules kalisi satisfy ayithe, `r` ye final answer -> **`rho(A) = r`**.
+
+#### Quick Rule (whiteboard lo chala common case - easy shortcut)
+
+> Oka **square (`n x n`) matrix** ki, `det(A) != 0` ayithe, **direct ga `rho(A) = n`** (full rank). Chinna minors ni check cheyyalsina avasaram ledu!
+
+Enduku ila? Endukante full matrix (biggest possible size `n`) ye non-zero determinant (order `n` minor `!= 0`) isthe, Rule 1 already satisfy ayindi ee `n` size ki, and `n` kanna pedda minor `n x n` matrix lo undadu (Rule 2 automatic ga satisfy, "greater than n" ane size ye ledu). Anduke full-rank check **1 step**lo aipotundi.
+
+**Whiteboard Example 1 (2x2):**
+```
+A = [[2, 1],
+     [1, 3]]
+
+det(A) = (2*3) - (1*1) = 6 - 1 = 5   (not zero)
+```
+- `A` **2 x 2** matrix, `det(A) = 5 != 0`. Quick Rule prakaram -> **`rho(A) = 2`** (full rank, direct ga).
+
+**Whiteboard Example 2 (3x3 identity matrix):**
+```
+I = [[1, 0, 0],
+     [0, 1, 0],
+     [0, 0, 1]]
+
+det(I) = 1   (not zero)
+```
+- `I` **3 x 3** matrix, `det(I) = 1 != 0`. Quick Rule prakaram -> **`rho(I) = 3`** (full rank, direct ga).
+- **Gurthu:** identity matrix eppudu full rank (`rho(I_n) = n`), endukante `det(I) = 1` eppudu non-zero.
+
+#### How to Find Rank - Full Step-by-Step Method (matrix "weak" unnappudu)
+
+Paina Quick Rule pani chestundi **`det != 0`** unnappudu matrame. Kani `det = 0` aithe (or matrix square kaakapothe, rectangle aithe), full method follow avvali:
+
+1. **Start with the biggest possible minor size.** Square matrix aithe full size (`n`), rectangle matrix aithe `min(rows, columns)`.
+2. **Aa size determinant (minor) check chey.** Non-zero aithe -> **STOP**, adhe rank (`rho = aa size`).
+3. **Zero aithe, size ni 1 tagginchi (size - 1) tho malli try chey** - aa size lo **ye okka combination** (rows/columns ye teesukunna) non-zero minor dorikina chalu.
+4. **Ila size ni takkuva takkuva chesthu povali**, ye size lo modatisaari non-zero minor dorikithe, **ade rank**.
+5. **Anni sizes (1 varaku) lo kuda anni minors 0 aithe matrame**, rank = `0` (matrix full zero matrix ayithe matrame idi jarugutundi).
+
+#### Worked Example (rank takkuva unna case - method motham use chesi)
+
+```
+A = [[1, 2],
+     [2, 4]]
+```
+
+- **Step 1: Biggest size = 2 (2x2 matrix). Order 2 minor (full det) check cheddam:**
+  `det(A) = (1*4) - (2*2) = 4 - 4 = 0`. **Zero vachindi**, so rank `2` **kaadu** (Quick Rule ikkada apply avvadu, endukante det = 0).
+- **Step 2: Size 1 ki digudam (single elements check):**
+  Elements: `1, 2, 2, 4` - ivi anni `0` **kaavu** (example: `A[0][0] = 1 != 0`).
+  Order 1 lo **atleast oka non-zero minor** (`1`) dorikindi.
+- **Result:** order 2 anni (idi okate undi) minors `0` (Rule 2 satisfy), order 1 lo non-zero minor undi (Rule 1 satisfy) -> **`rho(A) = 1`**.
+- **Enduku ila jarigindi?** `A` lo row 2 (`[2,4]`) = row 1 (`[1,2]`) ni `2` tho multiply chesindi ye (`2*[1,2] = [2,4]`) - ante rendu rows **same direction** (dependent), kotha information ivvavu. Anduke full 2 kaadu, matrame 1.
+
+Inko example (`rho = 2`, full rank direct ga Quick Rule tho):
+```
+B = [[1, 2],
+     [3, 5]]
+
+det(B) = (1*5) - (2*3) = 5 - 6 = -1   (not zero)
+```
+- `det(B) != 0` -> Quick Rule -> **`rho(B) = 2`** direct ga (rows independent, chinna minors check cheyyalsina avasaram ledu).
+
+#### Worked Example (3x3 matrix, order 3 -> order 2 ki digevadam - Whiteboard nundi)
+
+```
+C = [[2, 1, 3],
+     [4, 2, 6],
+     [3, 1, 4]]
+```
+
+- **Step 1: Biggest size = 3 (3x3 matrix). Order 3 minor (full determinant) check cheddam:**
+  Row 2 (`[4, 2, 6]`) = Row 1 (`[2, 1, 3]`) ni `2` tho multiply chesindi (`2*[2,1,3] = [4,2,6]`). Anduke `2` ni row 2 nunchi common factor ga bayataki teestham:
+  ```
+  det(C) = 2 * | 2  1  3 |
+               | 2  1  3 |   (row 2 lo 2 factor out chesaka, row 1 tho SAME ayindi)
+               | 3  1  4 |
+  ```
+  - Ippudu row 1 and row 2 **same** (duplicate rows) -> determinant properties prakaram (property 3: rendu rows same ayithe det = 0) -> `det(C) = 2 * 0 = 0`.
+  - Order 3 minor `0` vachindi, so rank `3` **kaadu**. Size ni `1` takkuva chesi (`2`) ki digudam.
+
+- **Step 2: Size 2 ki digi, order 2 minors (2x2 pieces) try cheddam:**
+  Mundu top-left `2x2` piece teesukundam:
+  ```
+  | 2  1 |
+  | 4  2 | = (2*2) - (1*4) = 4 - 4 = 0
+  ```
+  - Ee minor kuda `0` vachindi (endukante ikkada kuda row 2 = 2 * row 1). Anduke **inko `2x2` combination** try cheyyali (same size lo, veru rows/columns tho).
+
+  Malli row 2 and row 3 tho, column 1 and 2 teesukundam:
+  ```
+  | 4  2 |
+  | 3  1 | = (4*1) - (2*3) = 4 - 6 = -2   (not zero)
+  ```
+  - Ee minor **non-zero** (`-2`) dorikindi! Rule 1 satisfy (size 2 ki non-zero minor undi), and Rule 2 already satisfy (size 3 anni minors 0, Step 1 lo chusam).
+
+- **Result:** -> **`rho(C) = 2`**.
+- **Enduku ila jarigindi?** `C` lo row 2 (`[4,2,6]`) row 1 (`[2,1,3]`) ki exact `2` rettlu (dependent row, kotha information ivvadu) - anduke full 3 kaadu. Kani row 3 (`[3,1,4]`) migilina rows ki dependent kaadu, so **konchem** independent information (2 dimensions worth) migilundi -> rank `2`.
+- **Chinna gurthu (important):** oka size lo **oka minor `0`** vachindi ani vetane rank decide cheyyakudadu - **ye combination (rows/columns) tho ainaa** non-zero minor dorikithe chalu aa size ki. Anduke first `2x2` (`0`) fail ayyaka, malli inko `2x2` (`-2`) try chesi confirm chesam.
+
+#### Worked Example (Find the Rank of the Matrix - Whiteboard nundi)
+
+```
+A = [[1, 2,  3],
+     [2, 4,  7],
+     [3, 6, 10]]
+```
+
+- **Step 1: Biggest size = 3. Row operation `R3 -> R3 - (R1+R2)` tho check cheddam:**
+  - `R1 + R2 = [1+2, 2+4, 3+7] = [3, 6, 10]`.
+  - `R3 - (R1+R2) = [3-3, 6-6, 10-10] = [0, 0, 0]`.
+  ```
+  A = | 1  2  3 |
+      | 2  4  7 |    R3 -> R3 - (R1+R2)
+      | 0  0  0 |
+  ```
+  - Row 3 anni zeros ayyindi (row 3 = row 1 + row 2, dependent row) -> full determinant `det(A) = 0` (oka row anni `0` ayithe det eppudu `0`, Property 2 gurthu). Anduke rank `3` **kaadu**. Size ni `1` takkuva chesi `2` ki digudam.
+  - **Doubt vaste ("row operation cheyyakunda direct ga det(A) calculate chesthe, adi zero kaadhaa?"):** Kaadu, **direct ga expand chesina kuda `det(A) = 0` ye vastundi** - row operation valla determinant VALUE maaradu (idi mundu chusina property: "oka row ki inko rows combination add/subtract chesthe, det same ye untundi"). Row operation ni manam just **easy ga calculate cheyyadaniki** (zeros create chesi) vadatunnam, det ni maarchadaniki kaadu. Direct expansion tho verify cheddam:
+    ```
+    det(A) = 1*(4*10 - 7*6) - 2*(2*10 - 7*3) + 3*(2*6 - 4*3)
+           = 1*(40 - 42) - 2*(20 - 21) + 3*(12 - 12)
+           = 1*(-2) - 2*(-1) + 3*(0)
+           = -2 + 2 + 0 = 0
+    ```
+    - Ade answer (`0`) row-operation tho kuda, direct expansion tho kuda vachindi. Row operation determinant ni **change cheyyadu**, just calculation ni **simple** (zeros tho) chestundi.
+
+- **Step 2: Size 2 ki digi, order 2 minors (2x2 pieces) - ONE-BY-ONE try cheddam (idi important step, anni minors 0 kaavu):**
+
+  Minor 1 - Row 1,2 and Column 1,2:
+  ```
+  | 1  2 |
+  | 2  4 | = (1*4) - (2*2) = 4 - 4 = 0
+  ```
+  - **Zero vachindi.** Ee combination tho kudaradu, **inko combination** try cheyyali (rank decide cheyyaledu ika).
+
+  Minor 2 - Row 2,3 and Column 1,2:
+  ```
+  | 2  4 |
+  | 3  6 | = (2*6) - (4*3) = 12 - 12 = 0
+  ```
+  - **Idi kuda zero.** Malli inko combination try cheddam.
+
+  Minor 3 - Row 1,2 and Column 2,3:
+  ```
+  | 2  3 |
+  | 4  7 | = (2*7) - (3*4) = 14 - 12 = 2   (not zero)
+  ```
+  - **Ee minor non-zero (`2`) dorikindi!** Rule 1 satisfy (size 2 ki non-zero minor undi).
+
+- **Result:** `\therefore` Rank of matrix `A` is `rho(A) = 2`.
+- **Enduku 2 sarlu zero minors vachina inka try chesam?** Endukante oka size lo **oka combination** `0` vachindi ani, aa size **motham** `0` ani cheppalem. `r x r` size lo possible combinations anni (rows and columns select cheyyadam different ways) `0` ayyithe matrame aa size **completely** fail. Anduke systematic ga (row/column combinations maarchi maarchi) try cheyyali, ye okka non-zero minor dorikina chalu.
+- **Chinna gurthu:** ee example lo `R1, R2, R3` madhya oka linear relation undi (`R3 = R1 + R2`) - anduke full row-space "2 independent directions" varake untundi (`R1` and `R2` independent, `R3` vaatilo linear combination), so rank `3` kaadu, `2` ye.
+
+#### Kid Analogy
+
+- Rank ni oka group photo lo "**enni unique poses**" unnayo ani count cheyyadam laaga anukondi.
+- Iddaru students **same pose** (same row/column repeat, like `A` above: row 2 = 2 * row 1) isthe, aa pose **kotha information ivvadu** - so rank takkuva.
+- Prathi okkaru **veru veru pose** isthe (independent rows/columns), rank full (matrix size antha) - Identity matrix laaga, prathi row completely veru direction lo untundi.
+- **Quick Rule kid version:** full class photo (matrix) lo, "group photo overall crisp ga (det != 0) vachinda?" ani okka sari chusthe chalu - crisp ga vaste, prathi okkaru unique pose ye ani direct ga cheppochu (full rank), okko okkarini verega check cheyyalsina avasaram ledu.
+
+#### Properties of the Rank of a Matrix (Whiteboard nundi)
+
+**(i) The rank of the matrix remains unaltered by elementary transformation.**
+
+- Ante: row/column ki elementary operations (rows swap cheyyadam, oka row ni scalar tho multiply cheyyadam, oka row ki inko row multiple add cheyyadam) apply chesina, rank **maaradu** (same ye untundi). Ee elementary operations ni mundu "Equivalent Matrix" section lo chusam (`A ~ B`).
+- **Example:**
+  ```
+  A = [[1, 2],
+       [2, 4]]
+  ```
+  `det(A) = (1*4)-(2*2) = 0`, order 1 minor (`1`) non-zero -> `rho(A) = 1`.
+
+  Ippudu row operation `R2 -> R2 - 2*R1` apply cheddam:
+  ```
+  B = [[1, 2],
+       [0, 0]]
+  ```
+  `B` lo row 2 anni zeros -> order 2 minor (`det`) `= 0`, order 1 minor (`1`) non-zero -> `rho(B) = 1`.
+  - `rho(A) = rho(B) = 1` -> elementary operation (`R2 -> R2-2R1`) chesina rank **same ga** migilindi.
+
+**(ii) No skew-symmetric matrix can be of rank 1.**
+
+- Skew-symmetric matrix ante `A.T = -A` (mundu "Skew-Symmetric Matrix" section lo chusam), diagonal anni `0`.
+- **Example (2x2 skew-symmetric):**
+  ```
+  A = [[0,  b],
+       [-b, 0]]
+
+  det(A) = (0*0) - (b*-b) = b^2
+  ```
+  - `b = 0` aithe: `A` full **zero matrix** -> `rho(A) = 0`.
+  - `b != 0` aithe: `det(A) = b^2` (always positive, non-zero) -> Quick Rule prakaram **`rho(A) = 2`** (full rank) direct ga.
+  - **Rank `1` eppudu raadu** - `b` value batti rank `0` (`b=0` unnappudu) or `2` (`b != 0` unnappudu) matrame vastundi, madhyalo `1` randi.
+- **Enduku ila?** Rank 1 ante matrix lo anni rows oka **single direction (vector)** ki multiples ga undali. Kani skew-symmetric lo `A[i][j] = -A[j][i]` (mirror position sign flip) rule valla, ee "anni oka direction" structure possible kaadu (contradiction vasthundi) - anduke either anni `0` (rank 0) or full independent (rank = matrix size, always **even** number).
+
+**(iii) The rank of matrix A and rank of A' (transpose) is same.**
+
+- `rho(A) = rho(A.T)` eppudu **true**.
+- **Example:**
+  ```
+  A = [[1, 2, 3],
+       [2, 4, 6]]
+
+  A.T = [[1, 2],
+         [2, 4],
+         [3, 6]]
+  ```
+  - `A` lo row 2 = `2 * row 1` (dependent row) -> order 2 anni minors `0`, order 1 minor (`1`) non-zero -> `rho(A) = 1`.
+  - `A.T` lo column 2 = `2 * column 1` (transpose lo rows columns ayyayi, kani same dependency) -> `rho(A.T) = 1` kuda.
+  - `rho(A) = rho(A.T) = 1` -> **same**.
+
+**(iv) The rank of matrix AA' is same as that of matrix A.**
+
+- `A * A.T` (A ni A transpose tho multiply chesindi) rank, `A` rank ki equal: `rho(A * A.T) = rho(A)`.
+- **Example:**
+  ```
+  A = [[1, 2],
+       [2, 4]]        (rho(A) = 1, row 2 = 2*row1)
+
+  A.T = [[1, 2],
+         [2, 4]]
+
+  A * A.T = [[(1*1)+(2*2), (1*2)+(2*4)],
+             [(2*1)+(4*2), (2*2)+(4*4)]]
+          = [[5,  10],
+             [10, 20]]
+  ```
+  - `det(A*A.T) = (5*20)-(10*10) = 100-100 = 0`. Order 1 minor (`5`) non-zero -> `rho(A*A.T) = 1`.
+  - `rho(A) = 1` and `rho(A*A.T) = 1` -> **same**.
+- **AI/ML lo ekkada vadatam:** `X.T * X` (or `X * X.T`) laanti matrices - **covariance matrix**, **Gram matrix** - anni ee property meeda base padi untayi. `X` (features) rank entha undo, `X.T * X` rank kuda **ade** untundi. Anduke `X.T * X` invertible check cheyyalante, `X` full rank aa kaada chusthe chalu.
+
+**Chinna summary (properties):** Rank ni chinni "safe" operations (row/column shuffle, transpose, self-multiply tho `AA'`) maarchavu - rank oka **stable, reliable fingerprint** matrix ki.
+
+#### Enduku kavali? (Why rank matters in AI/ML)
+
+- **Redundant features kanukkovadaniki:** dataset lo oka column inko column ki exact multiple (or copy) aithe, rank takkuva avuthundi - ante konni features **duplicate information** istunnayi ani ardham.
+- **Invertibility check:** square matrix `A` (n x n) ki full rank (`rho(A) = n`) unte matrame `A` invertible. Rank takkuva unte (`rho(A) < n`), matrix **singular** (det = 0, inverse ledu) - idi mundu "Determinant" section lo chusina invertibility concept ki kalisi untundi. (Quick Rule ikkade nunchi vachindi: `det != 0` <=> full rank <=> invertible, anni oka same fact ni cheppedi.)
+- **Linear independence:** rank = matrix lo unna **independent rows (or columns)** count. Linear regression lo `(X.T * X)` full rank kakapothe (features linearly dependent), unique solution dorakadu.
+- **Dimensionality reduction:** PCA laanti techniques rank takkuva chesi (important directions matrame unchi), data ni chinna size lo represent chestai.
+
+**Chinna summary:** Rank = matrix lo unna "**real, independent information**" entha undo cheppe number. **Shortcut gurthu:** square matrix ki `det != 0` ayithe rank = full size (direct answer). `det = 0` ayithe, chinna chinna minors (size takkuva chesukuntu) check chesi, modatisaari non-zero vachina size ye rank.
+
+### Echelon Form (Whiteboard nundi)
+
+#### Zero Row and Non-Zero Row
+
+- **Zero row:** If **all** the elements of a row of a matrix are zero, then it is called a **zero row**.
+- **Non-zero row:** If **one or all** the elements of a row of a matrix are **non-zero**, then it is called a **non-zero row**.
+
+**Example:**
+```
+[0, 0, 0]   -> Zero row (anni elements 0)
+[2, 0, 5]   -> Non-zero row (konni elements non-zero unte chalu)
+[0, 0, 7]   -> Non-zero row (kaneesam okka element (7) non-zero unna chalu, anni 0 kaavali "zero row" avvadaniki)
+```
+- **Gurthu:** row "non-zero" avvadaniki **anni** elements non-zero avvalsina avasaram ledu - **oka** element non-zero unna chalu.
+
+#### Conditions of a Matrix to be in Echelon Form
+
+Oka matrix ni **Echelon Form** lo undhi anadaniki, ee **3 conditions** anni satisfy avvali:
+
+**1. All (or any) zero rows follow all the non-zero rows of the matrix.**
+- Ante: matrix lo **non-zero rows anni mundu (top)** undali, **zero rows anni kinda (bottom)** undali. Zero row tarvata malli non-zero row raakudadu.
+- **Correct example:**
+  ```
+  [[1, 2, 3],
+   [0, 1, 4],
+   [0, 0, 0]]     <- zero row bottom lo undi, sarina order
+  ```
+- **Wrong example (violates condition 1):**
+  ```
+  [[1, 2, 3],
+   [0, 0, 0],     <- zero row MADHYALO vachindi
+   [0, 0, 5]]     <- ee row tarvata malli non-zero row - INVALID echelon form
+  ```
+
+**2. No. of zeros before the first non-zero element in 1st, 2nd, 3rd rows... should be in increasing order.**
+- Ante: prathi row lo, **first non-zero element ki mundu enni zeros unnayo** count cheyyi. Ee count, next row ki veltu **peragali (peragali = penchali/increase avvali)** - "**staircase (mettu)**" pattern laaga kanipinchali.
+- **Correct example:**
+  ```
+  [[1, 2, 3, 4],     Row 1: 0 zeros before first non-zero (1)
+   [0, 5, 6, 7],     Row 2: 1 zero before first non-zero (5)
+   [0, 0, 8, 9]]     Row 3: 2 zeros before first non-zero (8)
+  ```
+  - Zeros count: `0, 1, 2` - **increasing order** ga undi -> condition satisfy.
+- **Wrong example (violates condition 2):**
+  ```
+  [[1, 2, 3],      Row 1: 0 zeros before first non-zero (1)
+   [0, 0, 5],      Row 2: 2 zeros before first non-zero (5)
+   [0, 4, 6]]      Row 3: 1 zero before first non-zero (4) <- decrease ayindi (2 nunchi 1 ki)!
+  ```
+  - Zeros count: `0, 2, 1` - **increasing order kaadu** (row 3 lo takkuva ayindi) -> condition **fail**.
+
+**3. The first non-zero element in each row be unity (i.e., equal to `1`).**
+- Ante: prathi (non-zero) row lo, **first non-zero number eppudu `1` ye** undali.
+- **Correct example:**
+  ```
+  [[1, 3, 4],       first non-zero = 1 (correct)
+   [0, 1, 5]]       first non-zero = 1 (correct)
+  ```
+- **Wrong example (violates condition 3):**
+  ```
+  [[2, 3, 4],       first non-zero = 2 (NOT 1) - INVALID
+   [0, 1, 5]]
+  ```
+  - Idi fix cheyyalante, row 1 ni `2` tho divide chestham: `[2,3,4]/2 = [1, 1.5, 2]` - appudu first non-zero `1` avuthundi.
+
+#### Full Worked Example (Echelon Form check)
+
+```
+A = [[1, 4, 2, 3],
+     [0, 1, 5, 6],
+     [0, 0, 1, 7],
+     [0, 0, 0, 0]]
+```
+- **Condition 1:** Row 4 (`[0,0,0,0]`) zero row, adi **last** lo undi (bottom) - non-zero rows (1,2,3) anni mundu unnayi. **Satisfy.**
+- **Condition 2:** Zeros before first non-zero: Row1 `0`, Row2 `1`, Row3 `2` - **increasing** (`0 < 1 < 2`). **Satisfy.**
+- **Condition 3:** First non-zero elements: Row1 `1`, Row2 `1`, Row3 `1` - anni **unity**. **Satisfy.**
+- **Result:** `A` **Echelon Form** lo undi (anni 3 conditions satisfy ayyayi).
+
+#### Worked Example 2 (Rectangular Matrix, 4x5 - Whiteboard nundi)
+
+Echelon form **square matrix ki matrame** kaadu - **rectangular matrices** (rows and columns different) ki kuda apply avuthundi.
+
+```
+A = [[1, 2, 3, 4, 5],
+     [0, 1, 2, 3, 4],
+     [0, 0, 1, 3, 4],
+     [0, 0, 0, 0, 0]]      (4 x 5 matrix)
+```
+
+- **Condition 1:** Row 4 (`[0,0,0,0,0]`) zero row, adi **last** lo undi - non-zero rows (1,2,3) anni mundu unnayi. **Satisfy.**
+- **Condition 2:** Zeros before first non-zero: Row1 `0`, Row2 `1`, Row3 `2` - **increasing** (`0 < 1 < 2`). **Satisfy.**
+- **Condition 3:** First non-zero elements: Row1 `1`, Row2 `1`, Row3 `1` - anni **unity**. **Satisfy.**
+- **Result:** `A` **Echelon Form** lo undi, matrix **square kaakapoyina** (`4 x 5`, rows != columns).
+- **Rank connection:** Non-zero rows count = `3` (row 1, 2, 3), row 4 zero row -> **`rho(A) = 3`** direct ga (echelon form nunchi counting chesi).
+- **Gurthu:** rectangular matrix ki rank eppudu `min(rows, columns)` kanna takkuva or equal untundi. Ikkada `min(4, 5) = 4`, kani rank `3` vachindi (oka zero row unna kaarananga, full `4` kaadu).
+
+> **Rule (whiteboard nundi):** "No. of non-zero rows of echelon form is rank of matrix." Ante: matrix ni echelon form loki teeskuni vachaka, **just non-zero rows ni count cheste chalu** - adi ye rank. Paina example ki: `A` echelon form lo `3` non-zero rows unnayi, so `rho(A) = 3`.
+
+#### Worked Example 3 (First column anni zeros unna case - Whiteboard nundi)
+
+```
+B = [[0, 1, 2, 3],
+     [0, 0, 1, 2],
+     [0, 0, 0, 0]]      (3 x 4 matrix)
+```
+
+- **Condition 1:** Row 3 (`[0,0,0,0]`) zero row, adi **last** lo undi - non-zero rows (1,2) anni mundu unnayi. **Satisfy.**
+- **Condition 2:** Zeros before first non-zero: Row1 lo `1` zero (position 1 lo `0`, position 2 lo first non-zero `1`), Row2 lo `2` zeros (positions 1,2 lo `0`, position 3 lo first non-zero `1`) - **increasing** (`1 < 2`). **Satisfy.**
+- **Condition 3:** First non-zero elements: Row1 `1`, Row2 `1` - anni **unity**. **Satisfy.**
+- **Result:** `B` **Echelon Form** lo undi.
+- **Rank connection:** Non-zero rows count = `2` (row 1, 2), row 3 zero row -> **`rho(B) = 2`** (Rule prakaram, direct counting).
+- **Ee example enduku special?** `B` lo **column 1 full ga zeros** (`0, 0, 0`) - echelon form ki matrix **first column nunchi ne** non-zero start avvalsina avasaram ledu. Staircase pattern (condition 2) **row-to-row zeros count** batti decide avuthundi, column 1 specifically ki kaadu.
+
+#### Worked Example 4: Reduce a Matrix to Echelon Form and Find its Rank (Whiteboard nundi)
+
+**Problem:** Reduce the matrix `A` to echelon form and then find its rank:
+
+```
+A = [[ 2,  4,  3],
+     [ 1,  2, -1],
+     [-1, -2,  6]]
+```
+
+- **Step 1: Row operation `R1 <-> R2`** (rows swap chesi, first row lo simple `1` techukundam - calculation easy avutundi):
+  ```
+  A = [[ 1,  2, -1],
+       [ 2,  4,  3],
+       [-1, -2,  6]]
+  ```
+
+- **Step 2: Row operations `R2 -> R2 - 2*R1` and `R3 -> R3 + R1`** (row 1 use chesi, column 1 lo zeros create cheddam):
+  - `R2 - 2*R1 = [2-2*1, 4-2*2, 3-2*(-1)] = [0, 0, 5]`.
+  - `R3 + R1 = [-1+1, -2+2, 6+(-1)] = [0, 0, 5]`.
+  ```
+  A = [[1, 2, -1],
+       [0, 0,  5],
+       [0, 0,  5]]
+  ```
+
+- **Step 3: Row operation `R3 -> R3 - R2`** (row 3 and row 2 same ga unnayi, anduke row 3 ni row 2 tho subtract chesi zero row create cheddam):
+  - `R3 - R2 = [0-0, 0-0, 5-5] = [0, 0, 0]`.
+  ```
+  A = [[1, 2, -1],
+       [0, 0,  5],
+       [0, 0,  0]]
+  ```
+
+- **Echelon Form check:** Row 3 (`[0,0,0]`) zero row, **last** lo undi (Condition 1 satisfy). Zeros before first non-zero: Row1 `0`, Row2 `2` - increasing (Condition 2 satisfy). -> **`A` echelon form lo undi.**
+- **Rank:** Here, **number of non-zero rows are two** (row 1 and row 2, row 3 zero row) -> **`rho(A) = 2`**.
+
+**Chinna doubt clear cheddam (Condition 3 gurinchi):** Ee example lo row 2 first non-zero element `5` (not `1`) - Condition 3 ("first non-zero element unity") **strict ga satisfy avvaledu**. Kani **rank kanukkovadaniki** idi problem kaadu - endukante rank ki matter ayyedi **only Condition 1 and 2** (zero rows bottom lo, staircase pattern of zeros). Rank = non-zero rows count, first non-zero element value (`1` or `5` or ye number aina) rank ni maarchadu. Anduke practical ga, rank kosam matrame echelon ki teeskuntunte, Condition 3 ni **skip cheyyachu** - `5` ni `1` ki normalize cheyyalsina avasaram ledu.
+
+#### Worked Example 5: Reduce a 4x4 Matrix to Echelon Form and Find its Rank (Whiteboard nundi)
+
+**Problem:** Reduce the matrix `A` to echelon form and then find its rank:
+
+```
+A = [[1, -2,  1, -1],
+     [1,  1, -2,  3],
+     [4,  1, -5,  8],
+     [5, -7,  2, -1]]
+```
+
+- **Step 1: Row operations `R2 -> R2-R1`, `R3 -> R3-4*R1`, `R4 -> R4-5*R1`** (row 1 use chesi, column 1 lo zeros create cheddam):
+  - `R2 - R1 = [1-1, 1-(-2), -2-1, 3-(-1)] = [0, 3, -3, 4]`.
+  - `R3 - 4*R1 = [4-4, 1-4*(-2), -5-4*1, 8-4*(-1)] = [0, 9, -9, 12]`.
+  - `R4 - 5*R1 = [5-5, -7-5*(-2), 2-5*1, -1-5*(-1)] = [0, 3, -3, 4]`.
+  ```
+  A = [[1, -2,  1, -1],
+       [0,  3, -3,  4],
+       [0,  9, -9, 12],
+       [0,  3, -3,  4]]
+  ```
+
+- **Step 2: Row 3 and row 4 ni observe cheddam:** `R3 = [0,9,-9,12] = 3 * [0,3,-3,4] = 3*R2` (exact multiple), and `R4 = [0,3,-3,4]` **exact ga `R2` same**. Anduke:
+  - `R3 -> R3 - 3*R2 = [0-0, 9-9, -9+9, 12-12] = [0, 0, 0, 0]`.
+  - `R4 -> R4 - R2 = [0-0, 3-3, -3+3, 4-4] = [0, 0, 0, 0]`.
+  ```
+  A = [[1, -2,  1, -1],
+       [0,  3, -3,  4],
+       [0,  0,  0,  0],
+       [0,  0,  0,  0]]
+  ```
+
+- **Echelon Form check:** Row 3 and Row 4 (`[0,0,0,0]`) zero rows, anni **last** lo unnayi (Condition 1 satisfy). Zeros before first non-zero: Row1 `0`, Row2 `1` - increasing (Condition 2 satisfy). -> **`A` echelon form lo undi.**
+- **Rank:** **Number of non-zero rows = 2** (row 1, row 2), row 3 and row 4 zero rows -> **`rho(A) = 2`**.
+- **Enduku ila jarigindi (explanation):** `R3` and `R4` (original matrix lo) `R1` and `R2` ki **linear combinations** ye - ante `R3` and `R4` "kotha" (independent) information ivvavu, `R1` and `R2` nunchi ne derive avvachu. Anduke full `4` rows unna, matrix lo matrame **2 independent directions** untayi -> rank `2`.
+
+#### Enduku Echelon Form kavali? (Connection to Rank)
+
+> **Main Point:** Oka matrix ni Echelon Form loki teeskuni vachaka, **Rank = matrix lo unna non-zero rows count** - direct ga counting chesi cheppochu, minors calculate cheyyalsina avasaram ledu!
+
+- Paina example `A` lo **3 non-zero rows** (row 1, 2, 3) unnayi, row 4 zero row - anduke **`rho(A) = 3`** (direct ga, echelon form nunchi).
+- Idi mundu chusina "minors check chesi rank kanukkovadam" method kanna **chala fast and easy** - especially pedda matrices (4x4, 5x5...) ki, minors chala ekkuva combinations untai, kani echelon form ki convert chesi non-zero rows count cheste chalu.
+- **Elementary row operations** (row swap, row ni scalar tho multiply, oka row ki inko row multiple add) tho **ye matrix ni ainaa echelon form loki** teeskuni raavachu - and rank (mundu chusina Property `(i)`: rank elementary operations tho maaradu) same ye untundi.
+
+#### Kid Analogy
+
+- Echelon form ni oka **descending staircase (metlu)** anukondi - prathi metu (step) previous metu kanna konchem **lopala (indented)** untundi.
+- Non-zero rows = "**strong, useful**" metlu (top nundi start), zero rows = "**empty, no-step**" migilina space (bottom).
+- Prathi row first number `1` (unity) undadam ante, prathi step "**clean, standard size**" ga undhi ani gurthu.
+
+**Chinna summary:** Echelon Form = matrix ni oka **staircase pattern** (zeros ekkuva ga penchukuntu) loki teeskuni raavadam. Prathi non-zero row first element `1`, zero rows anni bottom lo. Rank kanukkovadaniki ide **fastest practical method**.
+
 ### AI lo matrices enduku important?
 - Full dataset oka **matrix** (`X`): rows = examples, columns = features.
 - Neural network **weights** oka matrix (`W`).
@@ -1467,124 +2156,6 @@ print(round(np.linalg.det(B)))   # -3 (3x3 example)
   Rohit -> [ 45,  38,  4, 1]
   ```
 - Idi 2 rows x 4 columns = **2 x 4** matrix. Real ga manam roju chuse tables anni matrices laantivi.
-
----
-
-## Key Concepts with Worked Examples
-
-Prati concept ki oka chinna real example tho chuddam.
-
-### 1) Scalar (single number)
-- Example: `learning_rate = 0.01`.
-- AI lo: training speed control cheyyadaniki oka single number.
-- **Real-time example:** meeru shop lo konna oka item price = `Rs 50`. Adi oka single number, ade scalar.
-- **Explain:** scalar ki direction/list undadu, just oka value. Temperature `30 degrees`, meeru speed `60 kmph` anni scalars.
-
-### 2) Vector (list of numbers)
-- Example: oka house data `[1200, 3, 2]` = (area sqft, bedrooms, bathrooms).
-- AI lo: oka data point / oka word embedding.
-- Vector addition example:
-  `[2, 3] + [1, 4] = [3, 7]` (same positions add avuthayi).
-- **Real-time example:** oka Swiggy/Zomato order `[2, 1, 3]` = (2 biryani, 1 coke, 3 roti). Oka order ni describe cheyyadaniki multiple numbers oka line lo.
-- **Explain:** oka single number tho order cheppalem, so list (vector) vadatam. GPS location `[17.3, 78.4]` (latitude, longitude) kuda oka vector.
-
-### 3) Matrix (rows x columns)
-- Example: 2 houses data:
-  ```
-  [[1200, 3, 2],
-   [1500, 4, 3]]
-  ```
-- Shape = (2 rows, 3 columns) = (2, 3).
-- AI lo: full dataset `X` or weights `W`.
-- **Real-time example:** oka class attendance register. Prathi row = oka student, prathi column = oka day. Cell lo present(1)/absent(0).
-  ```
-  Student   Mon Tue Wed
-  Ravi   -> [ 1,  0,  1]
-  Sita   -> [ 1,  1,  1]
-  Kiran  -> [ 0,  1,  1]
-  ```
-- **Explain:** oka table lo rows and columns tho full information store avuthundi. Excel sheet, cricket score card, bank statement anni matrices laantivi.
-
-### 4) Tensor (3D+ numbers)
-- Tensor ante matrices ni stack chesi (paina paina petti) build chesina multi-dimensional numbers box.
-- **Small concrete example:** oka chinna 2x2 color image tiskundam. Prathi pixel ki 3 values untayi (Red, Green, Blue). So idi shape (3, 2, 2) tensor.
-  ```
-  Red channel:        Green channel:      Blue channel:
-  [[255, 100],        [[0,   50],         [[10,  20],
-   [ 40, 200]]         [30, 220]]          [90, 130]]
-  ```
-  - Red matrix -> prathi pixel entha erra unnado.
-  - Green matrix -> entha green.
-  - Blue matrix -> entha blue.
-  - Ee 3 matrices kalipi = 1 tensor (oka full color image).
-- **Shape ela chaduvutam?**
-  - Oka number = **scalar** -> shape ().
-  - `[85, 90]` = **vector** -> shape (2,).
-  - `[[1,2],[3,4]]` = **matrix** -> shape (2, 2).
-  - Paina 3 channel image = **tensor** -> shape (3, 2, 2).
-- **Batch example (AI lo real usage):** 100 color images, prathi 28x28 pixels, 3 colors -> shape (100, 3, 28, 28).
-  - 100 = enni images (batch size).
-  - 3 = colors (R, G, B).
-  - 28, 28 = height, width.
-- AI lo: images, videos (extra time dimension), and training batches anni tensors laaga store avuthai. Anduke library peru kuda "**TensorFlow**" and "PyTorch tensor".
-- **Real-time example:** meeru phone lo teesina oka photo. Adi screen meeda color ga kanipisthundi, kani internal ga adi 3 number grids (Red, Green, Blue) = oka tensor. Video ante ee photos chala frames stack ayyi, extra time dimension add avuthundi.
-- **Explain:** manaki photo color ga kanipisthundi, kani computer ki adi just numbers box. Prathi pixel ki 3 numbers, anni kalipi tensor.
-
-### 5) Dot Product (multiply then add)
-- Formula: `a·b = a1*b1 + a2*b2 + ...`
-- Example: `[1, 2, 3] · [4, 5, 6] = (1*4) + (2*5) + (3*6) = 4 + 10 + 18 = 32`.
-- AI lo: oka neuron output calculate cheyyadaniki (inputs * weights).
-- **Real-time example:** shopping bill. Items quantity `[2, 1, 3]` (biryani, coke, roti), prices `[120, 40, 15]`.
-  Total bill = `(2*120) + (1*40) + (3*15) = 240 + 40 + 45 = 325`. Idi exact ga dot product.
-- **Explain:** rendu lists ni position-position multiply chesi, anni kalipi oka single total number ki teesukostam. Bill total, weighted marks anni dot product.
-
-### 6) Matrix Multiplication
-- Rule: A(rows x k) * B(k x cols) = C(rows x cols). Middle numbers match avvali.
-- Example:
-  ```
-  A = [[1, 2],        B = [[5, 6],
-       [3, 4]]             [7, 8]]
-
-  A * B = [[1*5 + 2*7, 1*6 + 2*8],
-           [3*5 + 4*7, 3*6 + 4*8]]
-        = [[19, 22],
-           [43, 50]]
-  ```
-- AI lo: oka full layer output (`W * x`) ilage calculate avuthundi.
-- **Real-time example:** oka shop lo 2 customers, prathi okaru 2 items konnaru. Quantities matrix ni prices tho multiply chesthe, prathi customer total bill matrix laaga vasthundi. Oka sari lo anni customers bills calculate cheyyadam idi.
-- **Explain:** matrix multiplication ante just chala dot products oka sari lo cheyyadam. Anduke AI lo oka batch data anta oka multiply lo process avuthundi (fast).
-
-### 7) Transpose (rows and columns swap)
-- Example:
-  ```
-  A = [[1, 2, 3],        A.T = [[1, 4],
-       [4, 5, 6]]               [2, 5],
-                                [3, 6]]
-  ```
-- Shape (2, 3) -> (3, 2).
-- AI lo: shapes match cheyyadaniki (matrix multiply valid avvadaniki).
-- **Real-time example:** Excel lo oka table ni rotate chesinattu. Rows lo unna data ni columns loki, columns lo unna data ni rows loki marchadam. Names row lo unte, transpose chesthe names column loki veltayi.
-- **Explain:** data content same, kani arrangement (rows <-> columns) marutundi. Report format marchadaniki idi use avuthundi.
-
-### 8) Identity Matrix (diagonal 1s)
-- Example:
-  ```
-  I = [[1, 0],
-       [0, 1]]
-  ```
-- Rule: `A * I = A` (number `1` laaga behave chestundi).
-- AI lo: math proofs, matrix inverse concepts.
-- **Real-time example:** number `1` tho multiply chesthe value marani laaga (`50 * 1 = 50`), identity matrix tho multiply chesina matrix marani ga untundi.
-- **Explain:** identity matrix matrix world lo "number 1" laantidi. Emi effect ledu, but math rules and inverse calculations ki base.
-
-### 9) Eigenvalue / Eigenvector
-- Idea: matrix `A` ni oka special vector `v` meeda apply chesthe, direction marakunda just length matrame marutundi.
-- Formula: `A·v = lambda·v` (lambda = eigenvalue).
-- Simple example: `A = [[2, 0], [0, 3]]`, vector `v = [1, 0]`.
-  `A·v = [2, 0] = 2 * [1, 0]` -> eigenvalue `lambda = 2`.
-- AI lo: **PCA** lo important directions (max variance) kanukkovadaniki.
-- **Real-time example:** meeru oka rubber sheet ni stretch chesthe, konni directions ekkuva stretch avuthayi, konni takkuva. Ekkuva stretch aye direction = eigenvector, entha stretch = eigenvalue.
-- **Explain:** oka pedda data lo "most important direction" (ekkuva information unna direction) ni pattukovadaniki eigenvectors help chestai. Anduke face recognition, recommendation systems lo PCA vadatam.
 
 ---
 
