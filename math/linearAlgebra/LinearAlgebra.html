@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Linear Algebra — Vectors to Neural Nets</title>
-<meta name="description" content="A colorful, beginner-to-advanced walkthrough of linear algebra for machine learning, with interactive 3D vector and regression-plane visualizations." />
+<title>Linear Algebra — Simple Telugu English Notes</title>
+<meta name="description" content="Colorful, interactive edition of the Linear Algebra Tenglish notes — every original section, in its original order, with 3D vector and regression-plane visualizations." />
 <style>
 /* ============================= FONTS ============================= */
 @font-face{
@@ -51,13 +51,14 @@ h1,h2,h3,h4,p,figure{ margin:0; }
   --line:#DBDFEF;
   --line-soft:#E9EBF6;
 
-  --axis-x:#C1512D;      /* beginner · 1D */
+  /* axis colors — used literally for X/Y/Z coordinate axes in diagrams, not for difficulty */
+  --axis-x:#C1512D;
   --axis-x-soft:#F3E0D6;
   --axis-x-ink:#7A3319;
-  --axis-y:#1F7A5C;      /* intermediate · 2D */
+  --axis-y:#1F7A5C;
   --axis-y-soft:#DCEEE6;
   --axis-y-ink:#124D39;
-  --axis-z:#3450C9;      /* advanced · 3D + primary accent */
+  --axis-z:#3450C9;
   --axis-z-soft:#E0E4FA;
   --axis-z-ink:#22348C;
 
@@ -135,7 +136,6 @@ h1,h2,h3,h4{ font-family:var(--font-display); text-wrap:balance; color:var(--ink
 code, .mono{ font-family:var(--font-mono); }
 .numerals{ font-variant-numeric:tabular-nums; }
 
-/* subtle graph-paper texture used behind hero + section cards */
 .grid-texture{
   background-image:
     linear-gradient(var(--line-soft) 1px, transparent 1px),
@@ -144,63 +144,36 @@ code, .mono{ font-family:var(--font-mono); }
 }
 
 /* ============================= PROGRESS BAR ============================= */
-.progress-track{
-  position:fixed; top:0; left:0; width:100%; height:3px; z-index:60;
-  background:linear-gradient(90deg, var(--axis-x-soft), var(--axis-y-soft), var(--axis-z-soft));
-}
+.progress-track{ position:fixed; top:0; left:0; width:100%; height:3px; z-index:60; background:var(--line); }
 .progress-fill{
   position:fixed; top:0; left:0; height:3px; z-index:61; width:0%;
-  background:linear-gradient(90deg, var(--axis-x), var(--axis-y), var(--axis-z));
-  background-size:100vw 3px;
-  transition:width .08s linear;
+  background:var(--axis-z); transition:width .08s linear;
 }
 
 /* ============================= SHELL ============================= */
-.shell{
-  display:grid;
-  grid-template-columns:272px minmax(0,1fr);
-  max-width:1240px;
-  margin:0 auto;
-}
+.shell{ display:grid; grid-template-columns:272px minmax(0,1fr); max-width:1240px; margin:0 auto; }
 .sidebar{
-  position:sticky; top:0; align-self:start;
-  height:100vh; overflow-y:auto;
-  padding:28px 20px 40px 32px;
-  border-right:1px solid var(--line);
+  position:sticky; top:0; align-self:start; height:100vh; overflow-y:auto;
+  padding:28px 20px 40px 32px; border-right:1px solid var(--line);
 }
-.brand{
-  font-family:var(--font-display); font-weight:600; font-size:1.15rem;
-  display:flex; align-items:baseline; gap:8px; margin-bottom:4px;
-}
+.brand{ font-family:var(--font-display); font-weight:600; font-size:1.15rem; display:flex; align-items:baseline; gap:8px; margin-bottom:4px; }
 .brand .dim{ color:var(--axis-z); font-family:var(--font-mono); font-size:.72rem; letter-spacing:.06em; }
 .brand-sub{ font-size:.82rem; color:var(--ink-faint); margin-bottom:22px; }
 
-.nav-group{ margin-bottom:22px; }
-.nav-group-label{
-  display:flex; align-items:center; gap:8px;
-  font-family:var(--font-mono); font-size:.7rem; letter-spacing:.08em; text-transform:uppercase;
-  color:var(--ink-faint); margin-bottom:8px;
-}
-.nav-group-label .sw{ width:9px; height:9px; border-radius:2px; flex:none; }
-.nav-group[data-tier="x"] .sw{ background:var(--axis-x); }
-.nav-group[data-tier="y"] .sw{ background:var(--axis-y); }
-.nav-group[data-tier="z"] .sw{ background:var(--axis-z); }
-
+.nav-list{ margin-bottom:22px; }
 .nav-link{
   display:block; padding:6px 10px 6px 12px; margin-left:-1px;
   border-left:2px solid transparent;
-  font-size:.88rem; color:var(--ink-soft); text-decoration:none;
+  font-size:.87rem; color:var(--ink-soft); text-decoration:none;
   border-radius:0 6px 6px 0;
   transition:color .15s, border-color .15s, background .15s;
 }
 .nav-link:hover{ color:var(--ink); background:var(--surface-2); }
-.nav-group[data-tier="x"] .nav-link.active{ border-color:var(--axis-x); color:var(--axis-x-ink); background:var(--axis-x-soft); font-weight:600; }
-.nav-group[data-tier="y"] .nav-link.active{ border-color:var(--axis-y); color:var(--axis-y-ink); background:var(--axis-y-soft); font-weight:600; }
-.nav-group[data-tier="z"] .nav-link.active{ border-color:var(--axis-z); color:var(--axis-z-ink); background:var(--axis-z-soft); font-weight:600; }
+.nav-link.active{ border-color:var(--axis-z); color:var(--axis-z-ink); background:var(--axis-z-soft); font-weight:600; }
+.nav-link.sub{ font-size:.8rem; padding-left:24px; color:var(--ink-faint); }
+.nav-link.sub.active{ color:var(--axis-z-ink); }
 
-.theme-toggle{
-  display:flex; gap:6px; margin-top:18px; padding-top:18px; border-top:1px solid var(--line);
-}
+.theme-toggle{ display:flex; gap:6px; margin-top:18px; padding-top:18px; border-top:1px solid var(--line); }
 .theme-toggle button{
   flex:1; padding:6px 0; font-family:var(--font-mono); font-size:.7rem; letter-spacing:.04em;
   background:var(--surface-2); border:1px solid var(--line); border-radius:7px; cursor:pointer; color:var(--ink-soft);
@@ -211,67 +184,40 @@ code, .mono{ font-family:var(--font-mono); }
 
 /* ============================= MAIN ============================= */
 main{ padding:56px 48px 120px; min-width:0; }
-.hero{ max-width:640px; margin-bottom:56px; }
+.hero{ max-width:660px; margin-bottom:56px; }
 .eyebrow{
   font-family:var(--font-mono); font-size:.74rem; letter-spacing:.1em; text-transform:uppercase;
   color:var(--axis-z); margin-bottom:14px; display:flex; align-items:center; gap:10px;
 }
 .eyebrow::before{ content:""; width:22px; height:1px; background:var(--axis-z); }
-.hero h1{ font-size:clamp(2.1rem, 4vw, 3rem); font-weight:600; line-height:1.08; margin-bottom:18px; }
-.hero p.lead{ font-size:1.08rem; color:var(--ink-soft); max-width:56ch; }
-
-.legend{
-  display:flex; flex-wrap:wrap; gap:10px; margin-top:26px;
-}
-.legend-pill{
-  display:flex; align-items:center; gap:7px;
-  font-family:var(--font-mono); font-size:.74rem;
-  padding:6px 12px; border-radius:999px; border:1px solid var(--line);
-  background:var(--surface);
-}
-.legend-pill .sw{ width:8px; height:8px; border-radius:50%; }
-.legend-pill.x .sw{ background:var(--axis-x); } .legend-pill.x{ color:var(--axis-x-ink); }
-.legend-pill.y .sw{ background:var(--axis-y); } .legend-pill.y{ color:var(--axis-y-ink); }
-.legend-pill.z .sw{ background:var(--axis-z); } .legend-pill.z{ color:var(--axis-z-ink); }
+.hero h1{ font-size:clamp(2rem, 3.6vw, 2.8rem); font-weight:600; line-height:1.1; margin-bottom:18px; }
+.hero p.lead{ font-size:1.06rem; color:var(--ink-soft); max-width:60ch; }
 
 /* ============================= SECTION / CARD ============================= */
-section.topic{ margin-bottom:64px; scroll-margin-top:24px; }
+section.topic{ margin-bottom:60px; scroll-margin-top:24px; }
 .topic-head{ display:flex; align-items:baseline; gap:14px; margin-bottom:22px; flex-wrap:wrap; }
-.topic-num{ font-family:var(--font-mono); font-size:.85rem; color:var(--ink-faint); }
-.topic-head h2{ font-size:1.65rem; font-weight:600; }
-.badge{
-  font-family:var(--font-mono); font-size:.68rem; letter-spacing:.06em; text-transform:uppercase;
-  padding:3px 9px; border-radius:999px; font-weight:600;
-}
-.badge.x{ background:var(--axis-x-soft); color:var(--axis-x-ink); }
-.badge.y{ background:var(--axis-y-soft); color:var(--axis-y-ink); }
-.badge.z{ background:var(--axis-z-soft); color:var(--axis-z-ink); }
+.topic-num{ font-family:var(--font-mono); font-size:.85rem; color:var(--axis-z); }
+.topic-head h2{ font-size:1.55rem; font-weight:600; }
 
 .card{
   background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
   box-shadow:var(--shadow-sm); padding:28px 30px; position:relative; overflow:hidden;
 }
 .card + .card{ margin-top:18px; }
-.card::before{ content:""; position:absolute; top:0; left:0; right:0; height:4px; }
-.topic[data-tier="x"] .card::before{ background:var(--axis-x); }
-.topic[data-tier="y"] .card::before{ background:var(--axis-y); }
-.topic[data-tier="z"] .card::before{ background:var(--axis-z); }
-.card h3{ font-size:1.15rem; font-weight:600; margin-bottom:12px; }
-.card h4{ font-size:.98rem; font-weight:700; margin:18px 0 8px; color:var(--ink); }
-.card p{ color:var(--ink-soft); margin-bottom:12px; max-width:68ch; }
+.card::before{ content:""; position:absolute; top:0; left:0; right:0; height:4px; background:var(--axis-z); }
+.card h3{ font-size:1.12rem; font-weight:600; margin-bottom:12px; }
+.card h4{ font-size:.96rem; font-weight:700; margin:18px 0 8px; color:var(--ink); }
+.card p{ color:var(--ink-soft); margin-bottom:12px; max-width:70ch; }
 .card p:last-child{ margin-bottom:0; }
 .card ul, .card ol{ color:var(--ink-soft); margin-bottom:12px; padding-left:1.3em; }
 .card ul li{ list-style:disc; margin-bottom:5px; }
 .card ol li{ list-style:decimal; margin-bottom:5px; }
 .card strong{ color:var(--ink); }
 
-.prose-tight > * + *{ margin-top:10px; }
-
 /* callouts */
 .callout{
   border:1px solid var(--line); border-left:3px solid var(--axis-z);
-  background:var(--surface-2); border-radius:0 10px 10px 0;
-  padding:14px 18px; margin:16px 0;
+  background:var(--surface-2); border-radius:0 10px 10px 0; padding:14px 18px; margin:16px 0;
 }
 .callout .tag{
   font-family:var(--font-mono); font-size:.68rem; letter-spacing:.08em; text-transform:uppercase;
@@ -305,19 +251,12 @@ tr.fail td{ color:var(--axis-x-ink); }
 
 /* figure / svg diagrams */
 figure.diagram{ margin:18px 0; }
-figure.diagram .frame{
-  border:1px solid var(--line); border-radius:12px; background:var(--surface-2); padding:14px;
-}
+figure.diagram .frame{ border:1px solid var(--line); border-radius:12px; background:var(--surface-2); padding:14px; }
 figure.diagram svg{ width:100%; height:auto; }
-figure.diagram figcaption{
-  margin-top:8px; font-size:.82rem; color:var(--ink-faint); text-align:center;
-}
+figure.diagram figcaption{ margin-top:8px; font-size:.82rem; color:var(--ink-faint); text-align:center; }
 
 /* viewport (3D / interactive canvases) */
-.viewport{
-  border:1px solid var(--line); border-radius:14px; background:var(--surface-2);
-  padding:16px; margin:18px 0;
-}
+.viewport{ border:1px solid var(--line); border-radius:14px; background:var(--surface-2); padding:16px; margin:18px 0; }
 .viewport .vp-head{ display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap; }
 .viewport .vp-title{ font-family:var(--font-mono); font-size:.72rem; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-faint); }
 .viewport .vp-hint{ font-family:var(--font-mono); font-size:.7rem; color:var(--ink-faint); }
@@ -352,8 +291,7 @@ footer{ padding:40px 48px 80px; color:var(--ink-faint); font-size:.85rem; border
   .menu-btn{
     display:flex; position:fixed; top:14px; left:14px; z-index:80;
     width:40px; height:40px; border-radius:10px; border:1px solid var(--line);
-    background:var(--surface); align-items:center; justify-content:center; cursor:pointer;
-    box-shadow:var(--shadow-sm);
+    background:var(--surface); align-items:center; justify-content:center; cursor:pointer; box-shadow:var(--shadow-sm);
   }
   .menu-btn span{ display:block; width:16px; height:2px; background:var(--ink); position:relative; }
   .menu-btn span::before,.menu-btn span::after{ content:""; position:absolute; width:16px; height:2px; background:var(--ink); left:0; }
@@ -376,7 +314,6 @@ footer{ padding:40px 48px 80px; color:var(--ink-faint); font-size:.85rem; border
 <button class="menu-btn" id="menuBtn" aria-label="Toggle navigation"><span></span></button>
 <div class="scrim" id="scrim"></div>
 
-<!-- shared arrow marker defs, reused by inline diagrams -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
     <marker id="arrow-ink" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
@@ -412,7 +349,6 @@ function Plot3D(canvas, opts){
   this.resize = resize;
 
   var dragging=false, lastX=0, lastY=0;
-  function pos(e){ return e.touches? [e.touches[0].clientX,e.touches[0].clientY] : [e.clientX,e.clientY]; }
   canvas.addEventListener('pointerdown', function(e){ dragging=true; lastX=e.clientX; lastY=e.clientY; canvas.setPointerCapture(e.pointerId); });
   canvas.addEventListener('pointermove', function(e){
     if(!dragging) return;
@@ -440,11 +376,9 @@ function Plot3D(canvas, opts){
     var css = getComputedStyle(document.documentElement);
     var ink = css.getPropertyValue('--ink').trim();
     var faint = css.getPropertyValue('--ink-faint').trim();
-    var surface = css.getPropertyValue('--surface').trim();
     ctx.clearRect(0,0,this.w,this.h);
 
     var R = this.range;
-    // floor grid on XZ plane at y=0
     ctx.strokeStyle = faint; ctx.globalAlpha=0.18; ctx.lineWidth=1;
     var step = R/5;
     for(var i=-5;i<=5;i++){
@@ -455,15 +389,12 @@ function Plot3D(canvas, opts){
     }
     ctx.globalAlpha=1;
 
-    // planes (draw before axes/points so they sit under)
     this.items.filter(function(it){return it.type==='plane';}).forEach(function(pl){ self._drawPlane(pl, ink); });
 
-    // axes
     this._axis([-R,0,0],[R,0,0], this.axisColors[0], this.axisNames[0]);
     this._axis([0,0,0],[0,R,0], this.axisColors[1], this.axisNames[1]);
     this._axis([0,0,0],[0,0,R], this.axisColors[2], this.axisNames[2]);
 
-    // vectors + points, painter sorted by depth
     var drawables = this.items.filter(function(it){return it.type!=='plane';});
     drawables.sort(function(a,b){
       var da = self.project(a.p?a.p[0]:a.to[0], a.p?a.p[1]:a.to[1], a.p?a.p[2]:a.to[2]).depth;
@@ -480,7 +411,6 @@ function Plot3D(canvas, opts){
     var a=this.project(from[0],from[1],from[2]), b=this.project(to[0],to[1],to[2]);
     ctx.strokeStyle=color; ctx.lineWidth=2; ctx.globalAlpha=0.9;
     ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
-    // arrowhead
     var ang = Math.atan2(b.y-a.y,b.x-a.x);
     ctx.fillStyle=color;
     ctx.beginPath();
@@ -550,7 +480,7 @@ function Transform2D(canvas){
   var ctx = canvas.getContext('2d');
   var self=this;
   this.canvas=canvas;
-  this.M = [1,0,0,1]; // a,b,c,d  columns: [a c; b d] i.e. i-hat=(a,b), j-hat=(c,d)
+  this.M = [1,0,0,1];
   this.target = [1,0,0,1];
   this.showEigen = false;
   this.dpr = Math.min(window.devicePixelRatio||1,2);
@@ -593,7 +523,6 @@ function Transform2D(canvas){
     var a=this.M[0], b=this.M[1], c=this.M[2], d=this.M[3];
     var O = toScreen(this,0,0);
 
-    // faint transformed grid
     ctx.strokeStyle=faint; ctx.globalAlpha=0.25; ctx.lineWidth=1;
     for(var i=-3;i<=3;i++){
       var p1=[a*i+c*-3, b*i+d*-3], p2=[a*i+c*3, b*i+d*3];
@@ -605,7 +534,6 @@ function Transform2D(canvas){
     }
     ctx.globalAlpha=1;
 
-    // unit square before (dashed) and after (filled) transform
     var square=[[0,0],[1,0],[1,1],[0,1]];
     ctx.setLineDash([4,4]); ctx.strokeStyle=faint; ctx.lineWidth=1.4;
     ctx.beginPath();
@@ -620,7 +548,6 @@ function Transform2D(canvas){
     ctx.strokeStyle=axisZ; ctx.lineWidth=2;
     ctx.fill(); ctx.stroke();
 
-    // axes
     function axisLine(x1,y1,x2,y2,color){
       var s1=toScreen(self,x1,y1), s2=toScreen(self,x2,y2);
       ctx.strokeStyle=color; ctx.globalAlpha=0.5; ctx.lineWidth=1;
@@ -675,40 +602,26 @@ function Transform2D(canvas){
 <div class="shell">
   <nav class="sidebar" id="sidebar">
     <div class="brand">Linear Algebra <span class="dim">// notes</span></div>
-    <div class="brand-sub">vectors → matrices → models</div>
+    <div class="brand-sub">Simple Telugu English Notes</div>
 
-    <div class="nav-group" data-tier="x">
-      <div class="nav-group-label"><span class="sw"></span>1D · Beginner</div>
+    <div class="nav-list">
       <ul>
-        <li><a class="nav-link" href="#why">Why Linear Algebra?</a></li>
-        <li><a class="nav-link" href="#s1">1 · Scalars, Vectors, Matrices</a></li>
-        <li><a class="nav-link" href="#s2">2 · Basic Operations</a></li>
-        <li><a class="nav-link" href="#s3">3 · Vectors in Data Science</a></li>
+        <li><a class="nav-link" href="#why">Enduku Important?</a></li>
+        <li><a class="nav-link" href="#s1">1) Scalars, Vectors, Matrices</a></li>
+        <li><a class="nav-link" href="#s2">2) Basic Operations</a></li>
+        <li><a class="nav-link" href="#s3">3) Linear Transformation</a></li>
+        <li><a class="nav-link" href="#s4">4) Eigen Value &amp; Eigen Vector</a></li>
+        <li><a class="nav-link" href="#s5">5) ML Connection — House Price</a></li>
+        <li><a class="nav-link" href="#s6">6) 3D Graph Intuition</a></li>
+        <li><a class="nav-link" href="#s7">7) Data to Prediction Flow</a></li>
+        <li><a class="nav-link" href="#s7b">7.1) Dataset to Model</a></li>
+        <li><a class="nav-link" href="#s8">8) Vector &amp; Matrix Visual</a></li>
+        <li><a class="nav-link" href="#s9">9) 3D Understanding</a></li>
+        <li><a class="nav-link" href="#s10">10) Quick Revision</a></li>
+        <li><a class="nav-link" href="#s11">11) Kid Analogy</a></li>
+        <li><a class="nav-link" href="#s12">12) ML &amp; AI Role</a></li>
+        <li><a class="nav-link" href="#s13">13) Optimization</a></li>
       </ul>
-    </div>
-
-    <div class="nav-group" data-tier="y">
-      <div class="nav-group-label"><span class="sw"></span>2D · Intermediate</div>
-      <ul>
-        <li><a class="nav-link" href="#s4">4 · From 2D to 3D</a></li>
-        <li><a class="nav-link" href="#s5">5 · Linear Transformations</a></li>
-        <li><a class="nav-link" href="#s6">6 · Covariance &amp; Correlation</a></li>
-        <li><a class="nav-link" href="#s7">7 · Eigenvalues &amp; Eigenvectors</a></li>
-        <li><a class="nav-link" href="#s8">8 · Dot Product → Predictions</a></li>
-      </ul>
-    </div>
-
-    <div class="nav-group" data-tier="z">
-      <div class="nav-group-label"><span class="sw"></span>3D · Advanced</div>
-      <ul>
-        <li><a class="nav-link" href="#s9">9 · 3D Data &amp; Model Surface</a></li>
-        <li><a class="nav-link" href="#s10">10 · Neural Networks</a></li>
-        <li><a class="nav-link" href="#s11">11 · Optimization &amp; Gradient Descent</a></li>
-      </ul>
-    </div>
-
-    <div class="nav-group">
-      <ul><li><a class="nav-link" href="#revision">Quick Revision</a></li></ul>
     </div>
 
     <div class="theme-toggle" role="group" aria-label="Theme">
@@ -720,20 +633,14 @@ function Transform2D(canvas){
 
   <main>
     <header class="hero grid-texture" style="padding:22px 24px; border-radius:16px; border:1px solid var(--line);">
-      <div class="eyebrow">A field guide for ML &amp; DS</div>
-      <h1>Linear Algebra, one dimension at a time.</h1>
-      <p class="lead">Numbers alone → single scalars. Numbers in order → vectors with direction. Numbers in a grid → matrices that transform data. Everything from a house-price model to a neural network is built out of these three ideas.</p>
-      <div class="legend">
-        <span class="legend-pill x"><span class="sw"></span>X · 1D · Beginner</span>
-        <span class="legend-pill y"><span class="sw"></span>Y · 2D · Intermediate</span>
-        <span class="legend-pill z"><span class="sw"></span>Z · 3D · Advanced</span>
-      </div>
+      <div class="eyebrow">Simple Telugu English Notes</div>
+      <h1>Linear Algebra</h1>
+      <p class="lead">Linear Algebra ante numbers ni single ga kakunda group ga chusi, vatini rules tho operate cheyyadam. Idi ML, DL, NLP, Computer Vision lo chala important. Same notes, same order — just colorful, with a few interactive 3D panels you can drag.</p>
     </header>
 
-    <section class="topic" id="why" style="scroll-margin-top:24px;">
+    <section class="topic" id="why">
       <div class="card">
         <h3>Enduku Linear Algebra Important?</h3>
-        <p>Linear Algebra ante numbers ni single ga kakunda <strong>group ga chusi</strong>, vatini rules tho operate cheyyadam. Idi ML, DL, NLP, Computer Vision lo chala important — because every one of those fields spends most of its time moving groups of numbers around.</p>
         <ol>
           <li>Data ni represent cheyyadaniki (tables, vectors, matrices)</li>
           <li>Relations ni ardham chesukodaniki (features madhya relation)</li>
@@ -741,246 +648,102 @@ function Transform2D(canvas){
           <li>Models train cheyyadaniki (weights updates, transformations)</li>
         </ol>
         <div class="callout analogy">
-          <span class="tag">Analogy</span>
-          <p>Oka toy box undi ani anuko. Single toy = <strong>scalar</strong>. Toys ni line lo arrange chesthe = <strong>vector</strong>. Toys ni rows and columns lo shelf lo arrange chesthe = <strong>matrix</strong>. That's the entire subject, in miniature — everything below is that idea, scaled up.</p>
+          <span class="tag">Kid analogy</span>
+          <p>Oka toy box undi ani anuko.<br/>Single toy = scalar<br/>Toy line lo arrange chesthe = vector<br/>Toys ni rows and columns lo shelf lo arrange chesthe = matrix</p>
         </div>
       </div>
     </section>
 
-    <section class="topic" id="s1" data-tier="x">
+    <section class="topic" id="s1">
       <div class="topic-head">
-        <span class="topic-num">§1</span>
+        <span class="topic-num">1)</span>
         <h2>Scalars, Vectors, Matrices</h2>
-        <span class="badge x">1D · Beginner</span>
       </div>
 
       <div class="card">
-        <h3>Scalar — oka single value</h3>
-        <p>No direction, magnitude matrame. <span class="mono">temperature = 32</span>, <span class="mono">house price = 75</span>.</p>
-      </div>
-
-      <div class="card">
-        <h3>Vector — magnitude + direction</h3>
-        <p>Order lo values list. Example: student marks vector <span class="mono">[85, 90, 78]</span>, or a 3D point <span class="mono">[2, 3, 4]</span>.</p>
-        <p>Vector ante numerical value ki <strong>magnitude</strong> (length/size) mariyu <strong>direction</strong> (e side ki point chestundo) rendu untayi.</p>
-        <div class="callout">
-          <span class="tag">Clarity</span>
-          <p>"45 km/hr" only magnitude kabatti idi scalar. "45 km/hr East direction" ante adhi vector concept (velocity type).</p>
-        </div>
-
-        <div class="formula">
-          <span class="cap">Magnitude — 2D vector</span>
-          |v| = √(x² + y²)
-        </div>
-        <div class="formula">
-          <span class="cap">Magnitude — n dimensions</span>
-          |v| = √(x₁² + x₂² + … + xₙ²)
-        </div>
-        <div class="formula">
-          <span class="cap">Worked example</span>
-          v = [3, 4]  ⇒  |v| = √(3² + 4²) = 5
-        </div>
-
-        <h4>Two vectors on the plane</h4>
-        <p>Consider <span class="mono">A = [1, 2]</span> and <span class="mono">B = [-3, 2]</span> — same idea, opposite x-direction.</p>
-        <figure class="diagram">
-          <div class="frame">
-            <svg viewBox="0 0 280 200" role="img" aria-label="Two vectors from the origin: A to (1,2) and B to (-3,2)">
-              <line x1="20" y1="172" x2="260" y2="172" stroke="currentColor" opacity="0.4" marker-end="url(#arrow-ink)"/>
-              <line x1="150" y1="188" x2="150" y2="14" stroke="currentColor" opacity="0.4" marker-end="url(#arrow-ink)"/>
-              <line x1="150" y1="172" x2="174" y2="124" stroke="var(--axis-z)" stroke-width="2.4" marker-end="url(#arrow-ink)" color="var(--axis-z)"/>
-              <text x="178" y="120" font-size="11" font-weight="700" fill="var(--axis-z)">A(1,2)</text>
-              <line x1="150" y1="172" x2="78" y2="124" stroke="var(--axis-x)" stroke-width="2.4" marker-end="url(#arrow-ink)" color="var(--axis-x)"/>
-              <text x="26" y="120" font-size="11" font-weight="700" fill="var(--axis-x)">B(-3,2)</text>
-            </svg>
-          </div>
-          <figcaption>|A| = √(1² + 2²) = √5 — the same magnitude formula, whatever direction the vector points.</figcaption>
-        </figure>
-
-        <h4>Decomposing a vector into î and ĵ</h4>
-        <p>Standard basis vectors: <span class="mono">î = (1,0)</span> points one unit along x, <span class="mono">ĵ = (0,1)</span> points one unit along y — both have magnitude 1. Any point is just a weighted sum of the two.</p>
-
-        <figure class="diagram">
-          <div class="frame">
-            <svg viewBox="0 0 300 210" role="img" aria-label="Point P at (3,3) shown as vector OP, decomposed into 3 units along the x-axis and 3 units along the y-axis">
-              <line x1="10" y1="190" x2="272" y2="190" stroke="currentColor" opacity="0.45" marker-end="url(#arrow-ink)"/>
-              <line x1="30" y1="205" x2="30" y2="18" stroke="currentColor" opacity="0.45" marker-end="url(#arrow-ink)"/>
-              <text x="278" y="194" font-size="12" fill="currentColor" opacity="0.6">x</text>
-              <text x="20" y="14" font-size="12" fill="currentColor" opacity="0.6">y</text>
-
-              <line x1="174" y1="190" x2="174" y2="46" stroke="var(--axis-x)" stroke-width="2" stroke-dasharray="4 4"/>
-              <line x1="30" y1="46" x2="174" y2="46" stroke="var(--axis-y)" stroke-width="2" stroke-dasharray="4 4"/>
-              <text x="164" y="205" font-size="11" fill="var(--axis-x)">3</text>
-              <text x="8" y="50" font-size="11" fill="var(--axis-y)">3</text>
-
-              <line x1="30" y1="190" x2="174" y2="46" stroke="var(--axis-z)" stroke-width="2.6" marker-end="url(#arrow-ink)" color="var(--axis-z)"/>
-              <circle cx="30" cy="190" r="3" fill="currentColor"/>
-              <text x="176" y="42" font-size="12.5" font-weight="700" fill="var(--axis-z)">P(3,3)</text>
-              <text x="90" y="182" font-size="11" fill="var(--axis-x-ink)">3î</text>
-              <text x="14" y="120" font-size="11" fill="var(--axis-y-ink)">3ĵ</text>
-            </svg>
-          </div>
-          <figcaption>OP = (3,3) = 3î + 3ĵ — x-part and y-part add tip-to-tail to build the vector.</figcaption>
-        </figure>
-
-        <div class="formula">
-          <span class="cap">Unit vector formula</span>
-          û = v / |v|  ·  for v=(3,3): |v| = √18 = 3√2, so û = (1/√2, 1/√2)
-        </div>
-
-        <figure class="diagram">
-          <div class="frame">
-            <svg viewBox="0 0 260 200" role="img" aria-label="A long vector to point P(3,3) and a short unit vector to point Q(0.71,0.71) pointing in the exact same direction">
-              <line x1="10" y1="180" x2="230" y2="180" stroke="currentColor" opacity="0.4" marker-end="url(#arrow-ink)"/>
-              <line x1="26" y1="192" x2="26" y2="16" stroke="currentColor" opacity="0.4" marker-end="url(#arrow-ink)"/>
-              <line x1="26" y1="180" x2="132" y2="72" stroke="var(--axis-z)" stroke-width="2.4" marker-end="url(#arrow-ink)" color="var(--axis-z)"/>
-              <text x="136" y="68" font-size="12" font-weight="700" fill="var(--axis-z)">P(3,3)</text>
-              <line x1="26" y1="180" x2="54" y2="152" stroke="var(--axis-x)" stroke-width="3" marker-end="url(#arrow-ink)" color="var(--axis-x)"/>
-              <text x="58" y="150" font-size="11" font-weight="700" fill="var(--axis-x)">Q(0.71,0.71) — û</text>
-            </svg>
-          </div>
-          <figcaption>O→P and O→Q point the same way; O→Q is scaled down to length exactly 1.</figcaption>
-        </figure>
-
-        <h4>Why unit vectors matter in ML</h4>
+        <h3>Scalar</h3>
+        <p>Oka single value.</p>
+        <p>Example:</p>
         <ul>
-          <li>Direction-only comparison — removes magnitude, keeps pure direction</li>
-          <li>Cosine similarity is built on normalized vectors</li>
-          <li>Normalization stabilizes training when feature scales vary wildly</li>
+          <li>temperature = 32</li>
+          <li>house price = 75</li>
         </ul>
-        <div class="formula">
-          <span class="cap">Two more quick examples</span>
-          v = (4,0)  ⇒  |v| = 4, û = (1,0) = î
-          v = (0,5)  ⇒  |v| = 5, û = (0,1) = ĵ
-        </div>
+      </div>
 
-        <h4>A vector is a displacement, not a position</h4>
-        <p>Same arrow ni slide chesina — starting point marina, ending point marina — <strong>direction and length same unte, adi same vector</strong>. Vector position kaadu, <em>change</em> ni represent chestundi.</p>
-
-        <figure class="diagram">
-          <div class="frame">
-            <svg viewBox="0 0 320 200" role="img" aria-label="Vector from O to P and a parallel, equal-length vector from A to B, both representing the same vector (3,3) at different positions">
-              <line x1="60" y1="176" x2="144" y2="92" stroke="var(--axis-z)" stroke-width="2.4" marker-end="url(#arrow-ink)" color="var(--axis-z)"/>
-              <circle cx="60" cy="176" r="3" fill="var(--axis-z)"/>
-              <text x="40" y="192" font-size="11" fill="currentColor" opacity="0.7">O(0,0)</text>
-              <text x="148" y="88" font-size="11" fill="var(--axis-z)" font-weight="700">P(3,3)</text>
-
-              <line x1="150" y1="150" x2="234" y2="66" stroke="var(--axis-y)" stroke-width="2.4" marker-end="url(#arrow-ink)" color="var(--axis-y)"/>
-              <circle cx="150" cy="150" r="3" fill="var(--axis-y)"/>
-              <text x="128" y="166" font-size="11" fill="currentColor" opacity="0.7">A(5,1)</text>
-              <text x="238" y="62" font-size="11" fill="var(--axis-y)" font-weight="700">B(8,4)</text>
-            </svg>
-          </div>
-          <figcaption>B − A = (8−5, 4−1) = (3,3) = P − O. Two different placements, mathematically the same vector.</figcaption>
-        </figure>
-
-        <h4>Same direction, different lines</h4>
-        <p>Parallel lines meaning — same slope/direction unna lines family. Center lo origin nundi velle line direction ni represent chestundi; vere parallel lines ante same direction but shifted positions.</p>
-        <figure class="diagram">
-          <div class="frame">
-            <svg viewBox="0 0 220 140" role="img" aria-label="Three parallel diagonal lines, all sharing the same direction but shifted to different positions">
-              <line x1="10" y1="130" x2="90" y2="10" stroke="var(--ink-faint)" stroke-width="1.6"/>
-              <line x1="70" y1="130" x2="150" y2="10" stroke="var(--axis-z)" stroke-width="2.2"/>
-              <line x1="130" y1="130" x2="210" y2="10" stroke="var(--ink-faint)" stroke-width="1.6"/>
-              <text x="152" y="9" font-size="9.5" fill="var(--axis-z-ink)">through origin</text>
-            </svg>
-          </div>
-          <figcaption>Same direction vector, shifted to different starting points — still one direction "class".</figcaption>
-        </figure>
-
-        <h4>Why this matters in ML</h4>
+      <div class="card">
+        <h3>Vector</h3>
+        <p>Order lo values list.</p>
+        <p>Example:</p>
         <ul>
-          <li><strong>Feature shift &amp; invariance</strong> — absolute location kanna relative differences important ani idea build avtundi</li>
-          <li><strong>Decision boundary intuition</strong> — classifier lo boundary line shift ayina slope same unte orientation same untundi</li>
-          <li><strong>Vector operations</strong> — add/subtract lo displacement concept direct ga use avtundi</li>
+          <li>student marks vector: <span class="mono">[85, 90, 78]</span></li>
+          <li>3D point: <span class="mono">[2, 3, 4]</span></li>
         </ul>
 
-        <div class="callout analogy">
-          <span class="tag">Analogy</span>
-          <p>Floor meeda oka arrow sticker undi ani anuko. Sticker ni side ki move chesina, arrow direction and length marakapothe, meaning same.</p>
-        </div>
-      </div>
+        <h4>Vector Detailed Explanation (Screenshot Add-on)</h4>
+        <p>Vector ante numerical value ki magnitude and direction rendu untayi.</p>
+        <p>Magnitude ante vector length/size. Direction ante vector e side ki point chestundo adi.</p>
+        <p>Simple definition:</p>
+        <ul>
+          <li>scalar -&gt; only magnitude</li>
+          <li>vector -&gt; magnitude + direction</li>
+        </ul>
+        <p>Important clarity:</p>
+        <ul>
+          <li>"45 km/hr" only magnitude kabatti idi scalar.</li>
+          <li>"45 km/hr East direction" ante adhi vector concept (velocity type).</li>
+        </ul>
+        <div class="formula">
+45 km/hr East  --------->
 
-      <div class="card">
-        <h3>Matrix — rows and columns of values</h3>
+Arrow length  -&gt; magnitude
+Arrow facing  -&gt; direction
+        </div>
+        <p>Magnitude formula (2D vector):</p>
+        <div class="formula">|v| = √(x² + y²)</div>
+        <p>General formula (n-dimension):</p>
+        <div class="formula">|v| = √(x₁² + x₂² + … + xₙ²)</div>
+        <p>Example 1:</p>
+        <div class="formula">v = [3,4] ⇒ |v| = √(3²+4²) = 5</div>
+        <p>Example 2 (speed intuition):</p>
+        <ul>
+          <li>45 km/hr East is vector-like velocity info (magnitude = 45, direction = East)</li>
+          <li>only "45 km/hr" direction lekunda unte scalar laga treat chestham</li>
+        </ul>
+
+        <h4>Data Science Example: Student Features as Vector</h4>
+        <p>Suppose student info:</p>
+        <ul>
+          <li>IQ = 90</li>
+          <li>StudyHours = 3</li>
+        </ul>
+        <p>Feature vector:</p>
+        <div class="formula">[90, 3]</div>
+        <p>Inko student:</p>
+        <div class="formula">[100, 3]</div>
+        <p>Possible target:</p>
+        <ul><li>Pass/Fail</li></ul>
+        <p>Meaning:</p>
+        <ul>
+          <li>input features vector form lo model ki velthai</li>
+          <li>model output scalar/class label istundi</li>
+        </ul>
+
+        <h4>Classification View (Screenshot Add-on)</h4>
+        <p>Features and output mapping:</p>
+        <ul>
+          <li>f1 = IQ</li>
+          <li>f2 = NoOfHours (study hours)</li>
+          <li>output = Pass/Fail</li>
+        </ul>
+        <p>Label encoding:</p>
+        <ul>
+          <li>Fail = 0</li>
+          <li>Pass = 1</li>
+        </ul>
+        <p>Sample labeled points:</p>
         <div class="tbl-wrap">
           <table>
-            <thead><tr><th>Area (sqft)</th><th class="num">Rooms</th><th class="num">Location Score</th><th class="num">Price (lakhs)</th></tr></thead>
-            <tbody>
-              <tr><td class="num">1000</td><td class="num">2</td><td class="num">7</td><td class="num">45</td></tr>
-              <tr><td class="num">1400</td><td class="num">3</td><td class="num">8</td><td class="num">62</td></tr>
-              <tr><td class="num">1800</td><td class="num">4</td><td class="num">9</td><td class="num">88</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p>First 3 columns input features, last column output target. Every row is a feature <em>vector</em>; the whole table is a <em>matrix</em>.</p>
-
-        <div class="callout analogy">
-          <span class="tag">Analogy</span>
-          <p>Data science kitchen laanti di. Ingredients list = vector. Full grocery table = matrix. Final dish taste score = scalar output.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="topic" id="s2" data-tier="x">
-      <div class="topic-head">
-        <span class="topic-num">§2</span>
-        <h2>Basic Operations</h2>
-        <span class="badge x">1D · Beginner</span>
-      </div>
-
-      <div class="card">
-        <h3>Vector Addition</h3>
-        <div class="formula">[1, 2, 3] + [4, 5, 6] = [5, 7, 9]</div>
-        <div class="callout analogy"><span class="tag">Analogy</span><p>Rendu chocolate bags lo chocolates count kalipinattu — same position ni add cheyyadam, that's it.</p></div>
-
-        <figure class="diagram">
-          <div class="frame">
-            <svg viewBox="0 0 260 190" role="img" aria-label="Vector A followed by vector B, placed tip to tail, resulting in vector A+B from the origin">
-              <line x1="20" y1="170" x2="130" y2="90" stroke="var(--axis-x)" stroke-width="2.4" marker-end="url(#arrow-ink)" color="var(--axis-x)"/>
-              <text x="70" y="118" font-size="11" fill="var(--axis-x)" font-weight="700">A</text>
-              <line x1="130" y1="90" x2="220" y2="40" stroke="var(--axis-y)" stroke-width="2.4" marker-end="url(#arrow-ink)" color="var(--axis-y)"/>
-              <text x="172" y="60" font-size="11" fill="var(--axis-y)" font-weight="700">B</text>
-              <line x1="20" y1="170" x2="220" y2="40" stroke="var(--axis-z)" stroke-width="2.6" stroke-dasharray="1 5" marker-end="url(#arrow-ink)" color="var(--axis-z)"/>
-              <text x="204" y="34" font-size="11" fill="var(--axis-z)" font-weight="700">A+B</text>
-            </svg>
-          </div>
-          <figcaption>Place B's tail at A's tip — the vector from the origin to B's new tip is the sum, A + B.</figcaption>
-        </figure>
-      </div>
-
-      <div class="card">
-        <h3>Dot Product</h3>
-        <div class="formula">[1,2,3] · [4,5,6] = (1×4) + (2×5) + (3×6) = 32</div>
-        <ul>
-          <li>Similarity check between two vectors</li>
-          <li>Prediction score calculation — this is how a model turns features into a number (see §8)</li>
-        </ul>
-      </div>
-
-      <div class="card">
-        <h3>Matrix Multiplication</h3>
-        <p>Idi transformation and model calculations ki base.</p>
-        <div class="formula">
-          A = [[1,2],[3,4]] &nbsp;·&nbsp; B = [[5,6],[7,8]] &nbsp;⇒&nbsp; A×B = [[19,22],[43,50]]
-        </div>
-      </div>
-    </section>
-
-    <section class="topic" id="s3" data-tier="x">
-      <div class="topic-head">
-        <span class="topic-num">§3</span>
-        <h2>Vectors in Data Science</h2>
-        <span class="badge x">1D · Beginner</span>
-      </div>
-
-      <div class="card">
-        <h3>A student's features, as a vector</h3>
-        <p>IQ = 90, StudyHours = 3 → feature vector <span class="mono">[90, 3]</span>. Inko student: <span class="mono">[100, 3]</span>. Input features vector form lo model ki velthai; model output scalar/class label istundi.</p>
-
-        <div class="tbl-wrap">
-          <table>
-            <thead><tr><th class="num">IQ (f1)</th><th class="num">Hours (f2)</th><th>Output</th></tr></thead>
+            <thead><tr><th class="num">f1 (IQ)</th><th class="num">f2 (Hours)</th><th>Output Label</th></tr></thead>
             <tbody>
               <tr class="fail"><td class="num">90</td><td class="num">2</td><td>Fail (0)</td></tr>
               <tr class="pass"><td class="num">100</td><td class="num">3</td><td>Pass (1)</td></tr>
@@ -989,26 +752,28 @@ function Transform2D(canvas){
             </tbody>
           </table>
         </div>
-
+        <p>Model flow:</p>
         <figure class="diagram">
           <div class="frame">
-            <svg viewBox="0 0 300 110" role="img" aria-label="Flow diagram: f1 IQ and f2 hours feed into a model, producing Pass or Fail output">
+            <svg viewBox="0 0 300 110" role="img" aria-label="Flow diagram: f1 IQ and f2 NoOfHours feed into a model, producing Pass or Fail output">
               <rect x="10" y="14" width="70" height="34" rx="7" fill="none" stroke="var(--axis-x)" stroke-width="1.6"/>
               <text x="45" y="35" font-size="10.5" text-anchor="middle" fill="var(--axis-x-ink)">f1: IQ</text>
               <rect x="10" y="62" width="70" height="34" rx="7" fill="none" stroke="var(--axis-x)" stroke-width="1.6"/>
-              <text x="45" y="83" font-size="10.5" text-anchor="middle" fill="var(--axis-x-ink)">f2: Hours</text>
+              <text x="45" y="83" font-size="10.5" text-anchor="middle" fill="var(--axis-x-ink)">f2: NoOfHours</text>
               <line x1="80" y1="31" x2="118" y2="50" stroke="currentColor" opacity="0.6" marker-end="url(#arrow-ink)"/>
               <line x1="80" y1="79" x2="118" y2="58" stroke="currentColor" opacity="0.6" marker-end="url(#arrow-ink)"/>
               <rect x="120" y="36" width="70" height="34" rx="7" fill="none" stroke="var(--axis-y)" stroke-width="1.8"/>
               <text x="155" y="57" font-size="10.5" text-anchor="middle" fill="var(--axis-y-ink)">Model</text>
               <line x1="190" y1="53" x2="228" y2="53" stroke="currentColor" opacity="0.6" marker-end="url(#arrow-ink)"/>
               <rect x="230" y="36" width="62" height="34" rx="7" fill="none" stroke="var(--axis-z)" stroke-width="1.8"/>
-              <text x="261" y="57" font-size="10" text-anchor="middle" fill="var(--axis-z-ink)">Pass/Fail</text>
+              <text x="261" y="53" font-size="10" text-anchor="middle" fill="var(--axis-z-ink)">Output:</text>
+              <text x="261" y="65" font-size="10" text-anchor="middle" fill="var(--axis-z-ink)">Pass or Fail</text>
             </svg>
           </div>
-          <figcaption>Two features go in, the model outputs one label.</figcaption>
+          <figcaption>f1, f2 → Model → Output: Pass or Fail</figcaption>
         </figure>
 
+        <p>2D points with labels:</p>
         <figure class="diagram">
           <div class="frame">
             <svg viewBox="0 0 320 220" role="img" aria-label="Scatter plot of IQ versus study hours, with fail points lower-left, pass points upper-right, and a diagonal decision boundary separating the two classes">
@@ -1016,74 +781,54 @@ function Transform2D(canvas){
               <line x1="30" y1="205" x2="30" y2="20" stroke="currentColor" opacity="0.4" marker-end="url(#arrow-ink)"/>
               <text x="270" y="205" font-size="11" fill="currentColor" opacity="0.6">IQ (f1)</text>
               <text x="6" y="18" font-size="11" fill="currentColor" opacity="0.6">Hours (f2)</text>
-
               <line x1="55" y1="182" x2="272" y2="52" stroke="var(--ink-faint)" stroke-width="1.6" stroke-dasharray="5 4"/>
-              <text x="200" y="60" font-size="10.5" fill="var(--ink-faint)">decision boundary</text>
-
+              <text x="200" y="60" font-size="10.5" fill="var(--ink-faint)">boundary line</text>
               <circle cx="134" cy="137" r="5" fill="var(--axis-x)"/><text x="106" y="128" font-size="10.5" fill="var(--axis-x-ink)">F(90,2)</text>
               <circle cx="82" cy="163" r="5" fill="var(--axis-x)"/><text x="40" y="180" font-size="10.5" fill="var(--axis-x-ink)">F(85,1.5)</text>
               <circle cx="238" cy="83" r="5" fill="var(--axis-y)"/><text x="212" y="74" font-size="10.5" fill="var(--axis-y-ink)">P(100,3)</text>
               <circle cx="186" cy="110" r="5" fill="var(--axis-y)"/><text x="158" y="101" font-size="10.5" fill="var(--axis-y-ink)">P(95,2.5)</text>
             </svg>
           </div>
-          <figcaption>One side of the boundary is mostly Fail, the other mostly Pass — training a model means placing this line well.</figcaption>
+          <figcaption>IQ (f1) on the x-axis, Hours (f2) on the y-axis — Pass/Fail points and the decision boundary.</figcaption>
         </figure>
-      </div>
-
-      <div class="card">
-        <h3>Vectors can hold anything in order</h3>
-        <p>Person weight, 4 days: <span class="mono">[70, 72, 75, 73]</span> — a 4-dimension vector. Real datasets go far beyond 2 or 3 numbers per row; the math doesn't care how many.</p>
-      </div>
-
-      <div class="card">
-        <h3>Where scalars / vectors / matrices show up in DS</h3>
+        <p>Simple meaning:</p>
         <ul>
-          <li><strong>Feature representation</strong> — one row of values (Area, Rooms, LocationScore) → vector; the full dataset → matrix</li>
-          <li><strong>Target prediction</strong> — Price, Sales, Rating are usually a scalar output</li>
-          <li><strong>Similarity</strong> — compare two users' interest vectors via dot product / cosine similarity</li>
-          <li><strong>Recommendation systems</strong> — user-feature matrix × item-feature matrix</li>
-          <li><strong>Images &amp; text</strong> — pixel grids are matrices, embeddings are high-dimension vectors</li>
-          <li><strong>Scaling / normalization</strong> — puts mismatched scales (temperature, salary, age) on equal footing</li>
+          <li>boundary line ki oka side mostly Fail points</li>
+          <li>inko side mostly Pass points</li>
+          <li>model goal: ee line ni correct ga place cheyyadam</li>
         </ul>
-        <div class="formula">
-          <span class="cap">Mini example</span>
-          x = [Area, Rooms, LocationScore] = [1200, 2, 7]
-          w = [0.03, 5, 2]
-          prediction score = w · x + b
-        </div>
-      </div>
-    </section>
 
-    <section class="topic" id="s4" data-tier="y">
-      <div class="topic-head">
-        <span class="topic-num">§4</span>
-        <h2>From 2D to 3D</h2>
-        <span class="badge y">2D · Intermediate</span>
-      </div>
+        <h4>Vector Over Time Example (Higher Dimension)</h4>
+        <p>Person weight 4 days data:</p>
+        <div class="formula">[70, 72, 75, 73]</div>
+        <p>Idi 4-dimension vector example.</p>
 
-      <div class="card">
-        <h3>A single house, as a point</h3>
-        <p>One house, two features (Area, Price) → a 2D point: <span class="mono">(1200, 45)</span>.</p>
+        <h4>2D Vector Coordinate Example</h4>
+        <p>A and B vectors ni consider cheddam:</p>
+        <div class="formula">A = [1, 2],  B = [-3, 2]</div>
         <figure class="diagram">
           <div class="frame">
-            <svg viewBox="0 0 260 140" role="img" aria-label="A single point plotted on Area versus Price axes">
-              <line x1="20" y1="120" x2="240" y2="120" stroke="currentColor" opacity="0.4" marker-end="url(#arrow-ink)"/>
-              <line x1="20" y1="130" x2="20" y2="14" stroke="currentColor" opacity="0.4" marker-end="url(#arrow-ink)"/>
-              <text x="196" y="115" font-size="10" fill="currentColor" opacity="0.6">Price</text>
-              <text x="2" y="12" font-size="10" fill="currentColor" opacity="0.6">Area</text>
-              <circle cx="150" cy="55" r="5" fill="var(--axis-z)"/>
-              <text x="158" y="52" font-size="11" font-weight="700" fill="var(--axis-z)">(1200, 45)</text>
+            <svg viewBox="0 0 280 200" role="img" aria-label="Two vectors from the origin: A to (1,2) and B to (-3,2)">
+              <line x1="20" y1="172" x2="260" y2="172" stroke="currentColor" opacity="0.4" marker-end="url(#arrow-ink)"/>
+              <line x1="150" y1="188" x2="150" y2="14" stroke="currentColor" opacity="0.4" marker-end="url(#arrow-ink)"/>
+              <line x1="150" y1="172" x2="174" y2="124" stroke="var(--axis-z)" stroke-width="2.4" marker-end="url(#arrow-ink)" color="var(--axis-z)"/>
+              <text x="178" y="120" font-size="11" font-weight="700" fill="var(--axis-z)">D(1,2)</text>
+              <line x1="150" y1="172" x2="78" y2="124" stroke="var(--axis-x)" stroke-width="2.4" marker-end="url(#arrow-ink)" color="var(--axis-x)"/>
+              <text x="26" y="120" font-size="11" font-weight="700" fill="var(--axis-x)">B(-3,2)</text>
+              <text x="154" y="184" font-size="10.5" fill="currentColor" opacity="0.7">O(0,0)</text>
             </svg>
           </div>
-          <figcaption>Two numbers, one point — a 2D vector.</figcaption>
+          <figcaption>Vector [1,2] endpoint D, and B(-3,2) — same 2D plane, opposite x-direction.</figcaption>
         </figure>
-        <p>Add a third feature, NoOfRooms, and the same house becomes a 3D point: <span class="mono">(1200, 2, 45)</span> — exactly the vector the widget below plots.</p>
-        <div class="callout analogy"><span class="tag">Analogy</span><p>2D ante map lo street matrame choosinatlu. 3D ante same street + building floors info kuda add ayinatlu.</p></div>
-      </div>
+        <p>A vector magnitude:</p>
+        <div class="formula">|A| = √(1² + 2²) = √5</div>
 
-      <div class="card">
-        <h3>One more feature, one more axis</h3>
-        <p>A 2D vector is <span class="mono">[x, y]</span>. Add a third number and the point lifts off the page into space: <span class="mono">C = [x, y, z]</span>, e.g. <span class="mono">C = (2, 4, 2)</span>. Drag the panel below to rotate it — this is the same î/ĵ decomposition from §1, just with a third basis vector k̂ joining in.</p>
+        <h4>3D Vector Coordinate Example</h4>
+        <p>General 3D vector:</p>
+        <div class="formula">C = [x, y, z]</div>
+        <p>Example point:</p>
+        <div class="formula">C = (2, 4, 2)</div>
+        <p>O = (0,0,0), point C(2,4,2) exists in 3D space. Drag the panel below to rotate it and see the projection for yourself:</p>
 
         <div class="viewport">
           <div class="vp-head">
@@ -1106,26 +851,249 @@ function Transform2D(canvas){
           p.items.push({type:'vector', to:[0,0,1], color:getComputedStyle(document.documentElement).getPropertyValue('--axis-z'), label:'k̂', width:1.6});
           p.items.push({type:'point', p:[2,4,2], color:getComputedStyle(document.documentElement).getPropertyValue('--axis-z'), r:5});
           document.getElementById('plot3dAReset').addEventListener('click', function(){ p.rotY=0.72; p.rotX=-0.38; p.zoom=1; p.draw(); });
-          document.addEventListener('la-theme-change', function(){ p.draw(); });
           new MutationObserver(function(){p.draw();}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
         })();
         </script>
 
-        <p style="margin-top:16px;">Same idea keeps stacking: <span class="mono">2D → (x1,x2)</span>, <span class="mono">3D → (x1,x2,x3)</span>, <span class="mono">nD → (x1,…,xn)</span>. Human eye 3D varaku matrame draw cheyagalam, kani the math doesn't care — a 50-feature row is just a point in 50-dimension space.</p>
-        <div class="callout analogy"><span class="tag">Analogy</span><p>2 features ante 2 color pencils tho drawing. 10 features ante 10 color pencils tho detail drawing. Colors ekkuva aina, drawing rules maravu — ade linear algebra idea.</p></div>
-      </div>
-    </section>
+        <h4>Unit Vector and Basis Vectors (i-hat, j-hat) — Detailed</h4>
+        <p><strong>1) Basis vectors ante enti?</strong></p>
+        <p>2D lo standard basis vectors:</p>
+        <div class="formula">î = (1,0),  ĵ = (0,1)</div>
+        <p>Meaning:</p>
+        <ul>
+          <li>î x-axis direction lo 1 unit length</li>
+          <li>ĵ y-axis direction lo 1 unit length</li>
+          <li>rendu unit vectors magnitude 1 untundi</li>
+        </ul>
 
-    <section class="topic" id="s5" data-tier="y">
-      <div class="topic-head">
-        <span class="topic-num">§5</span>
-        <h2>Linear Transformations</h2>
-        <span class="badge y">2D · Intermediate</span>
+        <p><strong>2) Point (3,3) ni vector ga ela rayali?</strong></p>
+        <p>If point P=(3,3), origin nundi P ki vellina arrow vector:</p>
+        <div class="formula">OP = (3,3) = 3î + 3ĵ</div>
+        <p>Ikkada: x direction lo 3 units, y direction lo 3 units.</p>
+        <figure class="diagram">
+          <div class="frame">
+            <svg viewBox="0 0 300 210" role="img" aria-label="Point P at (3,3) shown as vector OP, decomposed into 3 units along the x-axis and 3 units along the y-axis">
+              <line x1="10" y1="190" x2="272" y2="190" stroke="currentColor" opacity="0.45" marker-end="url(#arrow-ink)"/>
+              <line x1="30" y1="205" x2="30" y2="18" stroke="currentColor" opacity="0.45" marker-end="url(#arrow-ink)"/>
+              <text x="278" y="194" font-size="12" fill="currentColor" opacity="0.6">x</text>
+              <text x="20" y="14" font-size="12" fill="currentColor" opacity="0.6">y</text>
+              <line x1="174" y1="190" x2="174" y2="46" stroke="var(--axis-x)" stroke-width="2" stroke-dasharray="4 4"/>
+              <line x1="30" y1="46" x2="174" y2="46" stroke="var(--axis-y)" stroke-width="2" stroke-dasharray="4 4"/>
+              <text x="164" y="205" font-size="11" fill="var(--axis-x)">3</text>
+              <text x="8" y="50" font-size="11" fill="var(--axis-y)">3</text>
+              <line x1="30" y1="190" x2="174" y2="46" stroke="var(--axis-z)" stroke-width="2.6" marker-end="url(#arrow-ink)" color="var(--axis-z)"/>
+              <circle cx="30" cy="190" r="3" fill="currentColor"/>
+              <text x="176" y="42" font-size="12.5" font-weight="700" fill="var(--axis-z)">P(3,3)</text>
+              <text x="90" y="182" font-size="11" fill="var(--axis-x-ink)">3î</text>
+              <text x="14" y="120" font-size="11" fill="var(--axis-y-ink)">3ĵ</text>
+            </svg>
+          </div>
+          <figcaption>OP = (3,3) = 3î + 3ĵ — x-part and y-part add tip-to-tail to build the vector.</figcaption>
+        </figure>
+
+        <p><strong>3) Magnitude of vector (3,3)</strong></p>
+        <div class="formula">|OP| = √(3² + 3²) = √18 = 3√2</div>
+        <p>Meaning: magnitude ante arrow total length — coordinates kaadu, overall distance from origin.</p>
+
+        <p><strong>4) Unit vector in same direction</strong></p>
+        <div class="formula">û = v / |v|</div>
+        <p>For v=(3,3):</p>
+        <div class="formula">û = (3,3) / 3√2 = (1/√2, 1/√2)</div>
+        <p>Check magnitude:</p>
+        <div class="formula">|û| = √((1/√2)² + (1/√2)²) = 1</div>
+
+        <p><strong>5) Graph: original vector vs unit vector</strong></p>
+        <figure class="diagram">
+          <div class="frame">
+            <svg viewBox="0 0 260 200" role="img" aria-label="A long vector to point P(3,3) and a short unit vector to point Q(0.707,0.707) pointing in the exact same direction">
+              <line x1="10" y1="180" x2="230" y2="180" stroke="currentColor" opacity="0.4" marker-end="url(#arrow-ink)"/>
+              <line x1="26" y1="192" x2="26" y2="16" stroke="currentColor" opacity="0.4" marker-end="url(#arrow-ink)"/>
+              <line x1="26" y1="180" x2="132" y2="72" stroke="var(--axis-z)" stroke-width="2.4" marker-end="url(#arrow-ink)" color="var(--axis-z)"/>
+              <text x="136" y="68" font-size="12" font-weight="700" fill="var(--axis-z)">P(3,3) — long vector</text>
+              <line x1="26" y1="180" x2="54" y2="152" stroke="var(--axis-x)" stroke-width="3" marker-end="url(#arrow-ink)" color="var(--axis-x)"/>
+              <text x="58" y="150" font-size="11" font-weight="700" fill="var(--axis-x)">Q(0.707,0.707) — unit vector endpoint</text>
+            </svg>
+          </div>
+          <figcaption>Note: O→P and O→Q same direction lo untayi, kani O→Q length exactly 1.</figcaption>
+        </figure>
+
+        <p><strong>6) Why unit vector useful in ML/Data Science?</strong></p>
+        <ol>
+          <li>Direction-only comparison: magnitude effect remove chesi pure direction compare cheyyachu</li>
+          <li>Cosine similarity base: normalized vectors use chesthe angle-based similarity easy avtundi</li>
+          <li>Stable training intuition: very large feature scales impact ni tagginchadaniki normalization help chestundi</li>
+        </ol>
+
+        <p><strong>7) One More Example (quick)</strong></p>
+        <p>If v=(4,0):</p>
+        <div class="formula">|v|=4,  v̂=(1,0)=î</div>
+        <p>If v=(0,5):</p>
+        <div class="formula">|v|=5,  v̂=(0,1)=ĵ</div>
+        <p>Ivi screenshot lo mention chesina "unit vector towards x and y axis" concept ki exact examples.</p>
+
+        <h4>Property: Free Vector or Translation Invariance</h4>
+        <p>Mee screenshot lo main property idi:</p>
+        <ul>
+          <li>vector ni parallel ga slide chesina, vector value change avvadu</li>
+          <li>as long as direction and length same unte, adi same vector</li>
+        </ul>
+        <p>Simple ga: starting point change avvachu, ending point kuda shift avvachu, kani delta x and delta y same unte vector same.</p>
+
+        <p><strong>What it means with (3,3)</strong></p>
+        <p>Suppose one vector:</p>
+        <div class="formula">v=(3,3)</div>
+        <p>Idi origin nundi draw chesthe O(0,0) -&gt; P(3,3). Ippudu same arrow ni inko place ki slide chesi A(5,1) nundi draw chesthe endpoint B(8,4). Endukante:</p>
+        <div class="formula">B-A=(8-5,4-1)=(3,3)=v</div>
+        <p>So O-&gt;P and A-&gt;B geometric ga different places lo unna, vector math lo same vector.</p>
+        <figure class="diagram">
+          <div class="frame">
+            <svg viewBox="0 0 320 200" role="img" aria-label="Vector from O to P and a parallel, equal-length vector from A to B, both representing the same vector (3,3) at different positions">
+              <line x1="60" y1="176" x2="144" y2="92" stroke="var(--axis-z)" stroke-width="2.4" marker-end="url(#arrow-ink)" color="var(--axis-z)"/>
+              <circle cx="60" cy="176" r="3" fill="var(--axis-z)"/>
+              <text x="40" y="192" font-size="11" fill="currentColor" opacity="0.7">O(0,0)</text>
+              <text x="148" y="88" font-size="11" fill="var(--axis-z)" font-weight="700">P(3,3)</text>
+              <line x1="150" y1="150" x2="234" y2="66" stroke="var(--axis-y)" stroke-width="2.4" marker-end="url(#arrow-ink)" color="var(--axis-y)"/>
+              <circle cx="150" cy="150" r="3" fill="var(--axis-y)"/>
+              <text x="128" y="166" font-size="11" fill="currentColor" opacity="0.7">A(5,1)</text>
+              <text x="238" y="62" font-size="11" fill="var(--axis-y)" font-weight="700">B(8,4)</text>
+            </svg>
+          </div>
+          <figcaption>O→P = (3,3), A→B = (3,3) — two different placements, same vector.</figcaption>
+        </figure>
+        <p>Conclusion: vector "position" kaadu, vector "displacement" (change) represent chestundi.</p>
+
+        <p><strong>Parallel lines picture meaning</strong></p>
+        <p>Mee right-side graph lo unna parallel lines meaning:</p>
+        <ul>
+          <li>same slope/direction unna lines family</li>
+          <li>center lo origin nundi velle line direction ni represent chestundi</li>
+          <li>vere parallel lines ante same direction but shifted positions</li>
+        </ul>
+        <figure class="diagram">
+          <div class="frame">
+            <svg viewBox="0 0 220 140" role="img" aria-label="Three parallel diagonal lines, all sharing the same direction but shifted to different positions">
+              <line x1="10" y1="130" x2="90" y2="10" stroke="var(--ink-faint)" stroke-width="1.6"/>
+              <line x1="70" y1="130" x2="150" y2="10" stroke="var(--axis-z)" stroke-width="2.2"/>
+              <line x1="130" y1="130" x2="210" y2="10" stroke="var(--ink-faint)" stroke-width="1.6"/>
+            </svg>
+          </div>
+          <figcaption>Parallel family: same direction. Middle line origin ni cross chesthe, dani direction vector ni base ga tiskoni parallel ga shift ayina anni lines same direction class lo untayi.</figcaption>
+        </figure>
+
+        <p><strong>ML/Data Science connection</strong></p>
+        <ol>
+          <li>Feature shift and invariance intuition: absolute location kanna relative differences important ani idea build avtundi</li>
+          <li>Decision boundary intuition: classifier lo boundary line shift ayina slope same unte orientation same untundi</li>
+          <li>Vector operations: add/subtract lo displacement concept direct ga use avtundi</li>
+        </ol>
+        <div class="callout analogy">
+          <span class="tag">Kid analogy</span>
+          <p>Floor meeda oka arrow sticker undi ani anuko. Adhe sticker ni side ki move chesina arrow direction and length marakapothe, meaning same.</p>
+        </div>
       </div>
 
       <div class="card">
-        <h3>Shape ni move/rotate/scale — but lines stay straight</h3>
-        <p>A transformation ante shape ni move/rotate/scale cheyyadam, kani straight lines ni straight lines gane unchadam. Every transformation here is <em>just a matrix</em> — î and ĵ get sent somewhere new, and every other point follows along as a weighted mix of the two.</p>
+        <h3>Matrix</h3>
+        <p>Rows and columns lo values table.</p>
+        <p>Example:</p>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Area (sqft)</th><th class="num">Rooms</th><th class="num">LocationScore</th><th class="num">Price (lakhs)</th></tr></thead>
+            <tbody>
+              <tr><td class="num">1000</td><td class="num">2</td><td class="num">7</td><td class="num">45</td></tr>
+              <tr><td class="num">1400</td><td class="num">3</td><td class="num">8</td><td class="num">62</td></tr>
+              <tr><td class="num">1800</td><td class="num">4</td><td class="num">9</td><td class="num">88</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Ikkada first 3 columns input features, last column output target.</p>
+      </div>
+
+      <div class="card">
+        <h3>Applications in Data Science</h3>
+        <p>Scalars, vectors, matrices data science lo direct ga use avutayi.</p>
+        <ol>
+          <li>Feature representation: Oka row lo unna feature values (Area, Rooms, LocationScore) -&gt; vector. Full dataset rows+columns -&gt; matrix</li>
+          <li>Target prediction: Price, Sales, Rating laanti output mostly scalar value</li>
+          <li>Similarity check: User A interests vector and User B interests vector compare cheyyadaniki dot product or cosine similarity use chestham</li>
+          <li>Recommendation systems: user-feature matrix and item-feature matrix use chesi best recommendations istaru</li>
+          <li>Image and text data: image pixel grid ni matrix ga represent chestham; text embedding ni high-dimension vector ga represent chestham</li>
+          <li>Feature scaling and normalization: temperature, salary, age laanti different scale values ni model ki easy ga nerpinchadaniki normalize chestham</li>
+        </ol>
+        <p>Mini example:</p>
+        <div class="formula">
+Input vector x = [Area, Rooms, LocationScore] = [1200, 2, 7]
+Weight vector w = [0.03, 5, 2]
+
+Prediction score = w . x + b
+        </div>
+        <div class="callout analogy">
+          <span class="tag">Kid analogy</span>
+          <p>Data science kitchen laanti di. Ingredients list = vector. Full grocery table = matrix. Final dish taste score = scalar output.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="topic" id="s2">
+      <div class="topic-head">
+        <span class="topic-num">2)</span>
+        <h2>Basic Operations</h2>
+      </div>
+
+      <div class="card">
+        <h3>Vector Addition</h3>
+        <div class="formula">[1, 2, 3] + [4, 5, 6] = [5, 7, 9]</div>
+        <p>Analogy: rendu chocolate bags lo chocolates count kalipinattu.</p>
+        <figure class="diagram">
+          <div class="frame">
+            <svg viewBox="0 0 260 190" role="img" aria-label="Vector A followed by vector B, placed tip to tail, resulting in vector A+B from the origin">
+              <line x1="20" y1="170" x2="130" y2="90" stroke="var(--axis-x)" stroke-width="2.4" marker-end="url(#arrow-ink)" color="var(--axis-x)"/>
+              <text x="70" y="118" font-size="11" fill="var(--axis-x)" font-weight="700">A</text>
+              <line x1="130" y1="90" x2="220" y2="40" stroke="var(--axis-y)" stroke-width="2.4" marker-end="url(#arrow-ink)" color="var(--axis-y)"/>
+              <text x="172" y="60" font-size="11" fill="var(--axis-y)" font-weight="700">B</text>
+              <line x1="20" y1="170" x2="220" y2="40" stroke="var(--axis-z)" stroke-width="2.6" stroke-dasharray="1 5" marker-end="url(#arrow-ink)" color="var(--axis-z)"/>
+              <text x="204" y="34" font-size="11" fill="var(--axis-z)" font-weight="700">A+B</text>
+            </svg>
+          </div>
+          <figcaption>Place B's tail at A's tip — the vector from the origin to B's new tip is the sum, A + B.</figcaption>
+        </figure>
+      </div>
+
+      <div class="card">
+        <h3>Dot Product</h3>
+        <div class="formula">[1, 2, 3] . [4, 5, 6] = (1x4) + (2x5) + (3x6) = 32</div>
+        <p>Dot product use:</p>
+        <ul>
+          <li>similarity check</li>
+          <li>prediction score calculate cheyyadam</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>Matrix Multiplication</h3>
+        <p>Idi transformation and model calculations ki base.</p>
+        <p>If</p>
+        <div class="formula">A = [[1, 2], [3, 4]]</div>
+        <div class="formula">B = [[5, 6], [7, 8]]</div>
+        <p>then</p>
+        <div class="formula">A x B = [[19, 22], [43, 50]]</div>
+      </div>
+    </section>
+
+    <section class="topic" id="s3">
+      <div class="topic-head">
+        <span class="topic-num">3)</span>
+        <h2>Linear Transformation (Easy Meaning)</h2>
+      </div>
+
+      <div class="card">
+        <p>Transformation ante shape ni move/rotate/scale cheyyadam, kani straight lines ni straight lines gane unchadam.</p>
+        <p>Examples:</p>
+        <ul>
+          <li>scaling</li>
+          <li>rotation</li>
+          <li>shearing</li>
+        </ul>
 
         <div class="viewport">
           <div class="vp-head">
@@ -1166,228 +1134,84 @@ function Transform2D(canvas){
         })();
         </script>
 
-        <h4>Try it</h4>
-        <ul>
-          <li><strong>Scale</strong> stretches along the axes — î and ĵ keep pointing the same way, just longer/shorter</li>
-          <li><strong>Rotate 40°</strong> spins everything — no direction survives unchanged</li>
-          <li><strong>Shear</strong> slides one axis sideways — the x-axis itself doesn't move</li>
-          <li><strong>Reflect</strong> flips the y-axis — a mirror</li>
-        </ul>
-        <div class="callout analogy"><span class="tag">Analogy</span><p>Paper meeda square draw chesi stretch chesthe rectangle avtundi. Adi transformation.</p></div>
+        <div class="callout analogy">
+          <span class="tag">Kid analogy</span>
+          <p>Paper meeda square draw chesi stretch chesthe rectangle avtundi. Adi transformation.</p>
+        </div>
       </div>
     </section>
 
-    <section class="topic" id="s6" data-tier="y">
+    <section class="topic" id="s4">
       <div class="topic-head">
-        <span class="topic-num">§6</span>
-        <h2>Covariance &amp; Correlation</h2>
-        <span class="badge y">2D · Intermediate</span>
+        <span class="topic-num">4)</span>
+        <h2>Eigen Value and Eigen Vector (Simple)</h2>
       </div>
+
       <div class="card">
-        <p><strong>Covariance</strong> — x, y same direction lo move avutunnaya leka opposite direction lo move avutunnaya ani cheptundi. <strong>Correlation</strong> — covariance idea ne scale chesi −1 nunchi +1 range lo istundi.</p>
+        <p>Konni directions untayi, transformation apply chesina direction maradu, size matrame marutundi.</p>
         <ul>
-          <li>Correlation <strong>+1</strong> ki daggara unte strong positive relation</li>
-          <li>Correlation <strong>−1</strong> ki daggara unte strong negative relation</li>
-          <li>Correlation <strong>0</strong> daggara unte clear linear relation ledu</li>
+          <li>direction marakunda unte adi eigen vector</li>
+          <li>size entha marindo adi eigen value</li>
         </ul>
-
-        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:14px; margin:16px 0;">
-          <figure class="diagram" style="margin:0;">
-            <div class="frame">
-              <svg viewBox="0 0 150 120" role="img" aria-label="Scatter plot trending upward, showing positive correlation">
-                <line x1="14" y1="104" x2="140" y2="104" stroke="currentColor" opacity="0.35"/>
-                <line x1="14" y1="104" x2="14" y2="12" stroke="currentColor" opacity="0.35"/>
-                <circle cx="30" cy="94" r="4" fill="var(--axis-y)"/><circle cx="55" cy="80" r="4" fill="var(--axis-y)"/>
-                <circle cx="80" cy="60" r="4" fill="var(--axis-y)"/><circle cx="105" cy="42" r="4" fill="var(--axis-y)"/>
-                <circle cx="125" cy="26" r="4" fill="var(--axis-y)"/>
-              </svg>
-            </div>
-            <figcaption>Positive — x↑ ⇒ y↑</figcaption>
-          </figure>
-          <figure class="diagram" style="margin:0;">
-            <div class="frame">
-              <svg viewBox="0 0 150 120" role="img" aria-label="Scatter plot trending downward, showing negative correlation">
-                <line x1="14" y1="104" x2="140" y2="104" stroke="currentColor" opacity="0.35"/>
-                <line x1="14" y1="104" x2="14" y2="12" stroke="currentColor" opacity="0.35"/>
-                <circle cx="30" cy="26" r="4" fill="var(--axis-x)"/><circle cx="55" cy="42" r="4" fill="var(--axis-x)"/>
-                <circle cx="80" cy="60" r="4" fill="var(--axis-x)"/><circle cx="105" cy="80" r="4" fill="var(--axis-x)"/>
-                <circle cx="125" cy="94" r="4" fill="var(--axis-x)"/>
-              </svg>
-            </div>
-            <figcaption>Negative — x↑ ⇒ y↓</figcaption>
-          </figure>
-          <figure class="diagram" style="margin:0;">
-            <div class="frame">
-              <svg viewBox="0 0 150 120" role="img" aria-label="Scatter plot with no clear trend, showing weak or no correlation">
-                <line x1="14" y1="104" x2="140" y2="104" stroke="currentColor" opacity="0.35"/>
-                <line x1="14" y1="104" x2="14" y2="12" stroke="currentColor" opacity="0.35"/>
-                <circle cx="28" cy="40" r="4" fill="var(--ink-faint)"/><circle cx="60" cy="90" r="4" fill="var(--ink-faint)"/>
-                <circle cx="82" cy="30" r="4" fill="var(--ink-faint)"/><circle cx="108" cy="70" r="4" fill="var(--ink-faint)"/>
-                <circle cx="128" cy="50" r="4" fill="var(--ink-faint)"/>
-              </svg>
-            </div>
-            <figcaption>Weak — no clear line</figcaption>
-          </figure>
+        <div class="callout analogy">
+          <span class="tag">Analogy</span>
+          <p>Rubber sheet ni stretch chesthunappudu konni arrows same direction lo untayi, length matrame perigedi/taggedi.</p>
         </div>
-
-        <div class="tbl-wrap">
-          <table>
-            <thead><tr><th>X movement</th><th>Y movement</th><th>Meaning</th></tr></thead>
-            <tbody>
-              <tr><td>X up</td><td>Y up</td><td>positive relation</td></tr>
-              <tr><td>X up</td><td>Y down</td><td>negative relation</td></tr>
-              <tr><td>X down</td><td>Y up</td><td>negative relation</td></tr>
-              <tr><td>random</td><td>random</td><td>weak relation</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="callout analogy"><span class="tag">Analogy</span><p>Ice cream sales (x) and temperature (y): usually rendu kalisi perugutayi → positive. Rain ekkuva ayite playground kids count taggipotundi → negative.</p></div>
+        <p>Use cases:</p>
+        <ul>
+          <li>PCA (dimensionality reduction)</li>
+          <li>image compression</li>
+          <li>recommendation systems</li>
+        </ul>
+        <p>The <a href="#s3" style="color:var(--axis-z); text-decoration:underline;">interactive matrix panel in section 3</a> has an eigenvector toggle — flip it on, try <strong>Scale</strong> (both axes are eigenvectors) vs <strong>Shear</strong> (only the x-axis survives) vs <strong>Rotate</strong> (no real eigenvector — everything turns).</p>
       </div>
     </section>
 
-    <section class="topic" id="s7" data-tier="y">
+    <section class="topic" id="s5">
       <div class="topic-head">
-        <span class="topic-num">§7</span>
-        <h2>Eigenvalues &amp; Eigenvectors</h2>
-        <span class="badge y">2D · Intermediate</span>
+        <span class="topic-num">5)</span>
+        <h2>ML Connection - House Price Example</h2>
       </div>
+
       <div class="card">
-        <p>Konni directions untayi — transformation apply chesina direction maradu, <em>size matrame</em> marutundi.</p>
+        <p>Meeru screenshot lo unna idea ni simple ga:</p>
+        <p>Input features:</p>
         <ul>
-          <li>Direction marakunda unte adi <strong>eigenvector</strong></li>
-          <li>Size entha marindo adi <strong>eigenvalue</strong> (λ)</li>
+          <li>Area</li>
+          <li>Number of rooms</li>
+          <li>Location score</li>
         </ul>
-        <div class="callout analogy"><span class="tag">Analogy</span><p>Rubber sheet ni stretch chesthunappudu konni arrows same direction lo untayi, length matrame perigedi/taggedi.</p></div>
-        <p>The <a href="#s5" style="color:var(--axis-z); text-decoration:underline;">interactive matrix panel in §5</a> has an eigenvector toggle — flip it on, try <strong>Scale</strong> (both axes are eigenvectors) vs <strong>Shear</strong> (only the x-axis survives) vs <strong>Rotate</strong> (no real eigenvector — everything turns).</p>
-        <h4>Where this shows up</h4>
+        <p>Model output:</p>
+        <ul><li>Predicted price</li></ul>
+        <p>Equation form:</p>
+        <div class="formula">Price = w1*Area + w2*Rooms + w3*LocationScore + b</div>
+        <p>Ikkada:</p>
         <ul>
-          <li><strong>PCA</strong> — dimensionality reduction</li>
-          <li><strong>Image compression</strong></li>
-          <li><strong>Recommendation systems</strong></li>
+          <li>[Area, Rooms, LocationScore] = vector x</li>
+          <li>[w1, w2, w3] = weight vector w</li>
+          <li>prediction = w . x + b</li>
         </ul>
-
-        <figure class="diagram">
-          <div class="frame">
-            <svg viewBox="0 0 420 110" role="img" aria-label="Flow diagram: higher dimension data goes through eigenvectors, called principal directions, to become lower dimension data">
-              <rect x="10" y="30" width="120" height="50" rx="8" fill="none" stroke="var(--axis-x)" stroke-width="1.6"/>
-              <text x="70" y="52" font-size="11" text-anchor="middle" fill="var(--axis-x-ink)">Higher-D data</text>
-              <text x="70" y="67" font-size="9.5" text-anchor="middle" fill="var(--ink-faint)">many features</text>
-
-              <line x1="130" y1="55" x2="168" y2="55" stroke="currentColor" opacity="0.6" marker-end="url(#arrow-ink)"/>
-              <text x="149" y="45" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.7">eigenvectors</text>
-
-              <rect x="170" y="30" width="120" height="50" rx="8" fill="none" stroke="var(--axis-y)" stroke-width="1.6"/>
-              <text x="230" y="52" font-size="11" text-anchor="middle" fill="var(--axis-y-ink)">Principal directions</text>
-              <text x="230" y="67" font-size="9.5" text-anchor="middle" fill="var(--ink-faint)">most information</text>
-
-              <line x1="290" y1="55" x2="328" y2="55" stroke="currentColor" opacity="0.6" marker-end="url(#arrow-ink)"/>
-              <text x="309" y="45" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.7">keep top-k</text>
-
-              <rect x="330" y="30" width="82" height="50" rx="8" fill="none" stroke="var(--axis-z)" stroke-width="1.6"/>
-              <text x="371" y="52" font-size="11" text-anchor="middle" fill="var(--axis-z-ink)">Lower-D</text>
-              <text x="371" y="67" font-size="9.5" text-anchor="middle" fill="var(--ink-faint)">compact</text>
-            </svg>
-          </div>
-          <figcaption>PCA in one line: pick the eigenvectors that carry the most information, drop the rest.</figcaption>
-        </figure>
+        <p>Ante model mostly dot product meeda run avutundi.</p>
       </div>
     </section>
 
-    <section class="topic" id="s8" data-tier="y">
+    <section class="topic" id="s6">
       <div class="topic-head">
-        <span class="topic-num">§8</span>
-        <h2>Dot Product → Predictions</h2>
-        <span class="badge y">2D · Intermediate</span>
-      </div>
-      <div class="card">
-        <h3>House price, as a dot product</h3>
-        <p>Input features: Area, Number of rooms, Location score. Model output: predicted price.</p>
-        <div class="formula">Price = w₁·Area + w₂·Rooms + w₃·LocationScore + b</div>
-        <p>[Area, Rooms, LocationScore] = vector <span class="mono">x</span> &nbsp;·&nbsp; [w₁, w₂, w₃] = weight vector <span class="mono">w</span> &nbsp;·&nbsp; prediction = <span class="mono">w · x + b</span></p>
-        <p>Ante model mostly dot product meeda run avutundi — <strong>every linear model in this document is the same three moves</strong>: gather features into a vector, weight them, sum.</p>
-
-        <figure class="diagram">
-          <div class="frame">
-            <svg viewBox="0 0 720 90" role="img" aria-label="Flow diagram: dataset becomes a feature vector x, combined with a weight vector w via dot product, plus a bias, producing the predicted price">
-              <rect x="0" y="26" width="70" height="38" rx="7" fill="none" stroke="var(--axis-x)" stroke-width="1.6"/>
-              <text x="35" y="49" font-size="10" text-anchor="middle" fill="var(--axis-x-ink)">Dataset</text>
-              <line x1="70" y1="45" x2="94" y2="45" stroke="currentColor" opacity="0.6" marker-end="url(#arrow-ink)"/>
-              <rect x="96" y="26" width="110" height="38" rx="7" fill="none" stroke="var(--axis-x)" stroke-width="1.6"/>
-              <text x="151" y="49" font-size="10" text-anchor="middle" fill="var(--axis-x-ink)">Feature vector x</text>
-              <line x1="206" y1="45" x2="230" y2="45" stroke="currentColor" opacity="0.6" marker-end="url(#arrow-ink)"/>
-              <rect x="232" y="26" width="110" height="38" rx="7" fill="none" stroke="var(--axis-y)" stroke-width="1.6"/>
-              <text x="287" y="49" font-size="10" text-anchor="middle" fill="var(--axis-y-ink)">Weight vector w</text>
-              <line x1="342" y1="45" x2="366" y2="45" stroke="currentColor" opacity="0.6" marker-end="url(#arrow-ink)"/>
-              <rect x="368" y="26" width="110" height="38" rx="7" fill="none" stroke="var(--axis-y)" stroke-width="1.6"/>
-              <text x="423" y="49" font-size="10" text-anchor="middle" fill="var(--axis-y-ink)">Dot product w·x</text>
-              <line x1="478" y1="45" x2="502" y2="45" stroke="currentColor" opacity="0.6" marker-end="url(#arrow-ink)"/>
-              <rect x="504" y="26" width="80" height="38" rx="7" fill="none" stroke="var(--axis-z)" stroke-width="1.6"/>
-              <text x="544" y="49" font-size="10" text-anchor="middle" fill="var(--axis-z-ink)">Add bias b</text>
-              <line x1="584" y1="45" x2="608" y2="45" stroke="currentColor" opacity="0.6" marker-end="url(#arrow-ink)"/>
-              <rect x="610" y="20" width="100" height="50" rx="8" fill="var(--axis-z-soft)" stroke="var(--axis-z)" stroke-width="1.8"/>
-              <text x="660" y="49" font-size="10.5" text-anchor="middle" fill="var(--axis-z-ink)">Predicted price</text>
-            </svg>
-          </div>
-          <figcaption>Dataset → feature vector → weighted → summed → predicted price. Every arrow here is linear algebra.</figcaption>
-        </figure>
+        <span class="topic-num">6)</span>
+        <h2>3D Graph Intuition</h2>
       </div>
 
       <div class="card">
-        <h3>Categorical features need encoding first</h3>
-        <p>Location text value kabatti model direct ga teesukodu — numeric ga convert cheyyali (encoding) before it can join the feature vector.</p>
-        <div class="tbl-wrap">
-          <table>
-            <thead><tr><th class="num">Area</th><th class="num">NoOfRooms</th><th>Location</th><th class="num">Price</th></tr></thead>
-            <tbody>
-              <tr><td class="num">1200</td><td class="num">2</td><td>Bangalore</td><td class="num">45</td></tr>
-              <tr><td class="num">1500</td><td class="num">3</td><td>Hyderabad</td><td class="num">62</td></tr>
-              <tr><td class="num">1800</td><td class="num">4</td><td>Bangalore</td><td class="num">88</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="formula">
-          <span class="cap">Example encoding</span>
-          Bangalore = 1 &nbsp;·&nbsp; Hyderabad = 2 &nbsp;·&nbsp; Chennai = 3
-        </div>
+        <p>3 features unte data ni 3D space lo plot cheyochu.</p>
+        <p>Axes example:</p>
+        <ul>
+          <li>X-axis: Area</li>
+          <li>Y-axis: Rooms</li>
+          <li>Z-axis: Price</li>
+        </ul>
 
-        <figure class="diagram">
-          <div class="frame">
-            <svg viewBox="0 0 340 130" role="img" aria-label="Flow diagram: Area, NoOfRooms, and encoded Location feed into a model producing the output price">
-              <rect x="0" y="6" width="110" height="30" rx="6" fill="none" stroke="var(--axis-x)" stroke-width="1.4"/>
-              <text x="55" y="26" font-size="10" text-anchor="middle" fill="var(--axis-x-ink)">Area</text>
-              <rect x="0" y="50" width="110" height="30" rx="6" fill="none" stroke="var(--axis-x)" stroke-width="1.4"/>
-              <text x="55" y="70" font-size="10" text-anchor="middle" fill="var(--axis-x-ink)">NoOfRooms</text>
-              <rect x="0" y="94" width="110" height="30" rx="6" fill="none" stroke="var(--axis-x)" stroke-width="1.4"/>
-              <text x="55" y="114" font-size="10" text-anchor="middle" fill="var(--axis-x-ink)">Location (encoded)</text>
-
-              <line x1="110" y1="21" x2="160" y2="60" stroke="currentColor" opacity="0.55" marker-end="url(#arrow-ink)"/>
-              <line x1="110" y1="65" x2="160" y2="65" stroke="currentColor" opacity="0.55" marker-end="url(#arrow-ink)"/>
-              <line x1="110" y1="109" x2="160" y2="70" stroke="currentColor" opacity="0.55" marker-end="url(#arrow-ink)"/>
-
-              <rect x="162" y="48" width="70" height="34" rx="7" fill="none" stroke="var(--axis-y)" stroke-width="1.6"/>
-              <text x="197" y="69" font-size="10.5" text-anchor="middle" fill="var(--axis-y-ink)">Model</text>
-
-              <line x1="232" y1="65" x2="270" y2="65" stroke="currentColor" opacity="0.6" marker-end="url(#arrow-ink)"/>
-              <rect x="272" y="48" width="66" height="34" rx="7" fill="none" stroke="var(--axis-z)" stroke-width="1.8"/>
-              <text x="305" y="69" font-size="10" text-anchor="middle" fill="var(--axis-z-ink)">Price</text>
-            </svg>
-          </div>
-          <figcaption>Same three-arrows-into-a-model pattern as §3 — now with a categorical feature turned numeric.</figcaption>
-        </figure>
-      </div>
-    </section>
-
-    <section class="topic" id="s9" data-tier="z">
-      <div class="topic-head">
-        <span class="topic-num">§9</span>
-        <h2>3D Data &amp; the Model Surface</h2>
-        <span class="badge z">3D · Advanced</span>
-      </div>
-
-      <div class="card">
-        <h3>Three features, one plane</h3>
-        <p>X-axis: Area · Y-axis: Rooms · Z-axis: Price. Four houses below, plotted in 3D (axes rescaled 0–10 for a clean cube — hover the readout for real units). A linear model over two features is a <strong>plane</strong>; drag to see it doesn't touch every point exactly — that gap is the error §11 will minimize.</p>
+        <h4>3D Scatter Concept</h4>
+        <p>3D Plane Concept (Model fit): Linear regression 3D lo mostly oka plane fit chestundi. Four houses below, drag to rotate — a linear model over two features is a <strong>plane</strong>, fitted live from the data points.</p>
 
         <div class="viewport">
           <div class="vp-head">
@@ -1431,7 +1255,6 @@ function Transform2D(canvas){
 
           var el = document.getElementById('plot3dB');
           var p = new Plot3D(el, {range:26, rotX:-0.25, rotY:0.6, axisNames:['Area','Rooms','Price']});
-          var axisZ = getComputedStyle(document.documentElement).getPropertyValue('--axis-z').trim();
           var colors = ['#C1512D','#1F7A5C','#3450C9','#8A4FBF'];
           pts.forEach(function(pt,i){
             p.items.push({type:'point', p:pt, color:colors[i%colors.length], r:6, label:'H'+(i+1)});
@@ -1447,116 +1270,548 @@ function Transform2D(canvas){
           var lines = raw.map(function(h,i){
             var predNorm = plane.a*nx(h.area)+plane.b*ny(h.rooms)+plane.c;
             var pred = predNorm/10*43+45;
-            return 'H'+(i+1)+'  Area '+h.area+' · Rooms '+h.rooms+' · Actual ₹'+h.price+'L · Plane predicts ₹'+pred.toFixed(1)+'L';
+            return 'H'+(i+1)+'  Area '+h.area+' · Rooms '+h.rooms+' · Actual price '+h.price+'L · Plane predicts '+pred.toFixed(1)+'L';
           });
           readout.textContent = lines.join('\n');
           new MutationObserver(function(){p.draw();}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
         })();
         </script>
       </div>
+    </section>
 
+    <section class="topic" id="s7">
+      <div class="topic-head">
+        <span class="topic-num">7)</span>
+        <h2>Mermaid Flow (Data to Prediction)</h2>
+      </div>
       <div class="card">
-        <h4>Two flattened views of the same data</h4>
-        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px;">
-          <figure class="diagram" style="margin:0;">
-            <div class="frame">
-              <svg viewBox="0 0 220 150" role="img" aria-label="Top-view projection of the four houses, plotting rooms against area only">
-                <line x1="26" y1="130" x2="204" y2="130" stroke="currentColor" opacity="0.4" marker-end="url(#arrow-ink)"/>
-                <line x1="26" y1="140" x2="26" y2="16" stroke="currentColor" opacity="0.4" marker-end="url(#arrow-ink)"/>
-                <text x="150" y="144" font-size="10" fill="currentColor" opacity="0.6">Area</text>
-                <text x="4" y="14" font-size="10" fill="currentColor" opacity="0.6">Rooms</text>
-                <circle cx="46" cy="118" r="4" fill="#C1512D"/><circle cx="102" cy="90" r="4" fill="#1F7A5C"/>
-                <circle cx="180" cy="62" r="4" fill="#3450C9"/><circle cx="82" cy="62" r="4" fill="#8A4FBF"/>
-              </svg>
-            </div>
-            <figcaption>Top view (X–Y): Area vs Rooms</figcaption>
-          </figure>
-          <figure class="diagram" style="margin:0;">
-            <div class="frame">
-              <svg viewBox="0 0 220 150" role="img" aria-label="Side-view projection of the four houses, plotting price against area only">
-                <line x1="26" y1="130" x2="204" y2="130" stroke="currentColor" opacity="0.4" marker-end="url(#arrow-ink)"/>
-                <line x1="26" y1="140" x2="26" y2="16" stroke="currentColor" opacity="0.4" marker-end="url(#arrow-ink)"/>
-                <text x="150" y="144" font-size="10" fill="currentColor" opacity="0.6">Area</text>
-                <text x="4" y="14" font-size="10" fill="currentColor" opacity="0.6">Price</text>
-                <circle cx="46" cy="122" r="4" fill="#C1512D"/><circle cx="102" cy="90" r="4" fill="#1F7A5C"/>
-                <circle cx="180" cy="34" r="4" fill="#3450C9"/><circle cx="82" cy="68" r="4" fill="#8A4FBF"/>
-              </svg>
-            </div>
-            <figcaption>Side view (X–Z): Area vs Price</figcaption>
-          </figure>
-        </div>
-        <p style="margin-top:14px;">3D varaku manam draw cheyochu, kani real ML lo 10, 50, 100+ features untayi — every data point becomes a high-dimension vector. Dimensions perigina, concept same untundi: vector and matrix operations.</p>
+        <figure class="diagram">
+          <div class="frame">
+            <svg viewBox="0 0 720 90" role="img" aria-label="Flow diagram: dataset becomes a feature vector x, combined with a weight vector w via dot product, plus a bias, producing the predicted price">
+              <rect x="0" y="26" width="70" height="38" rx="7" fill="none" stroke="var(--axis-x)" stroke-width="1.6"/>
+              <text x="35" y="49" font-size="10" text-anchor="middle" fill="var(--axis-x-ink)">Dataset</text>
+              <line x1="70" y1="45" x2="94" y2="45" stroke="currentColor" opacity="0.6" marker-end="url(#arrow-ink)"/>
+              <rect x="96" y="26" width="110" height="38" rx="7" fill="none" stroke="var(--axis-x)" stroke-width="1.6"/>
+              <text x="151" y="49" font-size="10" text-anchor="middle" fill="var(--axis-x-ink)">Feature vector x</text>
+              <line x1="206" y1="45" x2="230" y2="45" stroke="currentColor" opacity="0.6" marker-end="url(#arrow-ink)"/>
+              <rect x="232" y="26" width="110" height="38" rx="7" fill="none" stroke="var(--axis-y)" stroke-width="1.6"/>
+              <text x="287" y="49" font-size="10" text-anchor="middle" fill="var(--axis-y-ink)">Weight vector w</text>
+              <line x1="342" y1="45" x2="366" y2="45" stroke="currentColor" opacity="0.6" marker-end="url(#arrow-ink)"/>
+              <rect x="368" y="26" width="110" height="38" rx="7" fill="none" stroke="var(--axis-y)" stroke-width="1.6"/>
+              <text x="423" y="49" font-size="10" text-anchor="middle" fill="var(--axis-y-ink)">Dot Product w.x</text>
+              <line x1="478" y1="45" x2="502" y2="45" stroke="currentColor" opacity="0.6" marker-end="url(#arrow-ink)"/>
+              <rect x="504" y="26" width="80" height="38" rx="7" fill="none" stroke="var(--axis-z)" stroke-width="1.6"/>
+              <text x="544" y="49" font-size="10" text-anchor="middle" fill="var(--axis-z-ink)">Add Bias b</text>
+              <line x1="584" y1="45" x2="608" y2="45" stroke="currentColor" opacity="0.6" marker-end="url(#arrow-ink)"/>
+              <rect x="610" y="20" width="100" height="50" rx="8" fill="var(--axis-z-soft)" stroke="var(--axis-z)" stroke-width="1.8"/>
+              <text x="660" y="49" font-size="10.5" text-anchor="middle" fill="var(--axis-z-ink)">Predicted Price</text>
+            </svg>
+          </div>
+          <figcaption>Dataset → Feature Vector x → Weight Vector w → Dot Product w.x → Add Bias b → Predicted Price</figcaption>
+        </figure>
       </div>
     </section>
 
-    <section class="topic" id="s10" data-tier="z">
+    <section class="topic" id="s7b">
       <div class="topic-head">
-        <span class="topic-num">§10</span>
-        <h2>Neural Networks: Matrix Multiplication, Twice</h2>
-        <span class="badge z">3D · Advanced</span>
+        <span class="topic-num">7.1)</span>
+        <h2>Include This Too - Dataset to Model (Screenshot Style)</h2>
       </div>
 
       <div class="card">
-        <p>Same example as §8 — Input features f1 = Area, f2 = NoOfRooms — but now routed through 3 hidden neurons before reaching Price. Two inputs fully connected to three neurons means the input-to-hidden weights form a <span class="mono">2×3</span> matrix.</p>
+        <p>Mee image lo unna same idea ni clear ga ila chuddam.</p>
+        <h4>Dataset Columns</h4>
+        <ul>
+          <li>Input features (X): Area, NoOfRooms, Location</li>
+          <li>Output feature (Y): Price</li>
+        </ul>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th class="num">Area</th><th class="num">NoOfRooms</th><th>Location</th><th class="num">Price</th></tr></thead>
+            <tbody>
+              <tr><td class="num">1200</td><td class="num">2</td><td>Bangalore</td><td class="num">45</td></tr>
+              <tr><td class="num">1500</td><td class="num">3</td><td>Hyderabad</td><td class="num">62</td></tr>
+              <tr><td class="num">1800</td><td class="num">4</td><td>Bangalore</td><td class="num">88</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Note: Location text value kabatti model direct ga teesukodu. So Location ni numeric ga convert chestham (encoding).</p>
+        <p>Example encoding:</p>
+        <ul>
+          <li>Bangalore = 1</li>
+          <li>Hyderabad = 2</li>
+          <li>Chennai = 3</li>
+        </ul>
+
+        <h4>Input Feature to Output Feature Flow</h4>
+        <figure class="diagram">
+          <div class="frame">
+            <svg viewBox="0 0 340 130" role="img" aria-label="Flow diagram: Area, NoOfRooms, and Location Encoded feed into a model producing the output Price">
+              <rect x="0" y="6" width="110" height="30" rx="6" fill="none" stroke="var(--axis-x)" stroke-width="1.4"/>
+              <text x="55" y="26" font-size="10" text-anchor="middle" fill="var(--axis-x-ink)">Area</text>
+              <rect x="0" y="50" width="110" height="30" rx="6" fill="none" stroke="var(--axis-x)" stroke-width="1.4"/>
+              <text x="55" y="70" font-size="10" text-anchor="middle" fill="var(--axis-x-ink)">NoOfRooms</text>
+              <rect x="0" y="94" width="110" height="30" rx="6" fill="none" stroke="var(--axis-x)" stroke-width="1.4"/>
+              <text x="55" y="114" font-size="10" text-anchor="middle" fill="var(--axis-x-ink)">Location Encoded</text>
+              <line x1="110" y1="21" x2="160" y2="60" stroke="currentColor" opacity="0.55" marker-end="url(#arrow-ink)"/>
+              <line x1="110" y1="65" x2="160" y2="65" stroke="currentColor" opacity="0.55" marker-end="url(#arrow-ink)"/>
+              <line x1="110" y1="109" x2="160" y2="70" stroke="currentColor" opacity="0.55" marker-end="url(#arrow-ink)"/>
+              <rect x="162" y="48" width="70" height="34" rx="7" fill="none" stroke="var(--axis-y)" stroke-width="1.6"/>
+              <text x="197" y="69" font-size="10.5" text-anchor="middle" fill="var(--axis-y-ink)">Model</text>
+              <line x1="232" y1="65" x2="270" y2="65" stroke="currentColor" opacity="0.6" marker-end="url(#arrow-ink)"/>
+              <rect x="272" y="48" width="66" height="34" rx="7" fill="none" stroke="var(--axis-z)" stroke-width="1.8"/>
+              <text x="305" y="69" font-size="10" text-anchor="middle" fill="var(--axis-z-ink)">Price</text>
+            </svg>
+          </div>
+          <figcaption>Area, NoOfRooms, Location Encoded → Model → Output: Price</figcaption>
+        </figure>
+        <p>Ikkada model pani enti ante relation ni quantify cheyyadam.</p>
+        <p>Simple ga:</p>
+        <ul>
+          <li>X change ayite Y ela marutundi?</li>
+          <li>e direction lo marutundi?</li>
+          <li>entha strength tho marutundi?</li>
+        </ul>
+
+        <h4>X-Y Relationship Patterns</h4>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:14px; margin:16px 0;">
+          <figure class="diagram" style="margin:0;">
+            <div class="frame">
+              <svg viewBox="0 0 150 120" role="img" aria-label="Scatter plot trending upward, showing positive correlation">
+                <line x1="14" y1="104" x2="140" y2="104" stroke="currentColor" opacity="0.35"/>
+                <line x1="14" y1="104" x2="14" y2="12" stroke="currentColor" opacity="0.35"/>
+                <circle cx="30" cy="94" r="4" fill="var(--axis-y)"/><circle cx="55" cy="80" r="4" fill="var(--axis-y)"/>
+                <circle cx="80" cy="60" r="4" fill="var(--axis-y)"/><circle cx="105" cy="42" r="4" fill="var(--axis-y)"/>
+                <circle cx="125" cy="26" r="4" fill="var(--axis-y)"/>
+              </svg>
+            </div>
+            <figcaption>Case 1: Positive relation (x perigite y kuda perugutundi)</figcaption>
+          </figure>
+          <figure class="diagram" style="margin:0;">
+            <div class="frame">
+              <svg viewBox="0 0 150 120" role="img" aria-label="Scatter plot trending downward, showing negative correlation">
+                <line x1="14" y1="104" x2="140" y2="104" stroke="currentColor" opacity="0.35"/>
+                <line x1="14" y1="104" x2="14" y2="12" stroke="currentColor" opacity="0.35"/>
+                <circle cx="30" cy="26" r="4" fill="var(--axis-x)"/><circle cx="55" cy="42" r="4" fill="var(--axis-x)"/>
+                <circle cx="80" cy="60" r="4" fill="var(--axis-x)"/><circle cx="105" cy="80" r="4" fill="var(--axis-x)"/>
+                <circle cx="125" cy="94" r="4" fill="var(--axis-x)"/>
+              </svg>
+            </div>
+            <figcaption>Case 2: Negative relation (x perigite y taggutundi)</figcaption>
+          </figure>
+          <figure class="diagram" style="margin:0;">
+            <div class="frame">
+              <svg viewBox="0 0 150 120" role="img" aria-label="Scatter plot with no clear trend, showing weak or no correlation">
+                <line x1="14" y1="104" x2="140" y2="104" stroke="currentColor" opacity="0.35"/>
+                <line x1="14" y1="104" x2="14" y2="12" stroke="currentColor" opacity="0.35"/>
+                <circle cx="28" cy="40" r="4" fill="var(--ink-faint)"/><circle cx="60" cy="90" r="4" fill="var(--ink-faint)"/>
+                <circle cx="82" cy="30" r="4" fill="var(--ink-faint)"/><circle cx="108" cy="70" r="4" fill="var(--ink-faint)"/>
+                <circle cx="128" cy="50" r="4" fill="var(--ink-faint)"/>
+              </svg>
+            </div>
+            <figcaption>Case 3: Weak/no clear relation</figcaption>
+          </figure>
+        </div>
+
+        <h4>2D Point nundi 3D Point ki Move (Screenshot Concept)</h4>
+        <p>Oka single house ni 2 features tho represent chesthe 2D point vastundi.</p>
+        <p>Example:</p>
+        <ul>
+          <li>(x, y) = (Area, Price) = (1200, 45)</li>
+          <li>Idi 2-dimension vector la treat cheyochu.</li>
+        </ul>
+        <figure class="diagram">
+          <div class="frame">
+            <svg viewBox="0 0 260 140" role="img" aria-label="2D view: a single point plotted on Area versus Price axes">
+              <line x1="20" y1="120" x2="240" y2="120" stroke="currentColor" opacity="0.4" marker-end="url(#arrow-ink)"/>
+              <line x1="20" y1="130" x2="20" y2="14" stroke="currentColor" opacity="0.4" marker-end="url(#arrow-ink)"/>
+              <text x="196" y="115" font-size="10" fill="currentColor" opacity="0.6">Price</text>
+              <text x="2" y="12" font-size="10" fill="currentColor" opacity="0.6">Area</text>
+              <circle cx="150" cy="55" r="5" fill="var(--axis-z)"/>
+              <text x="158" y="52" font-size="11" font-weight="700" fill="var(--axis-z)">(1200, 45)</text>
+            </svg>
+          </div>
+          <figcaption>2D view (Area vs Price)</figcaption>
+        </figure>
+        <p>Ippudu inkoka feature add chesthe, ante NoOfRooms add chesthe, point 3D space ki shift avutundi.</p>
+        <p>3D point example:</p>
+        <ul>
+          <li>(x, y, z) = (Area, NoOfRooms, Price)</li>
+          <li>(1200, 2, 45)</li>
+        </ul>
+        <p>Meaning:</p>
+        <ul>
+          <li>2D lo okka relation (Area-Price) matrame kanipistundi.</li>
+          <li>3D lo additional info (NoOfRooms) kuda capture avutundi.</li>
+          <li>Kabatti model better ga pattern ni ardham cheskuntundi.</li>
+        </ul>
+        <div class="callout analogy">
+          <span class="tag">Kid analogy</span>
+          <p>2D ante map lo street matrame choosinatlu. 3D ante same street + building floors info kuda add ayinatlu.</p>
+        </div>
+
+        <h4>Covariance and Correlation (Very Simple)</h4>
+        <ul>
+          <li>Covariance: x, y same direction lo move avutunnaya leka opposite direction lo move avutunnaya ani cheptundi.</li>
+          <li>Correlation: covariance idea ne scale chesi -1 nunchi +1 range lo istundi.</li>
+        </ul>
+        <p>Quick interpretation:</p>
+        <ul>
+          <li>correlation +1 ki daggara unte strong positive relation</li>
+          <li>correlation -1 ki daggara unte strong negative relation</li>
+          <li>correlation 0 daggara unte clear linear relation ledu</li>
+        </ul>
+        <p>Mini relation table:</p>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>X movement</th><th>Y movement</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td>X up</td><td>Y up</td><td>positive relation</td></tr>
+              <tr><td>X up</td><td>Y down</td><td>negative relation</td></tr>
+              <tr><td>X down</td><td>Y up</td><td>negative relation</td></tr>
+              <tr><td>random</td><td>random</td><td>weak relation</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout analogy">
+          <span class="tag">Kid analogy</span>
+          <p>Ice cream sales (x) and temperature (y): usually rendu kalisi perugutayi -&gt; positive. Rain ekkuva ayite playground kids count taggipotundi -&gt; negative.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="topic" id="s8">
+      <div class="topic-head">
+        <span class="topic-num">8)</span>
+        <h2>Graphs Only - Vector and Matrix Visual</h2>
+      </div>
+
+      <div class="card">
+        <h3>Vector Addition Graph (2D idea)</h3>
+        <figure class="diagram">
+          <div class="frame">
+            <svg viewBox="0 0 320 90" role="img" aria-label="Flow diagram: Vector A 1,2,3 and Vector B 4,5,6 combine via Add to produce Result 5,7,9">
+              <rect x="0" y="10" width="110" height="34" rx="7" fill="none" stroke="var(--axis-x)" stroke-width="1.6"/>
+              <text x="55" y="31" font-size="10" text-anchor="middle" fill="var(--axis-x-ink)">Vector A: 1,2,3</text>
+              <rect x="0" y="50" width="110" height="34" rx="7" fill="none" stroke="var(--axis-x)" stroke-width="1.6"/>
+              <text x="55" y="71" font-size="10" text-anchor="middle" fill="var(--axis-x-ink)">Vector B: 4,5,6</text>
+              <line x1="110" y1="27" x2="148" y2="46" stroke="currentColor" opacity="0.6" marker-end="url(#arrow-ink)"/>
+              <line x1="110" y1="67" x2="148" y2="50" stroke="currentColor" opacity="0.6" marker-end="url(#arrow-ink)"/>
+              <rect x="150" y="30" width="60" height="34" rx="7" fill="none" stroke="var(--axis-y)" stroke-width="1.8"/>
+              <text x="180" y="51" font-size="10.5" text-anchor="middle" fill="var(--axis-y-ink)">Add</text>
+              <line x1="210" y1="47" x2="238" y2="47" stroke="currentColor" opacity="0.6" marker-end="url(#arrow-ink)"/>
+              <rect x="240" y="30" width="80" height="34" rx="7" fill="none" stroke="var(--axis-z)" stroke-width="1.8"/>
+              <text x="280" y="51" font-size="10" text-anchor="middle" fill="var(--axis-z-ink)">Result: 5,7,9</text>
+            </svg>
+          </div>
+          <figcaption>Vector A: 1,2,3 → Add ← Vector B: 4,5,6 → Result: 5,7,9</figcaption>
+        </figure>
+      </div>
+
+      <div class="card">
+        <h3>Matrix as Data Grid</h3>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Row</th><th class="num">Area</th><th class="num">Rooms</th><th class="num">Location</th><th class="num">Price</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td class="num">1000</td><td class="num">2</td><td class="num">7</td><td class="num">45</td></tr>
+              <tr><td>2</td><td class="num">1400</td><td class="num">3</td><td class="num">8</td><td class="num">62</td></tr>
+              <tr><td>3</td><td class="num">1800</td><td class="num">4</td><td class="num">9</td><td class="num">88</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Graph meaning:</p>
+        <ul>
+          <li>Columns = features</li>
+          <li>Each row = oka house point</li>
+          <li>Full table = matrix representation</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="topic" id="s9">
+      <div class="topic-head">
+        <span class="topic-num">9)</span>
+        <h2>Graphs Only - 3D Understanding</h2>
+      </div>
+
+      <div class="card">
+        <h3>3D Scatter (House Data Points)</h3>
+        <p>Same three houses plotted with price on the vertical axis — see the <a href="#s6" style="color:var(--axis-z); text-decoration:underline;">interactive 3D panel in section 6</a> to rotate this scatter and its fitted plane yourself.</p>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th class="num">Area (X)</th><th class="num">Rooms (Y)</th><th class="num">Price (Z)</th></tr></thead>
+            <tbody>
+              <tr><td class="num">1000</td><td class="num">2</td><td class="num">45</td></tr>
+              <tr><td class="num">1400</td><td class="num">3</td><td class="num">62</td></tr>
+              <tr><td class="num">1800</td><td class="num">4</td><td class="num">88</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>3D Plane Intuition (Linear Model Surface): y = w1x1 + w2x2 + b — the plane in section 6 is exactly this.</p>
+
+        <h4>Top View Projection (X-Y only)</h4>
+        <figure class="diagram">
+          <div class="frame">
+            <svg viewBox="0 0 220 150" role="img" aria-label="Top-view projection of the three houses, plotting rooms against area only">
+              <line x1="26" y1="130" x2="204" y2="130" stroke="currentColor" opacity="0.4" marker-end="url(#arrow-ink)"/>
+              <line x1="26" y1="140" x2="26" y2="16" stroke="currentColor" opacity="0.4" marker-end="url(#arrow-ink)"/>
+              <text x="150" y="144" font-size="10" fill="currentColor" opacity="0.6">X (Area)</text>
+              <text x="4" y="14" font-size="10" fill="currentColor" opacity="0.6">Y (Rooms)</text>
+              <circle cx="46" cy="118" r="4" fill="var(--axis-x)"/><text x="52" y="122" font-size="9.5" fill="var(--axis-x-ink)">(1000,2)</text>
+              <circle cx="122" cy="76" r="4" fill="var(--axis-y)"/><text x="128" y="80" font-size="9.5" fill="var(--axis-y-ink)">(1400,3)</text>
+              <circle cx="196" cy="34" r="4" fill="var(--axis-z)"/><text x="150" y="30" font-size="9.5" fill="var(--axis-z-ink)">(1800,4)</text>
+            </svg>
+          </div>
+          <figcaption>Y (Rooms) vs X (Area)</figcaption>
+        </figure>
+
+        <h4>Side View Projection (X-Z only)</h4>
+        <figure class="diagram">
+          <div class="frame">
+            <svg viewBox="0 0 220 150" role="img" aria-label="Side-view projection of the three houses, plotting price against area only">
+              <line x1="26" y1="130" x2="204" y2="130" stroke="currentColor" opacity="0.4" marker-end="url(#arrow-ink)"/>
+              <line x1="26" y1="140" x2="26" y2="16" stroke="currentColor" opacity="0.4" marker-end="url(#arrow-ink)"/>
+              <text x="150" y="144" font-size="10" fill="currentColor" opacity="0.6">X (Area)</text>
+              <text x="4" y="14" font-size="10" fill="currentColor" opacity="0.6">Z (Price)</text>
+              <circle cx="46" cy="122" r="4" fill="var(--axis-x)"/><text x="52" y="126" font-size="9.5" fill="var(--axis-x-ink)">(1000,45)</text>
+              <circle cx="122" cy="82" r="4" fill="var(--axis-y)"/><text x="128" y="86" font-size="9.5" fill="var(--axis-y-ink)">(1400,62)</text>
+              <circle cx="196" cy="34" r="4" fill="var(--axis-z)"/><text x="146" y="30" font-size="9.5" fill="var(--axis-z-ink)">(1800,88)</text>
+            </svg>
+          </div>
+          <figcaption>Z (Price) vs X (Area)</figcaption>
+        </figure>
+        <p>Ivi chuste 3D point ni 2D views lo kuda easy ga ardham cheskovachu.</p>
+
+        <h4>Linear Algebra Works with Higher-Dimension Data</h4>
+        <p>Exactly mee point: linear algebra higher dimension data tho baga work chestundi.</p>
+        <p>3D varaku manam draw cheyochu, kani real ML lo 10, 50, 100+ features untayi. Appudu every data point oka high-dimension vector avtundi.</p>
+        <p>Example (house dataset):</p>
+        <ul>
+          <li>2D: [Area, Price]</li>
+          <li>3D: [Area, Rooms, Price]</li>
+          <li>5D: [Area, Rooms, LocationScore, AgeOfHouse, DistanceToMetro]</li>
+        </ul>
+        <div class="formula">
+2D point  -&gt; (x1, x2)
+3D point  -&gt; (x1, x2, x3)
+nD point  -&gt; (x1, x2, x3, ..., xn)
+        </div>
+        <p>Simple meaning:</p>
+        <ul>
+          <li>dimensions perigina, concept same untundi: vector and matrix operations.</li>
+          <li>human eye ki draw cheyyatam kastam, kani math ki kastam kadu.</li>
+        </ul>
+        <div class="callout analogy">
+          <span class="tag">Kid analogy</span>
+          <p>2 features ante 2 color pencils tho drawing. 10 features ante 10 color pencils tho detail drawing. Colors ekkuva aina, drawing rules maravu; ade linear algebra idea.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="topic" id="s10">
+      <div class="topic-head">
+        <span class="topic-num">10)</span>
+        <h2>Quick Revision</h2>
+      </div>
+      <div class="card">
+        <ol>
+          <li>Scalar = single number</li>
+          <li>Vector = list of numbers</li>
+          <li>Matrix = table of numbers</li>
+          <li>Dot product = weighted sum</li>
+          <li>Matrix multiplication = transformation engine</li>
+          <li>Eigen concepts = stable direction + scaling</li>
+          <li>ML lo prediction core math = linear algebra</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="topic" id="s11">
+      <div class="topic-head">
+        <span class="topic-num">11)</span>
+        <h2>One More Kid Analogy (Super Simple)</h2>
+      </div>
+      <div class="card">
+        <p>Imagine crayons box:</p>
+        <ul>
+          <li>red, blue, green crayons counts = vector</li>
+          <li>class lo andari crayons counts table = matrix</li>
+          <li>teacher total colors power calculate chesthe = dot product laga</li>
+          <li>crayons ni rotate chesi new pattern create chesthe = transformation</li>
+        </ul>
+        <p>Ila chusthe Linear Algebra scary kadu, pattern game la untundi.</p>
+      </div>
+    </section>
+
+    <section class="topic" id="s12">
+      <div class="topic-head">
+        <span class="topic-num">12)</span>
+        <h2>Machine Learning and AI lo Linear Algebra Role</h2>
+      </div>
+
+      <div class="card">
+        <h3>(a) Linear Equation and Model Training Intuition</h3>
+        <p>Model training lo chala operations matrix arithmetic meeda base untayi. Simple line relation ni usually ila rayachu:</p>
+        <div class="formula">ax + by + c = 0</div>
+        <p>or slope-intercept form:</p>
+        <div class="formula">y = mx + c</div>
+        <p>Price vs Size graph lo, points ni best ga fit ayye line ni model nerchukuntundi.</p>
+        <figure class="diagram">
+          <div class="frame">
+            <svg viewBox="0 0 320 190" role="img" aria-label="Scatter of price versus size with a best fit line running through the points">
+              <line x1="20" y1="170" x2="300" y2="170" stroke="currentColor" opacity="0.4" marker-end="url(#arrow-ink)"/>
+              <line x1="20" y1="180" x2="20" y2="14" stroke="currentColor" opacity="0.4" marker-end="url(#arrow-ink)"/>
+              <text x="270" y="166" font-size="10.5" fill="currentColor" opacity="0.6">Size</text>
+              <text x="2" y="12" font-size="10.5" fill="currentColor" opacity="0.6">Price</text>
+              <circle cx="70" cy="150" r="4.5" fill="var(--ink)"/>
+              <circle cx="150" cy="108" r="4.5" fill="var(--ink)"/>
+              <circle cx="240" cy="55" r="4.5" fill="var(--ink)"/>
+              <line x1="45" y1="170" x2="280" y2="42" stroke="var(--axis-z)" stroke-width="2.4"/>
+              <text x="140" y="178" font-size="10.5" font-weight="700" fill="var(--axis-z-ink)">best fit line</text>
+            </svg>
+          </div>
+          <figcaption>Price vs Size — the best fit line the model learns.</figcaption>
+        </figure>
+      </div>
+
+      <div class="card">
+        <h3>(b) Eigen Value and Eigen Vector -&gt; Dimensionality Reduction</h3>
+        <p>Future topics lo chala important point idi: eigen value and eigen vector help tho high-dimension data ni low-dimension space ki map cheyyachu.</p>
+        <p>Simple ga cheppali ante:</p>
+        <ul>
+          <li>data lo most important directions (information ekkuva unna directions) ni pick chestham</li>
+          <li>less important directions ni drop chestham</li>
+          <li>appudu dimension reduce avutundi, but useful information major ga save avutundi</li>
+        </ul>
+        <p>Idi PCA concept ki core base.</p>
+        <figure class="diagram">
+          <div class="frame">
+            <svg viewBox="0 0 420 110" role="img" aria-label="Flow diagram: higher dimension data goes through eigenvectors, called principal directions, to become lower dimension data">
+              <rect x="10" y="30" width="120" height="50" rx="8" fill="none" stroke="var(--axis-x)" stroke-width="1.6"/>
+              <text x="70" y="52" font-size="11" text-anchor="middle" fill="var(--axis-x-ink)">Higher Dimension Data</text>
+              <text x="70" y="67" font-size="9.5" text-anchor="middle" fill="var(--ink-faint)">many features</text>
+              <line x1="130" y1="55" x2="168" y2="55" stroke="currentColor" opacity="0.6" marker-end="url(#arrow-ink)"/>
+              <rect x="170" y="30" width="120" height="50" rx="8" fill="none" stroke="var(--axis-y)" stroke-width="1.6"/>
+              <text x="230" y="52" font-size="11" text-anchor="middle" fill="var(--axis-y-ink)">Principal Directions</text>
+              <text x="230" y="67" font-size="9.5" text-anchor="middle" fill="var(--ink-faint)">eigen vectors</text>
+              <line x1="290" y1="55" x2="328" y2="55" stroke="currentColor" opacity="0.6" marker-end="url(#arrow-ink)"/>
+              <rect x="330" y="30" width="82" height="50" rx="8" fill="none" stroke="var(--axis-z)" stroke-width="1.6"/>
+              <text x="371" y="52" font-size="11" text-anchor="middle" fill="var(--axis-z-ink)">Lower Dimension</text>
+              <text x="371" y="67" font-size="9.5" text-anchor="middle" fill="var(--ink-faint)">compact features</text>
+            </svg>
+          </div>
+          <figcaption>Higher Dimension Data ----&gt; Principal Directions ----&gt; Lower Dimension Data</figcaption>
+        </figure>
+        <p>Note:</p>
+        <ul>
+          <li>"higher dimension nundi lower dimension ki reduce" ane idea exact ga ikkade use avutundi.</li>
+          <li>detailed math steps (covariance matrix, eigen decomposition) next ga depth lo chudachu.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>(c) Neural Networks: Forward Propagation and Backward Propagation</h3>
+        <p>Deep learning lo neural network ane concept untundi. Prerequisite ga full depth teliyakapoina parvaledu; basic idea unte enough.</p>
+        <p>Mee example ni same ga represent chesthe:</p>
+        <ul>
+          <li>Input features: f1 = Area, f2 = NoOfRooms</li>
+          <li>Hidden layer neurons: 3</li>
+          <li>Output feature: Price</li>
+        </ul>
 
         <figure class="diagram">
           <div class="frame">
             <svg viewBox="0 0 460 220" role="img" aria-label="Neural network diagram: two inputs f1 and f2 fully connected to three hidden neurons, which connect to one output. Forward arrows flow left to right; a dashed backward arrow underneath flows right to left carrying the error signal">
               <circle cx="40" cy="70" r="17" fill="var(--axis-x-soft)" stroke="var(--axis-x)" stroke-width="1.6"/><text x="40" y="74" font-size="11" text-anchor="middle" fill="var(--axis-x-ink)">f1</text>
               <circle cx="40" cy="150" r="17" fill="var(--axis-x-soft)" stroke="var(--axis-x)" stroke-width="1.6"/><text x="40" y="154" font-size="11" text-anchor="middle" fill="var(--axis-x-ink)">f2</text>
-
               <circle cx="230" cy="40" r="16" fill="var(--axis-y-soft)" stroke="var(--axis-y)" stroke-width="1.6"/><text x="230" y="44" font-size="10.5" text-anchor="middle" fill="var(--axis-y-ink)">h1</text>
               <circle cx="230" cy="110" r="16" fill="var(--axis-y-soft)" stroke="var(--axis-y)" stroke-width="1.6"/><text x="230" y="114" font-size="10.5" text-anchor="middle" fill="var(--axis-y-ink)">h2</text>
               <circle cx="230" cy="180" r="16" fill="var(--axis-y-soft)" stroke="var(--axis-y)" stroke-width="1.6"/><text x="230" y="184" font-size="10.5" text-anchor="middle" fill="var(--axis-y-ink)">h3</text>
-
               <circle cx="410" cy="110" r="18" fill="var(--axis-z-soft)" stroke="var(--axis-z)" stroke-width="1.8"/><text x="410" y="114" font-size="10.5" text-anchor="middle" fill="var(--axis-z-ink)">Price</text>
-
               <g stroke="var(--axis-z)" stroke-width="1.1" opacity="0.55">
                 <line x1="55" y1="70" x2="217" y2="40"/><line x1="55" y1="70" x2="217" y2="110"/><line x1="55" y1="70" x2="217" y2="180"/>
                 <line x1="55" y1="150" x2="217" y2="40"/><line x1="55" y1="150" x2="217" y2="110"/><line x1="55" y1="150" x2="217" y2="180"/>
                 <line x1="245" y1="40" x2="394" y2="105"/><line x1="245" y1="110" x2="392" y2="110"/><line x1="245" y1="180" x2="394" y2="115"/>
               </g>
-
               <line x1="380" y1="200" x2="60" y2="200" stroke="var(--axis-x)" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#arrow-ink)" color="var(--axis-x)"/>
-              <text x="220" y="215" font-size="10.5" text-anchor="middle" fill="var(--axis-x-ink)">backward: error flows right → left, updating weights</text>
-              <text x="220" y="16" font-size="10.5" text-anchor="middle" fill="var(--axis-z-ink)">forward: inputs flow left → right, producing a prediction</text>
+              <text x="220" y="215" font-size="10.5" text-anchor="middle" fill="var(--axis-x-ink)">Backward propagation direction: error &lt;- Hidden(3) &lt;- f1, f2</text>
+              <text x="220" y="16" font-size="10.5" text-anchor="middle" fill="var(--axis-z-ink)">Forward propagation direction: f1, f2 -&gt; Hidden(3) -&gt; Output(Price)</text>
             </svg>
           </div>
-          <figcaption>Forward pass = matrix multiply. Backward pass = the same graph run in reverse, distributing error.</figcaption>
+          <figcaption>I1[f1: Area], I2[f2: NoOfRooms] → H1, H2, H3 → O[Output: Price]</figcaption>
         </figure>
 
-        <div class="formula">
-          <span class="cap">Input-to-hidden weight matrix (2 rows for f1,f2 · 3 columns for h1,h2,h3)</span>
-          W₍ih₎ = [ w₁ w₂ w₃ ; w₄ w₅ w₆ ]
-        </div>
-        <div class="formula">
-          <span class="cap">Forward step</span>
-          X = [f1  f2]  (1×2)&nbsp;&nbsp;&nbsp;Z₍hidden₎ = X · W₍ih₎ &nbsp;&nbsp;→&nbsp;&nbsp; shape 1×3
-        </div>
-        <p>Result shape <span class="mono">1×3</span> — hidden layer lo 3 neurons ki 3 values vastayi.</p>
+        <p>Ikkada two inputs nundi three hidden neurons ki full connections unnayi kabatti, input-to-hidden weights shape:</p>
+        <div class="formula">2 x 3</div>
+        <p>Weight matrix ni ila rayachu:</p>
+        <div class="formula">W = [ w1 w2 w3 ; w4 w5 w6 ]</div>
+        <p>Meaning:</p>
+        <ul>
+          <li>2 rows -&gt; 2 input features (f1, f2)</li>
+          <li>3 columns -&gt; 3 hidden neurons (h1, h2, h3)</li>
+        </ul>
+        <p>Forward propagation: inputs and weights use chesi output predict chestham.</p>
+        <p>Backward propagation: prediction error batti weights update chestham.</p>
 
-        <div class="callout">
-          <span class="tag">Forward vs Backward</span>
-          <p><strong>Forward propagation:</strong> inputs and weights use chesi output predict chestham. <strong>Backward propagation:</strong> prediction error batti weights (w₁…w₆) update chestham.</p>
+        <h4>Same Diagram Style View (f1, f2 and 2x3 Matrix Multiplication)</h4>
+        <p>Input feature vector ni row form lo ila rayachu:</p>
+        <div class="formula">X = [f1  f2]</div>
+        <p>Input-to-hidden weight matrix:</p>
+        <div class="formula">W₍ih₎ = [ w1 w2 w3 ; w4 w5 w6 ]</div>
+        <p>Forward step lo first hidden pre-activation:</p>
+        <div class="formula">Z₍hidden₎ = X W₍ih₎ = [f1  f2] · [ w1 w2 w3 ; w4 w5 w6 ]</div>
+        <p>Result shape:</p>
+        <div class="formula">1 x 3</div>
+        <p>Ante hidden layer lo 3 neurons ki 3 values vastayi.</p>
+        <div class="formula">
+Forward propagation direction:
+f1, f2  ------&gt;  Hidden(3)  ------&gt;  Output(Price)
+
+Backward propagation direction:
+error from output  &lt;-------  Hidden(3)  &lt;-------  f1, f2
         </div>
+        <p>Simple summary:</p>
+        <ul>
+          <li>forward lo matrix multiplication tho prediction ki vellam.</li>
+          <li>backward lo error ni venakki pampinchi weights (w1..w6) update chestham.</li>
+        </ul>
         <div class="callout analogy">
-          <span class="tag">Analogy</span>
+          <span class="tag">Kid analogy</span>
           <p>Forward ante exam attempt chesi marks techukovadam. Backward ante mistakes chusi next attempt lo improve avvadam.</p>
         </div>
       </div>
     </section>
 
-    <section class="topic" id="s11" data-tier="z">
+    <section class="topic" id="s13">
       <div class="topic-head">
-        <span class="topic-num">§11</span>
-        <h2>Optimization &amp; Gradient Descent</h2>
-        <span class="badge z">3D · Advanced</span>
+        <span class="topic-num">13)</span>
+        <h2>Optimization (ML lo Chala Important)</h2>
       </div>
 
       <div class="card">
-        <h3>Fitting a line, step by step</h3>
-        <p>Simple linear model: <span class="mono">y = mx + c</span> (general line form: <span class="mono">ax + by + c = 0</span> — same idea, just rearranged). Simple regression lo, <span class="mono">m</span> (slope) and <span class="mono">c</span> (intercept) rendu scalar values — main goal: correct <span class="mono">m, c</span> find cheyyali, so predictions points ki close ga ravali.</p>
+        <h3>(a) Solving Equations -&gt; Linear Equation to Regression</h3>
+        <p>Linear model ni simple ga ila rayachu:</p>
+        <div class="formula">y = mx + c</div>
+        <p>Ikkada:</p>
+        <ul>
+          <li>m = slope (coefficient), idi scalar value</li>
+          <li>c = intercept, idi kuda scalar value</li>
+        </ul>
+        <p>Important note:</p>
+        <ul>
+          <li>Simple linear regression lo okka input feature unte, m and c rendu scalar values.</li>
+          <li>Multiple linear regression lo coefficients vector la untayi, but intercept mostly scalar gane untundi.</li>
+        </ul>
+        <p>House example lo:</p>
+        <ul>
+          <li>x = size (input feature)</li>
+          <li>y = price (output)</li>
+        </ul>
+        <p>Main goal: correct slope and intercept find cheyyali, so predictions points ki close ga ravali.</p>
 
+        <h4>Detailed Example (Step by Step)</h4>
+        <p>Manam 3 data points tiskundam (Size, Price):</p>
         <div class="tbl-wrap">
           <table>
             <thead><tr><th class="num">Size</th><th class="num">Price</th></tr></thead>
@@ -1567,23 +1822,39 @@ function Transform2D(canvas){
             </tbody>
           </table>
         </div>
+        <p>Ivi almost straight-line relation laga unnayi.</p>
 
-        <div class="formula"><span class="cap">Step 1 — slope from the endpoints</span>
-          m = (y₂−y₁)/(x₂−x₁) = (85−45)/(2000−1000) = 40/1000 = 0.04
-        </div>
-        <div class="formula"><span class="cap">Step 2 — intercept (substitute point 1)</span>
-          45 = 0.04(1000) + c &nbsp;⇒&nbsp; c = 5
-        </div>
-        <div class="formula"><span class="cap">Final model</span>ŷ = 0.04x + 5</div>
-        <div class="formula"><span class="cap">Step 3 — predict at x = 1800</span>ŷ = 0.04(1800) + 5 = 77</div>
-        <div class="formula"><span class="cap">Step 4 — error, if actual price is 80</span>
-          error = 80 − 77 = 3 &nbsp;&nbsp;→&nbsp;&nbsp; squared error = 3² = 9
-        </div>
-        <p>Every point ki squared error calculate chesi average tiskunte <strong>MSE</strong> vastundi. <span class="mono">m</span> ekkuva unte line steep ga untundi; <span class="mono">c</span> marite line up/down shift avutundi.</p>
+        <p>Step 1: Slope m estimate (first and last point use chesi)</p>
+        <div class="formula">m = (y2 - y1)/(x2 - x1) = (85 - 45)/(2000 - 1000) = 40/1000 = 0.04</div>
+        <p>Step 2: Intercept c find cheyyadam</p>
+        <p>Equation: y = mx + c</p>
+        <p>First point (1000,45) substitute chesthe:</p>
+        <div class="formula">45 = 0.04(1000) + c = 40 + c</div>
+        <p>So,</p>
+        <div class="formula">c = 5</div>
+        <p>Final model:</p>
+        <div class="formula">ŷ = 0.04x + 5</div>
+        <p>Step 3: Prediction example</p>
+        <p>If size x=1800:</p>
+        <div class="formula">ŷ = 0.04(1800) + 5 = 72 + 5 = 77</div>
+        <p>Ante model prakaram predicted price = 77 (lakhs ani assume cheyochu).</p>
+        <p>Step 4: Error ela compute cheyyali</p>
+        <p>Suppose actual price = 80.</p>
+        <div class="formula">error = y - ŷ = 80 - 77 = 3</div>
+        <p>Squared error:</p>
+        <div class="formula">(y - ŷ)² = 3² = 9</div>
+        <p>Ila every point ki squared error calculate chesi average tiskunte MSE vastundi.</p>
+        <p>Quick understanding:</p>
+        <ul>
+          <li>m ekkuva unte line steep ga untundi.</li>
+          <li>c marite line up/down shift avutundi.</li>
+          <li>training lo main target: right m, right c dorakadam.</li>
+        </ul>
       </div>
 
       <div class="card">
-        <h3>Many possible lines — which is best?</h3>
+        <h3>(b) Many Possible Lines, Best Line Edi?</h3>
+        <p>Same data ki chala lines draw cheyochu, kani best line ante error takkuva undedi.</p>
         <figure class="diagram">
           <div class="frame">
             <svg viewBox="0 0 320 200" role="img" aria-label="Scatter of price versus size with three candidate lines: one too flat, one too steep, and one best-fit line running through the middle of the points">
@@ -1591,34 +1862,46 @@ function Transform2D(canvas){
               <line x1="30" y1="190" x2="30" y2="20" stroke="currentColor" opacity="0.4" marker-end="url(#arrow-ink)"/>
               <text x="266" y="176" font-size="10.5" fill="currentColor" opacity="0.6">Size</text>
               <text x="8" y="18" font-size="10.5" fill="currentColor" opacity="0.6">Price</text>
-
               <circle cx="70" cy="150" r="4.5" fill="var(--ink)"/>
               <circle cx="160" cy="108" r="4.5" fill="var(--ink)"/>
               <circle cx="250" cy="62" r="4.5" fill="var(--ink)"/>
-
               <line x1="45" y1="128" x2="285" y2="100" stroke="var(--axis-x)" stroke-width="1.6" stroke-dasharray="3 4"/>
-              <text x="288" y="100" font-size="9.5" fill="var(--axis-x-ink)">too flat</text>
-
+              <text x="288" y="100" font-size="9.5" fill="var(--axis-x-ink)">line-1 (too flat)</text>
               <line x1="95" y1="190" x2="215" y2="20" stroke="var(--axis-x)" stroke-width="1.6" stroke-dasharray="3 4"/>
-              <text x="200" y="16" font-size="9.5" fill="var(--axis-x-ink)">too steep</text>
-
+              <text x="200" y="16" font-size="9.5" fill="var(--axis-x-ink)">line-3 (too steep)</text>
               <line x1="45" y1="170" x2="285" y2="45" stroke="var(--axis-z)" stroke-width="2.4"/>
-              <text x="230" y="66" font-size="10.5" font-weight="700" fill="var(--axis-z-ink)">best fit</text>
+              <text x="230" y="66" font-size="10.5" font-weight="700" fill="var(--axis-z-ink)">best-fit line</text>
             </svg>
           </div>
-          <figcaption>Best line = the one where total error (the vertical gaps to each point) is smallest.</figcaption>
+          <figcaption>Pink-type vertical gaps (actual point nundi line varaku distance) ni errors anukondi. Best line ante total error minimum ayye line.</figcaption>
         </figure>
-
-        <div class="formula"><span class="cap">Objective — mean squared error</span>
-          Loss = (1/n) Σ (yᵢ − ŷᵢ)²  &nbsp;&nbsp;&nbsp; target: min Loss
-        </div>
       </div>
 
       <div class="card">
-        <h3>Gradient Descent — the optimizer</h3>
+        <h3>(c) Objective Function (Error ni Minimize Cheyyadam)</h3>
+        <p>Regression lo objective usually error minimize cheyyadam.</p>
+        <p>Simple ga:</p>
+        <ul>
+          <li>model function f(x) best ga undali</li>
+          <li>error (loss) minimize avvali</li>
+        </ul>
+        <p>Mean Squared Error intuition:</p>
+        <div class="formula">Loss = (1/n) Σ (yᵢ - ŷᵢ)²</div>
+        <p>Target:</p>
+        <div class="formula">min Loss</div>
+      </div>
+
+      <div class="card">
+        <h3>(d) Gradient Descent -&gt; Optimizer</h3>
         <p>Gradient descent ane optimizer slope/intercept (or weights) ni step-by-step update chestundi, loss tagge direction lo move avutundi.</p>
-        <div class="formula"><span class="cap">Update rule</span>θ₍new₎ = θ₍old₎ − η · ∇Loss</div>
-        <p><span class="mono">θ</span> = parameters (m, c) &nbsp;·&nbsp; <span class="mono">η</span> = learning rate &nbsp;·&nbsp; <span class="mono">∇Loss</span> = gradient direction</p>
+        <p>Update idea:</p>
+        <div class="formula">θ₍new₎ = θ₍old₎ - η · ∇Loss</div>
+        <p>Ikkada:</p>
+        <ul>
+          <li>θ = parameters (example: m, c)</li>
+          <li>η = learning rate</li>
+          <li>∇Loss = gradient direction</li>
+        </ul>
 
         <figure class="diagram">
           <div class="frame">
@@ -1627,68 +1910,38 @@ function Transform2D(canvas){
                 <rect x="10" y="55" width="90" height="42" rx="8" fill="none" stroke="var(--axis-z)" stroke-width="1.6"/>
                 <text x="55" y="79" fill="var(--axis-z-ink)">Start params</text>
                 <line x1="100" y1="76" x2="128" y2="76" stroke="currentColor" opacity="0.6" marker-end="url(#arrow-ink)"/>
-
                 <rect x="130" y="55" width="90" height="42" rx="8" fill="none" stroke="var(--axis-z)" stroke-width="1.6"/>
                 <text x="175" y="79" fill="var(--axis-z-ink)">Compute error</text>
                 <line x1="220" y1="76" x2="248" y2="76" stroke="currentColor" opacity="0.6" marker-end="url(#arrow-ink)"/>
-
                 <rect x="250" y="55" width="90" height="42" rx="8" fill="none" stroke="var(--axis-z)" stroke-width="1.6"/>
                 <text x="295" y="79" fill="var(--axis-z-ink)">Compute gradient</text>
                 <line x1="340" y1="76" x2="368" y2="76" stroke="currentColor" opacity="0.6" marker-end="url(#arrow-ink)"/>
-
                 <rect x="330" y="5" width="90" height="42" rx="8" fill="none" stroke="var(--axis-x)" stroke-width="1.6"/>
                 <text x="375" y="29" fill="var(--axis-x-ink)">Update params</text>
               </g>
               <path d="M 370 47 Q 370 -6 55 5 Q 10 8 12 53" fill="none" stroke="var(--axis-x)" stroke-width="1.6" stroke-dasharray="4 4" marker-end="url(#arrow-ink)" color="var(--axis-x)"/>
-              <text x="200" y="14" font-size="10" text-anchor="middle" fill="var(--axis-x-ink)">repeat until error is small</text>
+              <text x="200" y="14" font-size="10" text-anchor="middle" fill="var(--axis-x-ink)">repeat until error small</text>
               <line x1="368" y1="76" x2="378" y2="50" stroke="currentColor" opacity="0" />
             </svg>
           </div>
-          <figcaption>Every training loop you'll ever run is this cycle, over and over.</figcaption>
+          <figcaption>Start params -&gt; compute error -&gt; compute gradient -&gt; update params -&gt; better line -&gt; repeat until error small</figcaption>
         </figure>
 
         <div class="callout analogy">
-          <span class="tag">Analogy</span>
+          <span class="tag">Kid analogy</span>
           <p>Hill paina nunchi kindaki digetappudu, every step lo ekkada slope kindaki untundo akkadike move avvadam. Alane gradient descent error-hill lo minimum point ki velthundi.</p>
         </div>
       </div>
     </section>
 
-    <section class="topic" id="revision">
-      <div class="topic-head">
-        <span class="topic-num">§12</span>
-        <h2>Quick Revision</h2>
-      </div>
-      <div class="card">
-        <div class="revision-grid">
-          <div class="item"><span class="k">Scalar</span><p>A single number — magnitude, no direction.</p></div>
-          <div class="item"><span class="k">Vector</span><p>An ordered list of numbers — magnitude + direction.</p></div>
-          <div class="item"><span class="k">Matrix</span><p>A table of numbers — rows × columns.</p></div>
-          <div class="item"><span class="k">Dot product</span><p>A weighted sum — the engine behind every prediction score.</p></div>
-          <div class="item"><span class="k">Matrix multiplication</span><p>The transformation engine — bends, scales, and rotates space.</p></div>
-          <div class="item"><span class="k">Eigen concepts</span><p>Directions a transformation leaves alone, plus how much they stretch.</p></div>
-          <div class="item"><span class="k">Gradient descent</span><p>Nudge parameters downhill on the error surface, one step at a time.</p></div>
-          <div class="item"><span class="k">ML core math</span><p>Almost every prediction reduces to <span class="mono">w · x + b</span>.</p></div>
-        </div>
-
-        <div class="callout analogy" style="margin-top:20px;">
-          <span class="tag">One more analogy</span>
-          <p>Imagine a crayons box: red, blue, green crayon counts = vector. Class lo andari crayons counts table = matrix. Teacher total colors power calculate chesthe = dot product laga. Crayons ni rotate chesi new pattern create chesthe = transformation. Ila chusthe Linear Algebra scary kadu — pattern game la untundi.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- SECTION_INSERT_POINT -->
-
   </main>
 </div>
 
 <footer>
-  Tenglish notes on Linear Algebra for Machine Learning &amp; Data Science · scroll-drag the 3D panels to rotate, click a preset under the transformation panel to see matrices bend space.
+  Tenglish notes on Linear Algebra for Machine Learning &amp; Data Science · drag the 3D panels to rotate, click a preset under the transformation panel to see matrices bend space.
 </footer>
 
 <script>
-/* ======================= THEME ======================= */
 (function(){
   var root = document.documentElement;
   var saved = localStorage.getItem('la-theme');
@@ -1709,7 +1962,6 @@ function Transform2D(canvas){
   });
 })();
 
-/* ======================= MOBILE NAV ======================= */
 (function(){
   var btn=document.getElementById('menuBtn'), sb=document.getElementById('sidebar'), scrim=document.getElementById('scrim');
   function close(){ sb.classList.remove('open'); scrim.classList.remove('show'); }
@@ -1718,7 +1970,6 @@ function Transform2D(canvas){
   document.querySelectorAll('.nav-link').forEach(function(a){ a.addEventListener('click', close); });
 })();
 
-/* ======================= SCROLL PROGRESS ======================= */
 (function(){
   var fill=document.getElementById('progressFill');
   function onScroll(){
@@ -1730,7 +1981,6 @@ function Transform2D(canvas){
   onScroll();
 })();
 
-/* ======================= SCROLLSPY ======================= */
 (function(){
   var links = Array.from(document.querySelectorAll('.nav-link[href^="#"]'));
   var map = {};
