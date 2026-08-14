@@ -475,6 +475,494 @@ Kid analogy:
 
 Analogy: rendu chocolate bags lo chocolates count kalipinattu.
 
+#### Addition of 2 Vectors (Screenshot Example)
+
+Given:
+
+$$P_1 = \begin{bmatrix}-4 \\ 3\end{bmatrix}, \quad P_2 = \begin{bmatrix}5 \\ 3\end{bmatrix}$$
+
+Vector addition element-wise chestham:
+
+$$
+P_1 + P_2 =
+\begin{bmatrix}-4 \\ 3\end{bmatrix} +
+\begin{bmatrix}5 \\ 3\end{bmatrix} =
+\begin{bmatrix}1 \\ 6\end{bmatrix}
+$$
+
+Resultant vector:
+
+$$R = (1,6)$$
+
+Graph points:
+- $P_1$ endpoint = $(-4,3)$
+- $P_2$ endpoint = $(5,3)$
+- $R$ endpoint = $(1,6)$
+
+![Addition of 2 vectors graph](assets/vector-addition-screenshot.png)
+
+Note: mee screenshot image ni `math/linearAlgebra/assets/vector-addition-screenshot.png` name tho place chesthe idi direct ga render avtundi.
+
+Interpretation:
+- x-components: $-4 + 5 = 1$
+- y-components: $3 + 3 = 6$
+- kabatti final arrow origin nundi $(1,6)$ ki vellutundi.
+
+Easy memory:
+- "x with x add cheyyali, y with y add cheyyali".
+
+#### Real-Time AI Example: Query + Context Vector Add
+
+Oka chatbot lo user query embedding vector untundi.
+System ki recent conversation context vector kuda untundi.
+I rendu kalipi final intent representation create chestharu.
+
+Example:
+- Query vector $q = [0.8, 0.1, 0.4]$
+- Context vector $c = [0.2, 0.7, 0.1]$
+
+Combined vector:
+
+$$
+q + c = [0.8,0.1,0.4] + [0.2,0.7,0.1] = [1.0,0.8,0.5]
+$$
+
+Meaning:
+- first dimension signal stronger ayindi ($1.0$)
+- second dimension context valla boost ayindi ($0.8$)
+- model final decision better ga teesukuntundi
+
+Mini intuition graph:
+
+```text
+Query signal     ---> [0.8, 0.1, 0.4]
+Context signal   ---> [0.2, 0.7, 0.1]
+Final signal     ---> [1.0, 0.8, 0.5]
+```
+
+Ila vector addition real-time lo RAG/chatbot/search systems lo chala common.
+
+#### Word Embeddings Example (Data + Science)
+
+Word embedding vectors:
+- Data = [0.2, 0.1, 0.4]
+- Science = [0.3, 0.7, 0.2]
+
+Phrase "Data Science" ni approximate ga ila represent cheyochu:
+
+$$
+v_{data} + v_{science} = [0.2,0.1,0.4] + [0.3,0.7,0.2] = [0.5,0.8,0.6]
+$$
+
+Quick view:
+
+```text
+v_data    = [0.2, 0.1, 0.4]
+v_science = [0.3, 0.7, 0.2]
+----------------------------
+v_phrase  = [0.5, 0.8, 0.6]   -> Data Science
+```
+
+Meaning:
+- rendu word signals kalisi phrase meaning ni stronger ga represent chestayi.
+
+#### Multiplication of Vectors (3 Types)
+
+Vector operations lo addition tho patu multiplication kuda important.
+Common ga 3 types use chestham:
+
+1. Dot Product (Inner Product)
+2. Element-wise Multiplication
+3. Scalar Multiplication
+
+##### 1) Dot Product (Inner Product)
+
+Definition:
+- rendu same-size vectors ni multiply chesi, final ga oka single number (scalar) vasthe danini dot product antaru.
+
+Formula:
+
+$$a \cdot b = \sum_i a_i b_i$$
+
+Worked example:
+
+$$a=[1,2,3],\ b=[4,5,6]$$
+
+Step-by-step:
+
+$$
+a \cdot b = (1*4) + (2*5) + (3*6) = 4 + 10 + 18 = 32
+$$
+
+Meaning in simple way:
+- value pedda ga unte vectors similar direction lo unnayi ani hint.
+- zero daggara unte relation takkuva/orthogonal la undachu.
+
+Kid analogy:
+- Idhi quiz matching game la untundi.
+- Nee answers and answer key ni pair-pair ga compare chesi total score istaru.
+- Final score ekkuva unte "baaga match ayindi" ani artham.
+
+Real-time AI example:
+- user query embedding `q` and document embedding `d` teesukuntaru.
+- $q \cdot d$ score ekkuva unte document relevant ani rank chestharu.
+
+Mini scoring example:
+
+$$q=[0.4,0.6],\ d_1=[0.5,0.5],\ d_2=[0.9,0.1]$$
+
+$$q\cdot d_1=0.2+0.3=0.5,\quad q\cdot d_2=0.36+0.06=0.42$$
+
+Kabatti $d_1$ query ki koncham ekkuva match.
+
+Screenshot style example:
+
+Definition line (simple):
+- Dot product of two vectors ante corresponding components products ni sum chesthe oka scalar value vastundi.
+
+Take:
+
+$$A=\begin{bmatrix}2 \\ 3\end{bmatrix},\quad B=\begin{bmatrix}4 \\ 5\end{bmatrix}$$
+
+Then:
+
+$$
+A \cdot B = 2*4 + 3*5 = 8 + 15 = 23
+$$
+
+So result scalar value = 23.
+
+Transpose view (same idea):
+
+$$
+[2\ \ 3]\begin{bmatrix}4 \\ 5\end{bmatrix} = 2*4 + 3*5 = 23
+$$
+
+Easy note:
+- Dot product compute cheyyadaniki one vector row form lo, inko vector column form lo rayadam comfortable.
+- final answer single number ga vastundi, vector kaadu.
+
+Geometric interpretation (projection view) - screenshot concept:
+
+Take vectors:
+
+$$A=\begin{bmatrix}5 \\ 0\end{bmatrix},\quad B=\begin{bmatrix}2 \\ 2\end{bmatrix}$$
+
+Algebra method:
+
+$$A \cdot B = 5*2 + 0*2 = 10$$
+
+Projection meaning:
+- $A$ x-axis meeda undi (length $|A|=5$)
+- $B$ point $(2,2)$ ki velthundi
+- $B$ ni $A$ direction (x-axis) meeda project chesthe projected component $B'$ length = 2
+
+Kabatti:
+
+$$A \cdot B = (\text{length of projected }B\text{ on }A) * (|A|) = 2 * 5 = 10$$
+
+Equivalent formula:
+
+$$A \cdot B = |A||B|\cos\theta$$
+
+Ikkada $|B|\cos\theta = 2$ (adi projection part), and $|A|=5$.
+
+![Dot product projection example](assets/dot-product-projection-screenshot.png)
+
+Note: ee screenshot ni `math/linearAlgebra/assets/dot-product-projection-screenshot.png` path lo place chesthe, image direct ga render avtundi.
+
+Why do we need to do this (dot product)?
+
+Main reason:
+- rendu vectors madhya "entha alignment undi" ani single score lo telusukodaniki.
+
+Intuition:
+- values match ayite score high
+- opposite direction unte score negative
+- unrelated/90-degree la unte score near zero
+
+Practical use enduku:
+1. Fast decision:
+- multiple features unna data ni okka scalar score ga convert cheyyadam easy
+
+2. Ranking:
+- e candidate better match ani quickly compare cheyyachu
+
+3. Projection meaning:
+- oka vector lo inko vector direction ki entha part contribute chestundo measure cheyyachu
+
+Tiny sign intuition:
+
+$$
+u=[1,0],\ v=[2,0] \Rightarrow u\cdot v=2\ (>0, same direction)
+$$
+
+$$
+u=[1,0],\ v=[-2,0] \Rightarrow u\cdot v=-2\ (<0, opposite direction)
+$$
+
+$$
+u=[1,0],\ v=[0,3] \Rightarrow u\cdot v=0\ (orthogonal)
+$$
+
+When dot-product scalar result is positive, negative, or zero
+
+Use formula:
+
+$$a\cdot b = |a||b|\cos\theta$$
+
+Ikkada sign mostly $\cos\theta$ meeda depend avtundi.
+
+1. Positive scalar result ($a\cdot b > 0$)
+- Case: angle $\theta$ is less than 90 deg (acute angle)
+- Meaning: vectors roughly same direction lo move avutunnayi
+
+Example:
+
+$$a=[2,1],\ b=[3,4]$$
+
+$$a\cdot b = 2*3 + 1*4 = 10 > 0$$
+
+2. Negative scalar result ($a\cdot b < 0$)
+- Case: angle $\theta$ is between 90 deg and 180 deg (obtuse angle)
+- Meaning: vectors opposite side tendency chupistunnayi
+
+Example:
+
+$$a=[2,1],\ b=[-3,-4]$$
+
+$$a\cdot b = 2*(-3) + 1*(-4) = -10 < 0$$
+
+3. Zero result ($a\cdot b = 0$)
+
+Main cases:
+- Case A: vectors orthogonal (90 deg)
+- Case B: one vector zero vector
+
+Case A example (orthogonal):
+
+$$a=[1,2],\ b=[2,-1]$$
+
+$$a\cdot b = 1*2 + 2*(-1) = 2-2 = 0$$
+
+Case B example (zero vector):
+
+$$a=[0,0,0],\ b=[5,1,-2]$$
+
+$$a\cdot b = 0$$
+
+Quick memory:
+- positive -> similar direction
+- negative -> opposite direction
+- zero -> perpendicular or one vector is zero
+
+Applications in AI field:
+
+1. Semantic search and RAG:
+- query embedding and document embedding dot product use chesi relevance score compute chestharu
+- top score docs ni retrieve chestharu
+
+2. Recommendation systems:
+- user preference vector and item vector dot product -> interest score
+- score high unte recommend chestharu
+
+3. Classification models:
+- linear models lo $w\cdot x + b$ core computation
+- final prediction decision idhe score meeda depend avtundi
+
+4. Neural networks:
+- every neuron mostly weighted sum (dot product form) perform chestundi
+- forward propagation lo repeated ga use avtundi
+
+5. Attention mechanism intuition:
+- query-key similarity calculate cheyyadaniki dot-product style scoring use chestharu
+- model e token meeda focus cheyyalo decide chestundi
+
+6. Cosine Similarity (Gen AI app -> RAG):
+- cosine similarity anedi 2 vectors entha similar ga unnayo measure chestundi
+- idi angle based similarity score istundi
+
+Definition (simple):
+- cosine of angle between two vectors = similarity score
+
+Formula:
+
+$$
+\cos\theta = \frac{A\cdot B}{\|A\|\|B\|}
+$$
+
+Range interpretation:
+- +1  -> complete similar direction
+- 0   -> orthogonal / unrelated direction
+- -1  -> opposite direction
+
+AI/RAG context lo usually embeddings similar side lone untayi kabatti score mostly 0 to 1 madhya untundi.
+
+Worked example:
+
+$$A=[1,2],\ B=[2,3]$$
+
+$$A\cdot B = 1*2 + 2*3 = 8$$
+
+$$\|A\|=\sqrt{1^2+2^2}=\sqrt{5},\quad \|B\|=\sqrt{2^2+3^2}=\sqrt{13}$$
+
+$$
+\cos\theta = \frac{8}{\sqrt{5}\sqrt{13}} \approx 0.993
+$$
+
+Meaning:
+- score 0.993 ante chala high similarity
+- RAG lo ilanti high score documents top lo retrieve chestharu
+
+Recommendation system example (Netflix-style, with graphs):
+
+Suppose genre order fix chesam:
+
+$$[\text{Action, Comedy, Drama, Romance, Thriller}]$$
+
+Movie/user vector A (Avengers type profile):
+
+$$A=[1,2,0,3,1]$$
+
+Candidate vector B:
+
+$$B=[2,0,1,1,1]$$
+
+Step 1: Dot product
+
+$$
+A\cdot B = 1*2 + 2*0 + 0*1 + 3*1 + 1*1 = 6
+$$
+
+Step 2: Vector magnitudes
+
+$$
+\|A\| = \sqrt{1^2+2^2+0^2+3^2+1^2} = \sqrt{15} \approx 3.872
+$$
+
+$$
+\|B\| = \sqrt{2^2+0^2+1^2+1^2+1^2} = \sqrt{7} \approx 2.646
+$$
+
+Step 3: Cosine score
+
+$$
+\cos\theta = \frac{A\cdot B}{\|A\|\|B\|} = \frac{6}{3.872*2.646} \approx 0.586
+$$
+
+Interpretation:
+- similarity around 0.586 ante moderate positive similarity
+- recommendation system lo idi "somewhat relevant" signal
+- inka higher-score movies unte avi first recommend avtayi
+
+Graph intuition 1 (vector space direction):
+
+```text
+origin O -----> A  (longer vector)
+origin O ---->  B  (different angle)
+
+angle between A and B small-unna better match,
+angle pedda ayite match taggutundi.
+```
+
+Graph intuition 2 (calculation flow):
+
+```mermaid
+flowchart LR
+	A1[A vector: 1,2,0,3,1] --> D[Dot product A.B = 6]
+	B1[B vector: 2,0,1,1,1] --> D
+	A1 --> NA[Norm |A| = sqrt15]
+	B1 --> NB[Norm |B| = sqrt7]
+	D --> C[Cosine = 6/(|A||B|)]
+	NA --> C
+	NB --> C
+	C --> R[Score ~ 0.586 => moderate positive similarity]
+```
+
+Kid analogy:
+- dot product ni "match meter" la think cheyyi.
+- two answer sheets compare chesi oka total match score ivvadam la untundi.
+- score ekkuva unte "idhi correct direction" ani model ki clue dorukutundi.
+
+##### 2) Element-wise Multiplication
+
+Definition:
+- vector lo prathi position ni ade position value tho multiply chestham.
+- output malli vector ga vastundi.
+
+Formula:
+
+$$c = a \odot b,\quad c_i = a_i b_i$$
+
+Worked example:
+
+$$[1,2,3] \odot [4,5,6] = [1*4, 2*5, 3*6] = [4,10,18]$$
+
+Meaning in simple way:
+- prathi feature ki local weight apply ayinatlu.
+- e dimension important o direct ga control cheyyachu.
+
+Kid analogy:
+- Oka fruit basket lo apples, bananas, mangoes unnayi ani anuko.
+- Teacher chepthadu: apples full, bananas koncham, mangoes half use cheyyali.
+- Ante prathi fruit quantity ki separate multiplier apply chestunnam.
+
+Real-time AI example (feature gating):
+- image features $f=[0.8,0.2,0.6]$
+- attention/gate weights $g=[1.0,0.1,0.5]$
+
+$$f \odot g = [0.8,0.02,0.3]$$
+
+Ikkada second feature almost suppress ayindi, first feature strong ga undi.
+
+##### 3) Scalar Multiplication
+
+Definition:
+- oka number (scalar) ni vector lo prathi element tho multiply chestham.
+
+Formula:
+
+$$k[a_1,a_2,\dots,a_n]=[ka_1,ka_2,\dots,ka_n]$$
+
+Worked example:
+
+$$3[1,2,3] = [3,6,9]$$
+
+Meaning in simple way:
+- vector direction same untundi (k positive unte), length matram scale avtundi.
+- k negative unte direction reverse avtundi.
+
+Kid analogy:
+- Photo zoom in / zoom out la anuko.
+- Same photo untundi, kani size matram perugutundi leda taggutundi.
+- Negative zoom la think chesthe opposite direction side ki tirigina la untundi.
+
+Mini example:
+
+$$-2[1,-3]=[-2,6]$$
+
+Real-time AI example:
+- recommendation score combine chestappudu context importance ni 0.7 or 1.3 la scale chestharu.
+- ante "entha importance ivvali" ani scalar decide chestundi.
+
+#### Quick Comparison (Easy Recall)
+
+| Type | Input | Output | Main purpose |
+|---|---|---|---|
+| Dot product | vector + vector | scalar | similarity / score |
+| Element-wise | vector + vector | vector | per-feature gating |
+| Scalar mult | scalar + vector | vector | scaling strength |
+
+Common mistakes avoid cheyyali:
+- different lengths vectors ki dot/element-wise cheyyakudadhu.
+- dot product result vector kaadu, scalar.
+- element-wise and dot product ni confuse avvakudadhu.
+
+Super quick kid memory trick:
+- Dot product = "score card"
+- Element-wise = "item-wise stickers"
+- Scalar mult = "zoom button"
+
 ### Dot Product
 [1, 2, 3] . [4, 5, 6] = (1x4) + (2x5) + (3x6) = 32
 
