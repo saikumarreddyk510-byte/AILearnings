@@ -1730,6 +1730,8 @@ Advantages:
 Disadvantage:
 - Overfitting chance ekkuva
 
+> **Full detail:** Root node selection, Entropy/Information Gain, Gini Impurity, Play Tennis worked example — anni **"Decision Tree — Algorithm 4"** section lo unnai (SVM tarvata).
+
 ---
 
 ## 8.4 Random Forest
@@ -2537,6 +2539,582 @@ gamma = 0.01 (smooth)          gamma = 10 (wiggly)
 | **Best when** | Clear margin/gap between classes unnappudu |
 
 > **Final gurthu:** SVM = *"Rendu classes madhyalo, maximum gap icche best line (hyperplane) geeyadam."* Data linearly separable aithe direct line, kaakapothe kernel trick.
+
+---
+
+# Decision Tree — Algorithm 4
+
+Decision Tree ante **yes/no (question by question)** series use chesi final decision ki reach avvadam. SVM laaga line geeyadu — **questions adugutu** data ni chinna chinna groups ga vidagottutundi.
+
+> **Main idea (oka line lo):** *"Data ni best ga separate chese question ni mundu adigi, step by step chinna groups ga vidagotti, chivarilo answer (Yes/No) ivvadam."*
+
+Simple ga:
+- **root** nundi start avtundi
+- oka **feature ni question laaga** adugutundi
+- answer batti **branch** lo next ki velthundi
+- finally **leaf node** lo class/output istundi
+
+### Prathi split lo em jarugutundi?
+
+Decision Tree lo prathi split:
+- data ni **better ga separate** cheyyali
+- **similar records** ni same branch lo pettaali
+- ante prathi split tarvata group **"pure"** (okate answer) ki daggara avvali
+
+---
+
+## Play Tennis Dataset (Whiteboard example)
+
+Ee data lo **weather conditions** batti *"aa roju tennis aaduthara?"* ani predict cheyyali.
+
+| # | Outlook | Temperature | Humidity | Wind | **PlayTennis** (Target) |
+|:-:|---------|-------------|----------|------|:-----------------------:|
+| 1 | Sunny | Hot | High | Weak | No |
+| 2 | Sunny | Hot | High | Strong | No |
+| 3 | Overcast | Hot | High | Weak | Yes |
+| 4 | Rain | Mild | High | Weak | Yes |
+| 5 | Rain | Cool | Normal | Weak | Yes |
+| 6 | Rain | Cool | Normal | Strong | No |
+| 7 | Overcast | Cool | Normal | Strong | Yes |
+| 8 | Sunny | Mild | High | Weak | No |
+| 9 | Sunny | Cool | Normal | Weak | Yes |
+| 10 | Rain | Mild | Normal | Weak | Yes |
+
+- **Independent variables (Features / X):** `Outlook`, `Temperature`, `Humidity`, `Wind`.
+- **Target (Label / y):** `PlayTennis` — whiteboard lo **red circle** chesindi ide. Idi predict cheyyalsina answer.
+- `PlayTennis` = **Yes / No** (categorical) → so idi **Classification** problem.
+- **Total rows = 10** → **6 Yes**, **4 No**.
+
+> **Gurthu:** anni features **categorical** (Sunny/Rain, Hot/Cool, High/Normal, Weak/Strong). Decision Tree ki **feature scaling avasaram ledu** — distance meeda kaadu, **questions** meeda pani chestundi.
+
+---
+
+## Tree Flow (Diagram)
+
+```mermaid
+flowchart TD
+    A["Play Tennis?"] --> B["Outlook<br/>(ROOT NODE)"]
+    B -->|"Sunny (4 rows)"| C["Humidity?<br/>(internal node)"]
+    B -->|"Overcast (2 rows)"| D["Yes<br/>(2 Yes / 0 No)"]
+    B -->|"Rain (4 rows)"| E["Wind?<br/>(internal node)"]
+    C -->|High| F["No<br/>(0 Yes / 3 No)"]
+    C -->|Normal| G["Yes<br/>(1 Yes / 0 No)"]
+    E -->|Weak| H["Yes<br/>(3 Yes / 0 No)"]
+    E -->|Strong| I["No<br/>(0 Yes / 1 No)"]
+```
+
+### Tree Terminology (Whiteboard annotations)
+
+| Term | Ee example lo | Meaning |
+|------|---------------|---------|
+| **Root Node** | `Outlook` | Tree lo **modati (first) question**. Motham data ikkade start avtundi. |
+| **Branch** | `Sunny`, `Overcast`, `Rain` | Question ki **answer paths** (edges). Prathi branch data ni oka vaipuki teeskeltundi. |
+| **Internal / Decision Node** | `Humidity?`, `Wind?` | Madhyalo unna **inko question**. Inka split avvali ani ardham. |
+| **Leaf Node (Target)** | `Yes` / `No` boxes | **Final answer** ichche node. Ikkada question undadu — idi target value. |
+| **Depth** | ikkada **2** | Root nunchi longest leaf varaku enni questions unnayo. |
+
+### Branch lo enni rows veltayi? (Whiteboard lo circle chesina numbers)
+
+`Outlook` root question adigithe, 10 rows ila **3 branches** ga vidipothayi:
+
+| Branch | Rows | Which rows | Yes / No | Status |
+|--------|:----:|------------|:--------:|--------|
+| **Sunny** | **4** | 1, 2, 8, 9 | 1 Yes / 3 No | mixed → inka question kavali |
+| **Overcast** | **2** | 3, 7 | 2 Yes / 0 No | **pure** → direct leaf **Yes** |
+| **Rain** | **4** | 4, 5, 6, 10 | 3 Yes / 1 No | mixed → inka question kavali |
+
+> **`Overcast` enduku direct answer?** Aa branch lo unna **rendu rows kuda "Yes"** — mixing ledu. Idi **pure node**. Pure ayipoyaka inka question adagatam waste, so **direct leaf** ga marchestham.
+
+### Migilina branches ni malli split cheyyadam
+
+- **Sunny (4 rows)** ni `Humidity?` tho split:
+  - `High` → rows 1, 2, 8 → anni **No** → leaf **No** (0 Yes / 3 No) ✅ pure
+  - `Normal` → row 9 → **Yes** → leaf **Yes** (1 Yes / 0 No) ✅ pure
+- **Rain (4 rows)** ni `Wind?` tho split:
+  - `Weak` → rows 4, 5, 10 → anni **Yes** → leaf **Yes** (3 Yes / 0 No) ✅ pure
+  - `Strong` → row 6 → **No** → leaf **No** (0 Yes / 1 No) ✅ pure
+
+**Anni leaves pure ayyayi → tree aagipotundi (stop).** Ide "training complete".
+
+### Tree ni rules ga chadavadam (If-Else form)
+
+```text
+IF Outlook = Overcast                      -> Yes
+IF Outlook = Sunny  AND Humidity = High    -> No
+IF Outlook = Sunny  AND Humidity = Normal  -> Yes
+IF Outlook = Rain   AND Wind     = Weak    -> Yes
+IF Outlook = Rain   AND Wind     = Strong  -> No
+```
+
+> Idi Decision Tree **biggest advantage** — model ni **plain English rules** ga chadavachu. Anduke "explainable model" antaru.
+
+---
+
+## Root Node Selection (Chala Important)
+
+### Root node enduku important?
+
+Root node ante tree lo **first question**. Idi **most important split**, enduku ante:
+
+1. **Motham data ikkade divide avtundi** — first split correct aithe, migilina pani easy.
+2. **Whole tree structure root meeda depend avtundi** — root marithe, kinda unna tree motham marutundi.
+3. **Wrong root select chesthe** — tree **deep** (chala levels) avtundi, rules complicated avtai, **overfitting** and accuracy problem vastundi.
+4. **Correct root select chesthe** — tree **chinnaga (shallow)**, simple ga, fast ga untundi.
+
+**Kid analogy:** Nuvvu oka person ni guess cheyyali (20 questions game).
+- Modati question *"Aa person peru lo 'a' undaa?"* — idi weak question, pedda help ledu.
+- Modati question *"Aa person magavaadaa/aadadaa?"* — idi **half mandini ventane** teesestundi. Idi **strong root question**.
+
+**Inko analogy (filter):** Root node = **first filter**.
+- First filter lo rough ga separate chesthe → later questions easy.
+- First filter bad ga unte → later tree chala complicated avtundi.
+
+### Root node ela select chestaru?
+
+Decision Tree algorithm **anni features ni try chesi** (Outlook, Temperature, Humidity, Wind), prathi daaniki *"idi root aithe data entha clean ga split avtundi?"* ani **score** calculate chestundi. **Best score** unna feature root avtundi.
+
+Rendu common criteria (measures):
+
+| Criterion | Ela pani chestundi | Best value |
+|-----------|--------------------|------------|
+| **Entropy → Information Gain** | Data lo unna **confusion (impurity)** entha thaggindo measure chestundi | **Information Gain ekkuva** unna feature = root (ID3 algorithm) |
+| **Gini Impurity** | Random ga oka row ni tappuga label chese **chance** entha undo | **Gini ekkuva thaggithe (impurity takkuva)** = root (CART / sklearn default) |
+
+### Entropy ante enti? (Confusion measure)
+
+**Entropy = group lo entha "mixing / confusion" undo cheppe number.**
+
+$$Entropy = -\sum p_i \log_2(p_i)$$
+
+- **Entropy = 0** → group **pure** (anni okate answer). Example: 4 Yes / 0 No → **0** (no confusion).
+- **Entropy = 1** → group **fully mixed** (perfect 50-50). Example: 2 Yes / 2 No → **1** (max confusion).
+- Madhyalo unte → partially mixed.
+
+**Kid explanation:** oka box lo **anni red balls** unte, "next ball ye color?" ani cheppadam easy → confusion **0**. Box lo **half red, half blue** unte → confusion **max (1)**.
+
+### Information Gain ante enti?
+
+$$Information\ Gain = Entropy(parent) - Weighted\ Entropy(children)$$
+
+Ante: *"Ee question adigina tarvata confusion **entha thaggindi**?"* — **ekkuva thaggithe ee question better.**
+
+---
+
+## Worked Example — Play Tennis data tho root node kanukkovadam
+
+### Step 1: Parent entropy (split cheyyaka mundu)
+
+Motham 10 rows → **6 Yes, 4 No**.
+
+$$Entropy(parent) = -\frac{6}{10}\log_2\frac{6}{10} - \frac{4}{10}\log_2\frac{4}{10}$$
+
+- `= -(0.6 × -0.737) - (0.4 × -1.322)`
+- `= 0.442 + 0.529`
+- **`= 0.971`** ← starting confusion (dadapu max, ante data baaga mixed).
+
+### Step 2: Prathi feature ki split chesi entropy chudadam
+
+**Option A: `Outlook` ni root ga pedithe**
+
+| Branch | Rows | Yes/No | Entropy |
+|--------|:----:|:------:|:-------:|
+| Sunny | 4 | 1 Y / 3 N | 0.811 |
+| Overcast | 2 | 2 Y / 0 N | **0.000** (pure!) |
+| Rain | 4 | 3 Y / 1 N | 0.811 |
+
+Weighted entropy = rows count batti average:
+
+- `= (4/10 × 0.811) + (2/10 × 0.000) + (4/10 × 0.811)`
+- `= 0.325 + 0 + 0.325 = 0.649`
+
+**Information Gain(Outlook) = 0.971 − 0.649 = `0.322`** ✅
+
+**Option B: `Humidity` ni root ga pedithe**
+
+| Branch | Rows | Yes/No | Entropy |
+|--------|:----:|:------:|:-------:|
+| High | 5 | 2 Y / 3 N | 0.971 |
+| Normal | 5 | 4 Y / 1 N | 0.722 |
+
+- Weighted = `(5/10 × 0.971) + (5/10 × 0.722)` = `0.486 + 0.361` = `0.846`
+- **Information Gain(Humidity) = 0.971 − 0.846 = `0.125`**
+
+**Option C: `Temperature` ni root ga pedithe**
+
+| Branch | Rows | Yes/No | Entropy |
+|--------|:----:|:------:|:-------:|
+| Hot | 3 | 1 Y / 2 N | 0.918 |
+| Mild | 3 | 2 Y / 1 N | 0.918 |
+| Cool | 4 | 3 Y / 1 N | 0.811 |
+
+- Weighted = `0.876` → **Information Gain(Temperature) = `0.095`**
+
+**Option D: `Wind` ni root ga pedithe**
+
+| Branch | Rows | Yes/No | Entropy |
+|--------|:----:|:------:|:-------:|
+| Weak | 7 | 5 Y / 2 N | 0.863 |
+| Strong | 3 | 1 Y / 2 N | 0.918 |
+
+- Weighted = `0.880` → **Information Gain(Wind) = `0.091`**
+
+### Step 3: Winner ni select cheyyadam
+
+| Feature | Weighted Entropy | **Information Gain** | Rank |
+|---------|:----------------:|:--------------------:|:----:|
+| **`Outlook`** | 0.649 | **0.322** | 🥇 **1 (ROOT)** |
+| `Humidity` | 0.846 | 0.125 | 2 |
+| `Temperature` | 0.876 | 0.095 | 3 |
+| `Wind` | 0.880 | 0.091 | 4 |
+
+> **Result:** `Outlook` ki **Information Gain highest (0.322)** → so **`Outlook` = Root Node**. Ee reason valle whiteboard diagram lo root lo `Outlook` undi!
+
+**Enduku `Outlook` gelichindi?** Enduku ante `Outlook = Overcast` branch **fully pure** (2 Yes / 0 No, entropy = 0) — okka question tho ne 2 rows ki answer fix ayipoyindi. Migilina features lo **e branch kuda pure kaadu** — anni branches lo Yes/No mixed ga unnayi.
+
+### Same example — Gini Impurity tho
+
+$$Gini = 1 - \sum p_i^2$$
+
+- **Parent Gini:** `1 − (0.6)² − (0.4)²` = `1 − 0.36 − 0.16` = **`0.48`**
+- **Outlook:** Sunny `0.375`, Overcast `0.000`, Rain `0.375` → weighted `0.300` → **gain = `0.180`** 🥇
+- **Humidity:** High `0.480`, Normal `0.320` → weighted `0.400` → gain = `0.080`
+- **Temperature:** weighted `0.417` → gain = `0.063`
+- **Wind:** weighted `0.419` → gain = `0.061`
+
+> **Gini kuda `Outlook` ne root ga chepthundi.** Rendu methods mostly **same answer** istai — Gini calculate cheyyadam fast (log ledu), anduke **sklearn default = `gini`**.
+
+### Ee process ni repeat cheyyadam (Recursion)
+
+Root fix ayyaka, **prathi branch ki same process malli** jarugutundi:
+
+1. `Sunny` branch (4 rows) lo migilina features (`Temperature`, `Humidity`, `Wind`) ni compare → **`Humidity`** best → adi aa branch node.
+2. `Rain` branch (4 rows) lo compare → **`Wind`** best → adi aa branch node.
+3. `Overcast` branch already **pure** → **stop**, leaf ga marchadam.
+
+**Stop eppudu avtundi?**
+- Node **pure** ayipoyindi (anni okate class), **or**
+- Features anni already vaadesam, **or**
+- `max_depth` / `min_samples_split` limit reach ayindi.
+
+### Mini intuition (formula lekunda)
+
+10 rows lo 5 Yes, 5 No unnai anuko. Oka question adigaka:
+
+```text
+GOOD root question:              BAD root question:
+   left  = 5 Yes / 0 No             left  = 3 Yes / 2 No
+   right = 0 Yes / 5 No             right = 2 Yes / 3 No
+   -> rendu sides PURE              -> rendu sides inka MIXED
+   -> confusion 0, pani ayipoyindi  -> inka chala questions kavali
+```
+
+**Rule:** oka side **mostly Yes**, inko side **mostly No** vasthe → adi **good root**. Rendu sides lo Yes/No **mix** ga unte → **bad root**.
+
+---
+
+## Prediction — Kotha row vasthe ela answer istundi?
+
+Kotha day: **Outlook = Rain, Temperature = Mild, Humidity = High, Wind = Strong**
+
+```text
+Start -> Outlook? = Rain      -> Rain branch loki
+      -> Wind?    = Strong    -> Strong branch loki
+      -> LEAF     = No
+```
+
+**Prediction: `No` (tennis aadaru).**
+
+- Gamanika: `Temperature` and `Humidity` ee prediction lo **vaadanu** — Rain path lo aa questions ravu. Tree **avasaramaina questions matrame** adugutundi.
+
+---
+
+## Final Leaves (Summary)
+
+| Path | Leaf | Counts |
+|------|:----:|:------:|
+| `Outlook = Overcast` | **Yes** | 2 Yes / 0 No |
+| `Outlook = Sunny` → `Humidity = High` | **No** | 0 Yes / 3 No |
+| `Outlook = Sunny` → `Humidity = Normal` | **Yes** | 1 Yes / 0 No |
+| `Outlook = Rain` → `Wind = Weak` | **Yes** | 3 Yes / 0 No |
+| `Outlook = Rain` → `Wind = Strong` | **No** | 0 Yes / 1 No |
+
+---
+
+## ⚠️ Main Disadvantage — **Decision Trees are prone to overfit**
+
+> **Whiteboard point:** *"Decision Trees are prone to overfit"* — idi Decision Tree yokka **biggest disadvantage**.
+
+**Overfit ante enti (quick recall):** model training data ni **baaga baaga memorize** chesi, **kotha (unseen) data meeda fail** avvadam.
+- Training accuracy → **chala ekkuva** (dadapu 100%)
+- Test accuracy → **takkuva**
+- Ee **gap** ye overfitting signal.
+
+---
+
+### 🔍 WHY? — Decision Trees enduku overfit avthai (5 reasons)
+
+#### Reason 1: Tree **"pure" ayye varaku aagadu** (main reason)
+
+Idi **most important reason**. Default ga Decision Tree ki **stop cheyyadaniki limit ledu** — prathi leaf **pure** (anni okate class) ayye varaku **splits chestune untundi**.
+
+- Impurity `> 0` unnanta varaku → *"inko question adugutha"*
+- Chivariki prathi leaf lo **1 or 2 rows** matrame migulutai
+- **1 row ki oka rule** ante adi **learning kaadu — memorizing**
+
+```text
+Correct learning:            Overfitting (memorizing):
+  "Rain + Strong -> No"        "Rain + Strong + Mild + Humidity=Normal
+   (30 rows batti nerchindi)     + Day=Tuesday -> No"  (1 row batti!)
+   -> general rule ✅            -> aa okka row ki matrame rule ❌
+```
+
+#### Reason 2: **Noise / wrong rows ni kuda rule ga marchestundi**
+
+- Data lo oka row **tappu ga label** ayindi anuko (mistake / noise).
+- Normal model adi **ignore** cheyyali.
+- Kani tree *"ee row kuda pure ga separate cheyyali"* ani, aa **okka row kosam prathyekam ga oka branch** create chestundi.
+- Aa branch **nijamaina pattern kaadu** — kevalam **noise** ni gurthu pettukunnadi.
+
+#### Reason 3: **Greedy algorithm** — munduki chuudadu
+
+- Tree prathi step lo **"ippudu best split edi?"** ani matrame chustundi (greedy).
+- *"Ee split valla tarvata tree entha complicated avtundi?"* ani **alochinchadu**.
+- So local ga correct decisions teeskuntu, **globally chala pedda, complicated tree** ni build chestundi.
+
+#### Reason 4: **Enni splits ayina cheyyagaladu** (no natural limit)
+
+- Linear Regression ki oka **line** matrame — adi entha ayina complicated avvadu (limited flexibility).
+- Kani Decision Tree **entha deep ayina** vellagaladu → **unlimited flexibility**.
+- Flexibility ekkuva = **variance ekkuva** = **overfit chance ekkuva**.
+
+#### Reason 5: **Jagged (unancha) boundary**
+
+- Deep tree yokka decision boundary **prathi point chuttu tightly wrap** avtundi.
+
+```text
+Good (general) boundary:        Overfit boundary (deep tree):
+    ___________                     _|‾|__|‾‾|_|‾|_
+   /           \                   | prathi point ni    |
+  |  class A    |                  | separate ga wrap   |
+   \___________/                   |_chestundi__________|
+   -> smooth, kotha data OK        -> kotha point vasthe tappu
+```
+
+---
+
+### 📊 Mana Play Tennis example lone overfitting evidence
+
+Mana tree lo ee leaves chudandi:
+
+| Leaf | Rows aa leaf lo | Problem? |
+|------|:---------------:|----------|
+| `Sunny → Humidity = Normal` → **Yes** | **1 row** (row 9) | ⚠️ **okka row** batti rule! |
+| `Rain → Wind = Strong` → **No** | **1 row** (row 6) | ⚠️ **okka row** batti rule! |
+| `Sunny → Humidity = High` → **No** | 3 rows | ✅ koncham better |
+
+- *"Rain + Strong Wind aithe tennis aadaru"* — ee rule **okka roju data** batti nerchukunnadi!
+- Nijam ga rain + strong wind lo evaro aadi undachu — kani mana tree **"eppudu No"** ani **gudlu moosukuni** cheptundi.
+- **Idi exactly overfitting** — chinna data batti **too confident** rule.
+
+---
+
+### 🧪 Real Proof (numbers tho) — sklearn experiment
+
+Breast Cancer dataset (569 rows) meeda **same data**, kevalam **tree depth** matrame maarchi test chesam:
+
+| Setting | Depth | Leaves | Train Accuracy | Test Accuracy | **Gap** |
+|---------|:-----:|:------:|:--------------:|:-------------:|:-------:|
+| **No limit (default)** | 7 | 16 | **1.000** (100%!) | 0.942 | **0.058** ❌ |
+| `max_depth=4` | 4 | 12 | 0.995 | 0.953 | 0.042 |
+| `max_depth=3` | 3 | 8 | 0.970 | **0.965** | **0.005** ✅ |
+| `min_samples_leaf=5` | 5 | 12 | 0.980 | **0.971** | 0.009 ✅ |
+
+**Ee table nunchi em ardham avtundi?**
+
+1. **No limit tree → training accuracy `1.000` (100%)** — ante **prathi training row ni correct** ga cheppindi. Idi *"model super"* kaadu — idi **memorization warning sign** ⚠️.
+2. Kani aa same tree **test meeda `0.942`** matrame — **shallow tree (`0.965`) kanna takkuva!**
+3. **Chinna tree (depth 3), pedda tree (depth 7) kanna kotha data meeda BETTER.** Idi overfitting ki **clear proof**.
+4. **Gap `0.058` → `0.005`** ki thaggindi — ante model **generalize** avtundi.
+
+> **Key insight:** Training accuracy 100% vasthe **santhoshapadaku** — mostly adi **overfitting** signal. Eppudu **test accuracy** ni chudu.
+
+```python
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+
+X, y = load_breast_cancer(return_X_y=True)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# Tree 1: limit ledu -> OVERFIT
+big = DecisionTreeClassifier(random_state=42).fit(X_train, y_train)
+print("Full tree  -> train:", accuracy_score(y_train, big.predict(X_train)),
+      "test:", accuracy_score(y_test, big.predict(X_test)))
+
+# Tree 2: depth limit -> BETTER
+small = DecisionTreeClassifier(max_depth=3, random_state=42).fit(X_train, y_train)
+print("Depth 3    -> train:", accuracy_score(y_train, small.predict(X_train)),
+      "test:", accuracy_score(y_test, small.predict(X_test)))
+```
+
+---
+
+### ✅ Overfitting ni ela aapali? (Solutions)
+
+| Solution | Ela pani chestundi |
+|----------|--------------------|
+| **`max_depth`** set cheyyadam | Tree ni **konni levels ki** aapesthundi (most common fix) |
+| **`min_samples_leaf`** | Leaf lo **kanisam N rows** undali — 1-row rules raavu |
+| **`min_samples_split`** | Node lo N rows unte ne split cheyyi |
+| **Pruning** (`ccp_alpha`) | Mundu **full tree** penchi, tarvata **useless branches ni kattirinchadam** |
+| **Cross Validation** | Best `max_depth` ni **guess kaakunda**, test chesi kanukkovadam |
+| **🌲 Random Forest** | **Chala trees** build chesi **vote** teeskovadam — **best solution** |
+
+> **Enduku Random Forest best fix?** Oka tree tappu cheyyachu (overfit). Kani **100 trees** different ga overfit avtai, and vaati **average/vote** teeskunte aa tappulu **cancel** ayipotai. Idi *"okkariki adagakunda, 100 mandini adigi majority teeskovadam"*. (Detail: section 8.4)
+
+> **Ee reason valle Random Forest, XGBoost lantivi puttayi** — anni **Decision Tree base** meeda kattinave, kani **overfitting problem ni fix** chesthu.
+
+---
+
+## Decision Tree Hyperparameters (Overfitting control)
+
+| Hyperparameter | Meaning | Chinna value | Pedda value |
+|----------------|---------|--------------|-------------|
+| `criterion` | Split measure | `'gini'` (fast, default) | `'entropy'` (information gain) |
+| `max_depth` | Tree entha lothu vellocho | **underfit** (too simple) | **overfit** (memorize) |
+| `min_samples_split` | Split cheyyadaniki kaavalsina min rows | overfit | underfit |
+| `min_samples_leaf` | Leaf lo undalsina min rows | overfit | underfit |
+
+- **Pruning** = penchina tree lo unnecessary branches ni **kattirinchadam** (trim), overfitting thaggadaniki.
+- Deep tree = prathi row ni gurthu pettukuntundi (**overfit**) → training 100%, test poor.
+
+---
+
+## Practical Implementation (Python + scikit-learn)
+
+```python
+import pandas as pd
+from sklearn.tree import DecisionTreeClassifier, export_text
+from sklearn.metrics import accuracy_score
+
+# Step 1: Whiteboard dataset
+data = {
+    "Outlook":     ["Sunny","Sunny","Overcast","Rain","Rain","Rain","Overcast","Sunny","Sunny","Rain"],
+    "Temperature": ["Hot","Hot","Hot","Mild","Cool","Cool","Cool","Mild","Cool","Mild"],
+    "Humidity":    ["High","High","High","High","Normal","Normal","Normal","High","Normal","Normal"],
+    "Wind":        ["Weak","Strong","Weak","Weak","Weak","Strong","Strong","Weak","Weak","Weak"],
+    "PlayTennis":  ["No","No","Yes","Yes","Yes","No","Yes","No","Yes","Yes"],
+}
+df = pd.DataFrame(data)
+
+# Step 2: Categorical text ni numbers ga marchadam (one-hot encoding)
+X = pd.get_dummies(df[["Outlook", "Temperature", "Humidity", "Wind"]])
+y = df["PlayTennis"]
+
+# Step 3: Model (entropy = information gain, whiteboard logic)
+model = DecisionTreeClassifier(criterion="entropy", random_state=42)
+model.fit(X, y)
+
+# Step 4: Tree ni rules ga print cheyyadam
+print(export_text(model, feature_names=list(X.columns)))
+
+# Step 5: Ye features important ayyayo chudadam
+importance = pd.Series(model.feature_importances_, index=X.columns)
+print("\nFeature importance:\n", importance.sort_values(ascending=False).head())
+
+# Step 6: Kotha day ki predict cheyyadam
+new_day = pd.DataFrame([{
+    "Outlook": "Rain", "Temperature": "Mild", "Humidity": "High", "Wind": "Strong"
+}])
+new_X = pd.get_dummies(new_day).reindex(columns=X.columns, fill_value=0)
+print("\nPlay Tennis?", model.predict(new_X)[0])
+```
+
+### Actual Output (ee code run cheste)
+
+```text
+|--- Outlook_Sunny <= 0.50
+|   |--- Wind_Weak <= 0.50
+|   |   |--- Outlook_Overcast <= 0.50
+|   |   |   |--- class: No
+|   |   |--- Outlook_Overcast >  0.50
+|   |   |   |--- class: Yes
+|   |--- Wind_Weak >  0.50
+|   |   |--- class: Yes
+|--- Outlook_Sunny >  0.50
+|   |--- Humidity_High <= 0.50
+|   |   |--- class: Yes
+|   |--- Humidity_High >  0.50
+|   |   |--- class: No
+
+Feature importance:
+ Humidity_High       0.334220
+Outlook_Sunny       0.264098
+Outlook_Overcast    0.205984
+Wind_Weak           0.195698
+Outlook_Rain        0.000000
+
+Play Tennis? No
+```
+
+- **Root node = `Outlook_Sunny`** → ante **`Outlook`** ye root ✅ (manam paina Information Gain tho calculate chesindi correct ani proof).
+- **Prediction = `No`** → manam manual ga chesina walkthrough (Rain → Strong → No) tho **exact ga match ayyindi** ✅.
+- `Outlook = Sunny` aithe → `Humidity` question, `Wind = Weak` aithe → direct `Yes` — whiteboard tree logic ne.
+
+### Code lo prathi step enduku?
+- **`get_dummies`** — sklearn ki text panicheyyadu, so categories ni 0/1 columns ga marchali.
+- **`criterion="entropy"`** — manam paina chesina Information Gain method ne vaadutundi (`"gini"` default).
+- **`export_text`** — tree ni **if-else rules** ga chupistundi (root node ye feature o **modati line lo** kanipistundi).
+- **`feature_importances_`** — ye feature entha useful ani score. (Gamanika: idi feature **motham** contribution — root node ni telusukovadaniki `export_text` modati line chudadam correct way.)
+- **Scaling ledu** — Decision Tree ki scaling avasaram ledu (splits meeda pani chestundi, distance meeda kaadu).
+
+> **Important note (whiteboard tree vs sklearn tree):** Whiteboard lo `Outlook` ni **3 branches** (Sunny / Overcast / Rain) ga split chesam — idi **multi-way split** (ID3 style). Kani **sklearn eppudu binary (2-way) splits** matrame chestundi, and one-hot encoding valla `Outlook_Sunny = 0 or 1` laaga questions adugutundi. So **shape koncham different** ga kanipistundi, kani **rules and final answers same**.
+
+---
+
+## Advantages and Weakness
+
+### Enduku Decision Tree? (Advantages)
+
+- **Easy to understand** — tree ni chusi direct ga ardham avtundi (visual).
+- **Explainable** — if-else rules ga chadavachu ("enduku ee answer icchindi" ani cheppachu).
+- **Feature scaling avasaram ledu** — StandardScaler/MinMaxScaler avasaram ledu.
+- **Categorical + numerical** rendu types data ki work avtundi.
+- **Missing values / outliers** ni koncham baaga tolerate chestundi (distance based kaadu kabatti).
+- **Non-linear relations** ni handle chestundi (SVM kernel laanti trick avasaram ledu).
+
+### Weakness
+
+- **⚠️ Overfitting avvachu (BIGGEST disadvantage)** — tree **pure ayye varaku** splits chestune, training data ni memorize chestundi. (Full "why" explanation paina **"Main Disadvantage"** section lo undi.)
+  - Fix: **pruning**, `max_depth`, `min_samples_leaf`, **Random Forest**.
+- **Unstable** — data lo chinna change vachina, tree structure motham marochu (high variance).
+  - Fix: **Random Forest** (chala trees vote chestai — section 8.4).
+- **Biased towards features with many categories** — ekkuva unique values unna column ni root ga select chese tendency.
+- **Greedy** — prathi step lo local best chustundi, globally best tree guarantee ledu.
+
+> **Short summary:** Decision Tree = *"Best question ni root ga adigi, question by question data ni pure groups ga vidagotti, leaf node lo final answer ivvadam."* Root node = **highest Information Gain (or lowest Gini)** unna feature.
+
+---
+
+## Decision Tree — Quick Summary (Gurthu pettuko)
+
+| Point | Value |
+|-------|-------|
+| **Type** | Supervised (Classification + Regression) |
+| **Idea** | Questions adugutu data ni pure groups ga split cheyyadam |
+| **Root Node** | Modati question — **best split** unna feature (`Outlook`) |
+| **Branch** | Question ki answer path (`Sunny`, `Overcast`, `Rain`) |
+| **Leaf Node** | Final answer (target) — `Yes` / `No` |
+| **Split criteria** | **Information Gain** (entropy) or **Gini Impurity** |
+| **Best root rule** | IG **highest** / Gini **lowest** |
+| **Scaling** | **Avasaram ledu** (distance based kaadu) |
+| **Stop eppudu** | Node pure ayinapudu, or `max_depth` reach ayinapudu |
+| **⚠️ Main Weakness** | **Prone to OVERFIT** (pure ayye varaku split chestundi) |
+| **Overfit signal** | Train accuracy ~100%, test accuracy takkuva |
+| **Fix** | `max_depth`, `min_samples_leaf`, Pruning, or **Random Forest** |
+
+> **Final gurthu:** Decision Tree = *"Correct root question adigithe, migilina pani sagam ayipoyinatte."*
 
 ---
 
