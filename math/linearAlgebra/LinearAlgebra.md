@@ -915,6 +915,183 @@ $$f \odot g = [0.8,0.02,0.3]$$
 
 Ikkada second feature almost suppress ayindi, first feature strong ga undi.
 
+###### Whiteboard Definition (Screenshot)
+
+> **"In element wise multiplication, corresponding elements of 2 vectors are multiplied to form a new vector of the same dimension."**
+
+Ee definition lo **3 key points** unnayi:
+
+1. **corresponding elements** — same position lo unna values ne multiply cheyyali (1st tho 1st, 2nd tho 2nd).
+2. **2 vectors** — rendu vectors kavali (scalar multiplication laaga oka number kaadu).
+3. **same dimension** — output vector size **input size ye** untundi (marade!).
+
+###### Worked Example (Screenshot)
+
+Given:
+
+$$A = \begin{bmatrix} 1 \\ 2 \\ 3 \end{bmatrix}, \quad B = \begin{bmatrix} 3 \\ 4 \\ 5 \end{bmatrix}$$
+
+Element-wise multiplication:
+
+$$A \otimes B = \begin{bmatrix} 1 \times 3 \\ 2 \times 4 \\ 3 \times 5 \end{bmatrix} = \begin{bmatrix} 3 \\ 8 \\ 15 \end{bmatrix}$$
+
+Position by position ela jarigindo:
+
+| Position | A value | B value | Multiply | Result |
+|:--------:|:-------:|:-------:|:--------:|:------:|
+| 1st | 1 | 3 | $1 \times 3$ | **3** |
+| 2nd | 2 | 4 | $2 \times 4$ | **8** |
+| 3rd | 3 | 5 | $3 \times 5$ | **15** |
+
+**Dimension check (screenshot lo circle chesindi):**
+
+- A dimension = **3 × 1**
+- B dimension = **3 × 1**
+- Result dimension = **3 × 1** ✅ **same dimension**
+
+> **Idi chala important point:** Element-wise multiplication lo **dimension marade**. 3 elements ichhi 3 elements ye vasthayi.
+>
+> **Dot product tho compare cheyyi:** $A \cdot B = 3 + 8 + 15 = 26$ → **okate number (scalar)**, dimension **poyindi**.
+> Element-wise lo **add cheyyam**, so **vector ga ne** untundi.
+
+###### Notation (symbols confusion avoid cheyyadaniki)
+
+Ee operation ki chala symbols vadutharu — **anni okate meaning**:
+
+| Symbol | Peru | Ekkada kanipistundi |
+|:------:|------|---------------------|
+| $\odot$ | Hadamard product | Textbooks, papers (most standard) |
+| $\otimes$ | — | Whiteboard lo idi vaadaru (screenshot) |
+| `*` | asterisk | NumPy / Python code lo |
+
+> **Official peru: "Hadamard Product"** (French mathematician *Jacques Hadamard* peru meeda).
+>
+> ⚠️ **Careful:** Maths lo $\otimes$ ki normally **"tensor product"** ani vere meaning undi. Kani ee screenshot lo **element-wise** ki vaadaru. Papers lo eppudu $\odot$ ye safe.
+
+###### Rule: Same size undali (compulsory)
+
+```text
+✅ CORRECT:                      ❌ WRONG:
+  [1, 2, 3]                        [1, 2, 3]
+⊙ [3, 4, 5]                      ⊙ [3, 4]
+------------                     ------------
+  [3, 8, 15]                       ERROR! sizes match avvaledu
+```
+
+- 3 elements tho 3 elements ye multiply cheyyali.
+- Size different aithe → **error** (Python lo `ValueError: operands could not be broadcast`).
+
+###### Python Code
+
+```python
+import numpy as np
+
+A = np.array([1, 2, 3])
+B = np.array([3, 4, 5])
+
+print("Element-wise (*):", A * B)          # [ 3  8 15]  -> vector
+print("np.multiply     :", np.multiply(A, B))  # same result
+print("Dot product (@) :", A @ B)          # 26          -> scalar
+
+print("A shape:", A.shape, "| Result shape:", (A * B).shape)  # (3,) (3,)
+```
+
+Output:
+
+```text
+Element-wise (*): [ 3  8 15]
+np.multiply     : [ 3  8 15]
+Dot product (@) : 26
+A shape: (3,) | Result shape: (3,)
+```
+
+> Gamanika: `*` = element-wise, `@` = dot product. Python lo **ee rendu confuse avvakudadhu**.
+
+###### Application in Data Science: Feature Engineering (Screenshot)
+
+Element-wise multiplication **nijam ga ekkada vadatharu?** — **Feature Engineering** lo (kotha column create cheyyadam).
+
+**Problem:** 3 products unnayi. Prathi product ki **cost** and **discount %** telusu. **Final price** kanukkovali.
+
+| Product | Cost | Discount |
+|:-------:|:----:|:--------:|
+| A | 1000 | 0.10 (10%) |
+| B | 500 | 0.20 (20%) |
+| C | 200 | 0.15 (15%) |
+
+**Step 1: Rendu columns ni vectors ga rayadam**
+
+$$Cost = \begin{bmatrix} 1000 \\ 500 \\ 200 \end{bmatrix}, \quad Discount = \begin{bmatrix} 0.1 \\ 0.2 \\ 0.15 \end{bmatrix}$$
+
+**Step 2: Element-wise multiplication → Discounted Price (entha thaggindi)**
+
+$$Cost \otimes Discount = \begin{bmatrix} 1000 \times 0.1 \\ 500 \times 0.2 \\ 200 \times 0.15 \end{bmatrix} = \begin{bmatrix} 100 \\ 100 \\ 30 \end{bmatrix}$$
+
+**Step 3: Subtract chesi → Final Price**
+
+$$Final = Cost - Discounted = \begin{bmatrix} 1000 \\ 500 \\ 200 \end{bmatrix} - \begin{bmatrix} 100 \\ 100 \\ 30 \end{bmatrix} = \begin{bmatrix} 900 \\ 400 \\ 170 \end{bmatrix}$$
+
+**Full table:**
+
+| Product | Cost | Discount | Discounted Price (Cost ⊗ Discount) | **Final Price** |
+|:-------:|:----:|:--------:|:----------------------------------:|:---------------:|
+| A | 1000 | 0.10 | $1000 \times 0.1 = 100$ | **900** |
+| B | 500 | 0.20 | $500 \times 0.2 = 100$ | **400** |
+| C | 200 | 0.15 | $200 \times 0.15 = 30$ | **170** |
+
+**Ee example lo gamaninchalsina point:**
+
+- Product **A** and **B** ki **discounted price same (100)** — kani **cost different** (1000 vs 500)!
+- Enduku? A ki 10% of 1000 = 100, B ki 20% of 500 = 100.
+- Ante **prathi row ki dhaani own discount** apply ayindi — **row-wise independent**. Ide element-wise magic.
+
+**Enduku ee operation important? (WHY)**
+
+1. **Prathi row ki different multiplier** — A ki 10%, B ki 20%, C ki 15%. Scalar multiplication tho idi **cheyyalemu** (adi andariki same number apply chestundi).
+2. **Loop avasaram ledu** — 3 rows ayina, **10 lakhs rows** ayina **okate line** lo aipotundi.
+3. **Chala fast (vectorization)** — NumPy/Pandas internally C lo optimize chesi, Python `for` loop kanna **50-100x fast** ga chestundi.
+4. **Kotha feature create ayindi** — `Discounted Price`, `Final Price` ane **kotha columns** vachayi. Ide **Feature Engineering** — model ki better inputs ivvadam.
+
+**Pandas code (real-world way):**
+
+```python
+import pandas as pd
+
+df = pd.DataFrame({
+    "Product":  ["A", "B", "C"],
+    "Cost":     [1000, 500, 200],
+    "Discount": [0.10, 0.20, 0.15],
+})
+
+# Element-wise multiplication -> kotha column (Feature Engineering)
+df["DiscountedPrice"] = df["Cost"] * df["Discount"]
+df["FinalPrice"] = df["Cost"] - df["DiscountedPrice"]
+
+print(df)
+```
+
+Output:
+
+```text
+  Product  Cost  Discount  DiscountedPrice  FinalPrice
+0       A  1000      0.10            100.0       900.0
+1       B   500      0.20            100.0       400.0
+2       C   200      0.15             30.0       170.0
+```
+
+> **Key insight:** `df["Cost"] * df["Discount"]` ee **okka line** — idi **element-wise multiplication** ye! Data Science lo roju vaade operation. Nuvvu Pandas lo rendu columns ni `*` chesinappudal la, **behind the scenes linear algebra** ne jarugutundi.
+
+**Inka real examples (ekkada vadatharu):**
+
+| Use case | Vector 1 | Vector 2 (⊙) | Result |
+|----------|----------|--------------|--------|
+| **Total bill** | Quantity | Price per item | Line-item total |
+| **Weighted marks** | Subject marks | Subject credits | Weighted score |
+| **Salary hike** | Current salary | Hike % | Increment amount |
+| **Neural Network** | Features | Attention weights | Gated features |
+| **Dropout** | Layer output | 0/1 mask | Konni neurons off |
+
+
 ##### 3) Scalar Multiplication
 
 Definition:
@@ -944,6 +1121,347 @@ $$-2[1,-3]=[-2,6]$$
 Real-time AI example:
 - recommendation score combine chestappudu context importance ni 0.7 or 1.3 la scale chestharu.
 - ante "entha importance ivvali" ani scalar decide chestundi.
+
+###### Whiteboard Definition (Screenshot)
+
+> **"It involves multiplying vector by a scalar, resulting in a vector where each component is scaled by the scalar."**
+
+Ee definition lo **3 key points**:
+
+1. **vector × scalar** — oka vector, oka single number (scalar). Rendu vectors kaadu!
+2. **resulting in a vector** — output malli **vector** ye (dot product laaga scalar kaadu).
+3. **each component is scaled** — vector lo **prathi element** ki **ade number** apply avtundi.
+
+> ⚠️ **Chinna correction:** Screenshot lo chivarilo *"scaled by the **vector**"* ani raasi undi — adi **"scaled by the scalar"** ani undali. Enduku ante scale chesedi **scalar (c)** ye, vector kaadu. Chinna writing slip anthe, meaning maatram scalar ye.
+
+###### Worked Example 1 (Screenshot)
+
+Given:
+
+$$A = \begin{bmatrix} 3 \\ 5 \\ 7 \end{bmatrix}, \quad c = 4$$
+
+Prathi component ni `4` tho multiply cheyyadam:
+
+$$cA = 4 \begin{bmatrix} 3 \\ 5 \\ 7 \end{bmatrix} = \begin{bmatrix} 4 \times 3 \\ 4 \times 5 \\ 4 \times 7 \end{bmatrix} = \begin{bmatrix} 12 \\ 20 \\ 28 \end{bmatrix}$$
+
+| Component | A value | × c (=4) | Result |
+|:---------:|:-------:|:--------:|:------:|
+| 1st | 3 | $4 \times 3$ | **12** |
+| 2nd | 5 | $4 \times 5$ | **20** |
+| 3rd | 7 | $4 \times 7$ | **28** |
+
+- **Dimension:** input `3 × 1` → output `3 × 1` ✅ **marade**.
+- Scalar `c = 4` **okkatey**, kani **moodu components ki** apply ayindi.
+
+###### Worked Example 2 — Graph tho (Screenshot)
+
+Given:
+
+$$A = \begin{bmatrix} 2 \\ 2 \end{bmatrix}, \quad c = 2 \quad \Rightarrow \quad cA = \begin{bmatrix} 4 \\ 4 \end{bmatrix}$$
+
+Graph lo em jarigindi:
+
+```text
+  y
+  4 |                    ● (4,4)  <- cA (red) : 2 rettlu doram
+    |                 ⁄
+  3 |              ⁄
+    |           ⁄
+  2 |        ● (2,2)  <- A (yellow) : original vector
+    |     ⁄
+  1 |  ⁄
+    |⁄
+  0 +----|----|----|----|----> x
+    0    1    2    3    4
+```
+
+**Ikkada gamaninchalsina MAIN point:**
+
+- Yellow vector `A = (2,2)` and red vector `cA = (4,4)` — **rendu okate straight line meeda** unnayi.
+- **Direction marale** (rendu kuda 45° angle lo, top-right vaipuke).
+- **Length matrame 2 rettlu** ayindi.
+
+> **Ide scalar multiplication asalu artham:** vector ni **saagadeeyyadam (stretch)** or **kudinchadam (shrink)** — kani **digantam (direction) marchakunda**.
+
+###### `c` value batti em jarugutundi? (Full rules)
+
+| `c` value | Length ki em avtundi | Direction | Example ($A=[2,2]$) |
+|:---------:|----------------------|-----------|---------------------|
+| $c > 1$ | **Pedadi avtundi** (stretch) | **Same** | $c=2 \Rightarrow [4,4]$ |
+| $c = 1$ | **Marade** | Same | $c=1 \Rightarrow [2,2]$ |
+| $0 < c < 1$ | **Chinnadi avtundi** (shrink) | **Same** | $c=0.5 \Rightarrow [1,1]$ |
+| $c = 0$ | **Sunna ayipotundi** | Ledu (point) | $c=0 \Rightarrow [0,0]$ |
+| $c < 0$ | Scale + **reverse** | **Opposite** ⚠️ | $c=-1 \Rightarrow [-2,-2]$ |
+
+```text
+Negative scalar (c = -1) chesthe:
+
+  y
+  2 |        ● A = (2,2)
+    |     ⁄
+  0 +--⁄------------> x
+    |⁄
+ -2 ● -A = (-2,-2)   <- 180° tirigindi (opposite direction)
+```
+
+- **Positive `c`** → **same line, same side**.
+- **Negative `c`** → **same line, opposite side** (180° flip).
+- Rendu case lo kuda **line (direction axis) marade** — anduke *"scaling"* antaru.
+
+###### Python Code
+
+```python
+import numpy as np
+
+A = np.array([3, 5, 7])
+c = 4
+print("cA =", c * A)                 # [12 20 28]
+
+# Graph example
+A2 = np.array([2, 2])
+print("2  * A2 =", 2 * A2)           # [4 4]  -> stretch
+print("0.5* A2 =", 0.5 * A2)         # [1. 1.] -> shrink
+print("-1 * A2 =", -1 * A2)          # [-2 -2] -> reverse
+
+# Direction marade ani proof: length tho divide chesthe same unit vector
+print("A2 direction :", A2 / np.linalg.norm(A2))
+print("2A2 direction:", (2 * A2) / np.linalg.norm(2 * A2))
+```
+
+Output:
+
+```text
+cA = [12 20 28]
+2  * A2 = [4 4]
+0.5* A2 = [1. 1.]
+-1 * A2 = [-2 -2]
+A2 direction : [0.70710678 0.70710678]
+2A2 direction: [0.70710678 0.70710678]
+```
+
+> **Chivari rendu lines chudandi:** `A2` and `2*A2` ki **direction exactly same** (`0.707, 0.707`). Length matrame marindi. Idi *"direction marade"* ani **mathematical proof**.
+
+###### Element-wise tho compare (confusion clear cheyyadaniki)
+
+| | Element-wise (⊙) | Scalar Multiplication |
+|---|---|---|
+| **Input** | vector **⊙** vector | **number** × vector |
+| **Prathi element ki** | **different** multiplier | **same** multiplier |
+| **Example** | $[1,2,3] \odot [3,4,5] = [3,8,15]$ | $4 \times [1,2,3] = [4,8,12]$ |
+| **Direction** | **marochu** | **marade** (sign same aithe) |
+| **Data Science** | prathi row ki own discount | andariki same discount |
+
+```text
+Element-wise: [1000, 500, 200] ⊙ [0.1, 0.2, 0.15]   -> different % prathi product ki
+Scalar      : [1000, 500, 200] × 0.1                -> andariki SAME 10%
+```
+
+###### Real-time uses (ekkada vadatharu)
+
+| Use case | Em jarugutundi |
+|----------|----------------|
+| **Learning rate** (Gradient Descent) | Gradient vector ni `0.01` tho multiply — step size control |
+| **Unit vector** cheyyadam | Vector ni dhaani length tho divide ($\frac{1}{\|v\|}$ tho multiply) |
+| **Normalization** | Anni values ni same scale ki teeskuravadam |
+| **Image brightness** | Prathi pixel ni `1.2` tho multiply → image bright avtundi |
+| **Uniform discount** | Anni products ki **same** 10% off |
+
+> **Gradient Descent connection:** `new_weights = old_weights - learning_rate * gradient` — ikkada `learning_rate * gradient` ye **scalar multiplication**! Learning rate chinnaga unte chinna steps, peddaga unte pedda steps. (Detail: section 13(d) Gradient Descent.)
+
+###### Eg: Normalization and Standardization (Screenshot)
+
+Scalar multiplication yokka **most famous real use** — **Scaling data**.
+
+```text
+Normalization  and  Standardization
+              ↓
+        Scaling data  ⇒  units
+```
+
+**Problem enti?** Different columns **different units** lo untai:
+
+- Age → `25` (years)
+- Salary → `50000` (rupees)
+- Pixel → `0 to 255` (brightness)
+
+Ee numbers **same range** lo lekapothe, model **pedda number** ye important ani anukuntundi. Anduke **anni okate scale** ki teeskuravali — ade **scaling**.
+
+**Image Processing Example (screenshot lo main example)**
+
+Oka image ante nijam ga oka **numbers grid (matrix)**. Prathi cell = **pixel**, prathi pixel value **0 to 255**.
+
+```text
+Image = grid of pixels, prathi value 0-255
+
+      0-255   0-255   0-255
+        ↓       ↓       ↓
+      ┌───────┬───────┬───────┐
+      │   0   │  128  │  255  │   0   = full black
+      ├───────┼───────┼───────┤   255 = full white
+      │  64   │  200  │   32  │
+      └───────┴───────┴───────┘
+```
+
+**RGB:** color image ki **3 channels** untai — **R** (Red), **G** (Green), **B** (Blue). Prathi channel ki **separate grid**, prathi daaniki values `0-255`.
+
+**Normalize cheyyadam — prathi pixel ni `255` tho divide:**
+
+$$Normalized = \frac{1}{255} \times \begin{bmatrix} 0 & 128 & 255 \\ 64 & 200 & 32 \end{bmatrix} = \begin{bmatrix} 0.0 & 0.502 & 1.0 \\ 0.251 & 0.784 & 0.125 \end{bmatrix}$$
+
+| Original pixel | ÷ 255 | Result |
+|:--------------:|:-----:|:------:|
+| 0 | $0/255$ | **0.000** |
+| 64 | $64/255$ | **0.251** |
+| 128 | $128/255$ | **0.502** |
+| 200 | $200/255$ | **0.784** |
+| 255 | $255/255$ | **1.000** |
+
+> **Ide scalar multiplication!** `255` tho divide cheyyadam ante $\frac{1}{255}$ (= 0.00392) ane **scalar** tho multiply cheyyadam. **Okate scalar**, kani **prathi pixel ki** apply ayindi. Image lo **10 lakhs pixels** unna, **okate operation** chalu.
+
+**Result:** anni values ippudu **[0, 1]** range lo. Grid shape, image content **emi marale** — kevalam **scale** marindi.
+
+###### Normalization vs Standardization (rendu different!)
+
+| | **Normalization** (Min-Max) | **Standardization** (Z-score) |
+|---|---|---|
+| **Formula** | $\frac{x - min}{max - min}$ | $\frac{x - mean}{std}$ |
+| **Range** | **[0, 1]** (fixed) | Fixed ledu (mostly −3 to +3) |
+| **Result** | Anni values 0 and 1 madhya | mean = **0**, std = **1** |
+| **Eppudu** | Image pixels, Neural Networks | Outliers unnapudu, Linear Regression, PCA |
+| **Outliers** | ⚠️ Outlier unte migilinavi kunchinchipotai | ✅ Better handle chestundi |
+
+**Image ki normalization enduku?** Pixel range **already telusu** (`0` to `255`) — so min=0, max=255 ni direct ga vaadachu:
+
+$$\frac{x - 0}{255 - 0} = \frac{x}{255}$$
+
+Anduke image ki **simple ga 255 tho divide** chesthe saripotundi.
+
+**Standardization example:**
+
+$$data = [1000, 500, 200], \quad mean = 566.67, \quad std = 330.0$$
+
+$$z = \frac{[1000, 500, 200] - 566.67}{330.0} = [1.313,\ -0.202,\ -1.111]$$
+
+- Result lo **mean = 0**, **std = 1** ✅
+- **Negative values** vachai — idi normal (mean kanna takkuva unna values ki).
+
+###### Python Code
+
+```python
+import numpy as np
+
+img = np.array([[0, 128, 255],
+                [64, 200, 32]], dtype=np.uint8)
+
+# NORMALIZATION -> [0,1] : scalar multiplication by 1/255
+norm = img / 255.0
+print("Normalized:\n", np.round(norm, 3))
+print("min:", norm.min(), "max:", norm.max())
+
+# STANDARDIZATION -> mean 0, std 1
+data = np.array([1000., 500., 200.])
+z = (data - data.mean()) / data.std()
+print("\nz-scores:", np.round(z, 3))
+print("mean: %.1f  std: %.1f" % (z.mean(), z.std()))
+```
+
+Output:
+
+```text
+Normalized:
+ [[0.    0.502 1.   ]
+ [0.251 0.784 0.125]]
+min: 0.0 max: 1.0
+
+z-scores: [ 1.313 -0.202 -1.111]
+mean: 0.0  std: 1.0
+```
+
+###### Enduku scaling avasaram? (WHY)
+
+1. **Fair comparison** — Salary (50000) and Age (25) ni direct compare cheste, salary **2000 rettlu pedda** number. Model *"salary ye important"* ani **tappu ga** anukuntundi.
+2. **Faster training** — anni features same range lo unte, Gradient Descent **fast ga converge** avtundi (steps balanced ga untai).
+3. **Neural Networks ki MUST** — pedda numbers (255) isthe weights **explode** avtai. `0-1` values tho network **stable** ga nerchukuntundi.
+4. **Distance-based algorithms** (K-NN, K-Means, SVM) — ivi distance meeda pani chestai, so **scaling lekapothe wrong results**.
+
+> **Gurthu:** Scaling **data meaning ni marchadu** — kevalam **units** ni marustundi. 1 meter ni 100 cm ani cheppinattu — **length same**, kevalam **number** marindi. Ade image lo `128` → `0.502`, **same brightness**, different scale.
+
+###### Eg: Machine Learning — Unit Conversion (Screenshot)
+
+Paina cheppina *"units marchadam"* ki oka **chala simple, clean example**.
+
+**Problem:** Machine Learning dataset lo **3 persons heights** unnayi — **centimeters** lo:
+
+$$Height = \begin{bmatrix} 160 & 170 & 180 \end{bmatrix} \quad \text{(cm lo)}$$
+
+Manaki ivi **meters** lo kavali.
+
+**Conversion rule:**
+
+$$1\ cm = 0.01\ m \quad \Rightarrow \quad c = 0.01$$
+
+**Scalar multiplication apply cheyyadam:**
+
+$$cH = 0.01 \begin{bmatrix} 160 & 170 & 180 \end{bmatrix} = \begin{bmatrix} 0.01 \times 160 \\ 0.01 \times 170 \\ 0.01 \times 180 \end{bmatrix}^T = \begin{bmatrix} 1.6 & 1.7 & 1.8 \end{bmatrix}$$
+
+| Person | Height (cm) | × 0.01 | **Height (m)** |
+|:------:|:-----------:|:------:|:--------------:|
+| 1 | 160 | $0.01 \times 160$ | **1.6** |
+| 2 | 170 | $0.01 \times 170$ | **1.7** |
+| 3 | 180 | $0.01 \times 180$ | **1.8** |
+
+**Ee example lo gamaninchalsina points:**
+
+- **Okate scalar (`0.01`)** — **anni 3 values ki** apply ayindi (prathi daaniki different number kaadu).
+- **Dimension marale** — 3 values ichhi, 3 values ye vachai.
+- **Order marale** — chinnadi (160) inka chinnadi ye (1.6), peddadi (180) inka peddadi ye (1.8).
+- **Information poledu** — 160 cm and 1.6 m **okate height**! Kevalam **unit** marindi.
+
+> **Whiteboard note:** *"This will be very helpful when we do specific calculation."*
+>
+> **Enduku?** Konni calculations lo **units match avvali**. Example: **BMI** formula ki height **meters** lo ne kavali:
+> $$BMI = \frac{weight\ (kg)}{height\ (m)^2}$$
+> Height ni **cm lo** (160) pettesthe, BMI **completely wrong** vastundi. So mundu **convert cheyyali** — ade ee scalar multiplication chesindi.
+
+**Python:**
+
+```python
+import numpy as np
+
+height_cm = np.array([160, 170, 180])
+c = 0.01                      # 1 cm = 0.01 m
+
+height_m = c * height_cm
+print("cm:", height_cm)
+print("m :", height_m)        # [1.6 1.7 1.8]
+
+# BMI example - height METERS lo ne undali
+weight = np.array([55, 68, 80])          # kg
+print("BMI:", np.round(weight / height_m**2, 2))
+```
+
+Output:
+
+```text
+cm: [160 170 180]
+m : [1.6 1.7 1.8]
+BMI: [21.48 23.53 24.69]
+```
+
+**Inka common unit conversions (anni scalar multiplication ye):**
+
+| Conversion | Scalar `c` | Example |
+|------------|:----------:|---------|
+| cm → m | `0.01` | $160 \rightarrow 1.6$ |
+| m → cm | `100` | $1.6 \rightarrow 160$ |
+| g → kg | `0.001` | $500 \rightarrow 0.5$ |
+| Rupees → Thousands | `0.001` | $50000 \rightarrow 50$ |
+| Percentage → Decimal | `0.01` | $25\% \rightarrow 0.25$ |
+| Pixel → Normalized | `1/255` | $128 \rightarrow 0.502$ |
+
+> **Chivari row chudandi** — image normalization kuda **ide same operation**! Kevalam scalar `1/255`. Ante *"unit conversion"* and *"normalization"* rendu kuda **okate maths** — scalar multiplication.
+
+
 
 #### Quick Comparison (Easy Recall)
 
