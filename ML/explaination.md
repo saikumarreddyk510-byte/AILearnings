@@ -1,4 +1,4 @@
-# Machine Learning Complete Guide
+﻿# Machine Learning Complete Guide
 
 Machine Learning ni simple ga cheppalante:
 
@@ -1730,7 +1730,7 @@ Advantages:
 Disadvantage:
 - Overfitting chance ekkuva
 
-> **Full detail:** Root node selection, Entropy/Information Gain, Gini Impurity, Play Tennis worked example — anni **"Decision Tree — Algorithm 4"** section lo unnai (SVM tarvata).
+> **Full detail:** Root node selection, Entropy/Information Gain, Gini Impurity, Play Tennis worked example â€” anni **"Decision Tree â€” Algorithm 4"** section lo unnai (SVM tarvata).
 
 ---
 
@@ -1768,7 +1768,7 @@ SVM main idea:
 
 **Key terms:**
 - **Hyperplane:** classes ni separate chese boundary line (2D lo line, higher dimensions lo plane).
-- **Support Vectors:** hyperplane ki chala daggara unna data points — ee points matrame boundary position ni decide chestai (migilina points ni ignore cheyyachu).
+- **Support Vectors:** hyperplane ki chala daggara unna data points â€” ee points matrame boundary position ni decide chestai (migilina points ni ignore cheyyachu).
 - **Margin:** hyperplane nundi daggara support vectors varaku unna distance. SVM ee margin ni **maximum** ga chese best hyperplane ni vethukutundi (margin ekkuva unte, kotha data meeda model confident ga classify chestundi).
 
 Use:
@@ -1882,17 +1882,17 @@ Examples:
 
 # K-Nearest Neighbors (K-NN)
 
-K-NN ante oka **simple, powerful classification (and regression) algorithm**. Idea chala easy: **"nee chuttu unna daggari neighbors ela unnaro, nuvvu kuda alane untaav"** — friends batti person ni guess cheyyadam laantidi.
+K-NN ante oka **simple, powerful classification (and regression) algorithm**. Idea chala easy: **"nee chuttu unna daggari neighbors ela unnaro, nuvvu kuda alane untaav"** â€” friends batti person ni guess cheyyadam laantidi.
 
-> **`K = Hyperparameter`** — enni neighbors (K value) chudalo manam **mundu decide chestham** (model nerchukodu). Example: K=3 ante **3 daggari points** chusi decide cheyyadam.
+> **`K = Hyperparameter`** â€” enni neighbors (K value) chudalo manam **mundu decide chestham** (model nerchukodu). Example: K=3 ante **3 daggari points** chusi decide cheyyadam.
 >
-> **K eppudu positive integer** (K = 1, 2, 3, 4, ...) — negative leda decimal (0.5, -2) values allow avvavu. Enni neighbors chudalo count kabatti, **whole positive number** matrame untundi.
+> **K eppudu positive integer** (K = 1, 2, 3, 4, ...) â€” negative leda decimal (0.5, -2) values allow avvavu. Enni neighbors chudalo count kabatti, **whole positive number** matrame untundi.
 
 ---
 
 ## Example Dataset (Loan Eligibility)
 
-Whiteboard lo unna data — **Credit Score** and **Income** batti oka person ki **Loan eligible** aa kaadaa ani predict cheyyadam.
+Whiteboard lo unna data â€” **Credit Score** and **Income** batti oka person ki **Loan eligible** aa kaadaa ani predict cheyyadam.
 
 | # | Credit Score | Income (Lakhs) | Loan Eligible |
 |:-:|:------------:|:--------------:|:-------------:|
@@ -1904,25 +1904,25 @@ Whiteboard lo unna data — **Credit Score** and **Income** batti oka person ki 
 | 6 | 750 | 13 | Yes |
 | 7 | 700 | 10 | Yes |
 
-- **Independent variables (Features / X):** `Credit Score`, `Income` — ivi manam input ga isthe.
-- **Target (Label / y):** `Loan Eligible` — idi predict cheyyalsina answer.
-- **`Loan Eligible` = Categorical** (Yes / No) → so idi **Classification** problem.
+- **Independent variables (Features / X):** `Credit Score`, `Income` â€” ivi manam input ga isthe.
+- **Target (Label / y):** `Loan Eligible` â€” idi predict cheyyalsina answer.
+- **`Loan Eligible` = Categorical** (Yes / No) â†’ so idi **Classification** problem.
 
 ### Kid Analogy
-- Kotha person vasthe → **credit score** and **income** chusi, **similar (daggari) people** ela unnaro chudadam.
-- Aa daggari people **ekkuva mandi "Yes"** ante → kotha person ki kuda **"Yes"**.
-- Ekkuva mandi **"No"** ante → **"No"**. Idi "majority vote".
+- Kotha person vasthe â†’ **credit score** and **income** chusi, **similar (daggari) people** ela unnaro chudadam.
+- Aa daggari people **ekkuva mandi "Yes"** ante â†’ kotha person ki kuda **"Yes"**.
+- Ekkuva mandi **"No"** ante â†’ **"No"**. Idi "majority vote".
 
 ---
 
 ## Ee Section lo Nerchukune 4 Topics (Agenda)
 
-Whiteboard lo raasina agenda — ee order lo K-NN complete ga nerchukuntham:
+Whiteboard lo raasina agenda â€” ee order lo K-NN complete ga nerchukuntham:
 
-1. **What is Agenda of K-NN?** — K-NN enti, enduku vadatam (basic idea).
-2. **Working Principle (step by step)** — K-NN internally ela pani chestundo, step by step.
-3. **Model Evaluation Techniques** — model entha baaga chesindo ela measure cheyyali (accuracy, confusion matrix, etc.).
-4. **Practical Implementation** — Python (scikit-learn) tho real code lo K-NN apply cheyyadam.
+1. **What is Agenda of K-NN?** â€” K-NN enti, enduku vadatam (basic idea).
+2. **Working Principle (step by step)** â€” K-NN internally ela pani chestundo, step by step.
+3. **Model Evaluation Techniques** â€” model entha baaga chesindo ela measure cheyyali (accuracy, confusion matrix, etc.).
+4. **Practical Implementation** â€” Python (scikit-learn) tho real code lo K-NN apply cheyyadam.
 
 ---
 
@@ -1930,10 +1930,10 @@ Whiteboard lo raasina agenda — ee order lo K-NN complete ga nerchukuntham:
 
 - **Enti:** K-NN oka **supervised learning** algorithm. Labelled data (answers telisina data) tho train avutundi.
 - **Enduku vadatam:** oka kotha point ye **class** (category) ki chendutundo predict cheyyadaniki.
-- **Core idea:** *"Similar things stay close together"* — oka laanti points **daggara** untai. So daggari neighbors chusi decide cheyyachu.
-- **Lazy learner:** K-NN **train time lo em nerchukodu** — anni data ni just **gurthu pettukuntundi** (store). Actual pani **prediction time lo** jarugutundi (distances calculate chesi).
+- **Core idea:** *"Similar things stay close together"* â€” oka laanti points **daggara** untai. So daggari neighbors chusi decide cheyyachu.
+- **Lazy learner:** K-NN **train time lo em nerchukodu** â€” anni data ni just **gurthu pettukuntundi** (store). Actual pani **prediction time lo** jarugutundi (distances calculate chesi).
 
-> **Classification + Regression:** K-NN rendintiki work avutundi — Classification lo **majority vote**, Regression lo **average** teeskuntundi.
+> **Classification + Regression:** K-NN rendintiki work avutundi â€” Classification lo **majority vote**, Regression lo **average** teeskuntundi.
 
 ---
 
@@ -1941,30 +1941,30 @@ Whiteboard lo raasina agenda — ee order lo K-NN complete ga nerchukuntham:
 
 ### Step 1: Preparing the Data (Scatter Plot lo chudadam)
 
-Mundu mana data ni oka **graph (scatter plot)** meeda pedatam — prathi person oka **point** avutundi:
+Mundu mana data ni oka **graph (scatter plot)** meeda pedatam â€” prathi person oka **point** avutundi:
 
 - **X-axis (horizontal)** = `Credit Score` (500, 550, 600, 650, 700, 750...).
 - **Y-axis (vertical)** = `Income (Lakhs)` (5, 7, 9, 11, 13, 15...).
 - **Prathi point color** = class (Loan Eligible):
-  - 🔴 **Red points** = **No** (loan raadu) — takkuva credit score + takkuva income.
-  - 🟣 **Purple points** = **Yes** (loan vastundi) — ekkuva credit score + ekkuva income.
+  - ðŸ”´ **Red points** = **No** (loan raadu) â€” takkuva credit score + takkuva income.
+  - ðŸŸ£ **Purple points** = **Yes** (loan vastundi) â€” ekkuva credit score + ekkuva income.
 
 ```
 Income (L)
-  15 |                          🟣  🟣
-  13 |                       🟣
-  11 |                    🟣
+  15 |                          ðŸŸ£  ðŸŸ£
+  13 |                       ðŸŸ£
+  11 |                    ðŸŸ£
    9 |
-   7 |            🔴 🔴
-   5 |        🔴
-     +----------------------------------→ Credit Score
+   7 |            ðŸ”´ ðŸ”´
+   5 |        ðŸ”´
+     +----------------------------------â†’ Credit Score
        500  550  600  650  700  750
 ```
 
 **Idi chusi emi ardham avutundi?**
-- **Left-bottom** (takkuva score, takkuva income) → **🔴 No** group.
-- **Right-top** (ekkuva score, ekkuva income) → **🟣 Yes** group.
-- Rendu groups **separate ga** (daggari daggari) untai → K-NN ki idi perfect. Kotha point ye group daggara padite, ade class.
+- **Left-bottom** (takkuva score, takkuva income) â†’ **ðŸ”´ No** group.
+- **Right-top** (ekkuva score, ekkuva income) â†’ **ðŸŸ£ Yes** group.
+- Rendu groups **separate ga** (daggari daggari) untai â†’ K-NN ki idi perfect. Kotha point ye group daggara padite, ade class.
 
 > **Enduku ee step mukhyam:** Data ni visualize chesthe, **groups ela unnai**, **overlap undaa**, **outliers unnaya** ani telustundi. K-NN "daggari points" batti pani chestundi kabatti, ee spatial view chala help avutundi.
 
@@ -1972,7 +1972,7 @@ Income (L)
 
 ### Step 2: Calculate Distance (Test data ki training data tho)
 
-Ippudu manaki **kotha 2 people** vachcharu, vaari **Loan Eligible?** ani teliyadu — vaallani **Test data** antam:
+Ippudu manaki **kotha 2 people** vachcharu, vaari **Loan Eligible?** ani teliyadu â€” vaallani **Test data** antam:
 
 | | Credit Score | Income (Lakhs) | Loan Eligible |
 |:-:|:------------:|:--------------:|:-------------:|
@@ -1987,10 +1987,10 @@ Rendu points (`p` and `q`) madhya distance kanukkovadaniki:
 
 $$D(p, q) = \sqrt{\sum_{i=1}^{n} (p_i - q_i)^2}$$
 
-- **`p`, `q`** — rendu points (example: oka training row, oka test row).
-- **`n`** — features count (ikkada n=2: Credit Score, Income).
-- **`(p_i - q_i)^2`** — prathi feature lo difference ni **square** cheyyadam (negative poyi, big differences ni penalize cheyyadaniki).
-- **`√`** — anni squared differences ni add chesi, **square root** teeskovadam — idi actual "straight-line distance".
+- **`p`, `q`** â€” rendu points (example: oka training row, oka test row).
+- **`n`** â€” features count (ikkada n=2: Credit Score, Income).
+- **`(p_i - q_i)^2`** â€” prathi feature lo difference ni **square** cheyyadam (negative poyi, big differences ni penalize cheyyadaniki).
+- **`âˆš`** â€” anni squared differences ni add chesi, **square root** teeskovadam â€” idi actual "straight-line distance".
 
 #### Worked Example: Test1 (730, 18) vs anni 7 Training rows
 
@@ -2024,9 +2024,9 @@ Ee distances ni original training table lo **kotha column** ga add chesthe:
 | 6 | 750 | 13 | Yes | 20.62 |
 | 7 | 700 | 10 | Yes | 31.05 |
 
-**Idi chusi emi cheyyali?** — ee **Dist** column ni **chinna nunchi pedda** ki sort cheyyi (Step 3 — Sort cheyyi). Chinna distance unna row ye Test1 ki **daggari neighbor**. Row 2 (Dist=11.41) **most daggari** — so K=3 tho chusthe, top 3 daggari rows (Row 2, Row 6, Row 7 — anni **Yes**) → Test1 ki prediction = **Yes**.
+**Idi chusi emi cheyyali?** â€” ee **Dist** column ni **chinna nunchi pedda** ki sort cheyyi (Step 3 â€” Sort cheyyi). Chinna distance unna row ye Test1 ki **daggari neighbor**. Row 2 (Dist=11.41) **most daggari** â€” so K=3 tho chusthe, top 3 daggari rows (Row 2, Row 6, Row 7 â€” anni **Yes**) â†’ Test1 ki prediction = **Yes**.
 
-> Ade process **Test2 (660, 8)** ki kuda repeat cheyyali — separate ga anni training rows tho distance calculate chesi, daggari K neighbors batti predict cheyyali.
+> Ade process **Test2 (660, 8)** ki kuda repeat cheyyali â€” separate ga anni training rows tho distance calculate chesi, daggari K neighbors batti predict cheyyali.
 
 ---
 
@@ -2044,13 +2044,13 @@ Anni 7 distances ni **ascending order** lo (chinna nunchi pedda ki) arrange ches
 | 6 | 750 | 13 | Yes | 20 | **2** |
 | 7 | 700 | 10 | Yes | 31 | **3** |
 
-- **Rank 1** = chinna-most distance (Row 2, Dist=11.41) → Test1 ki **most daggari** neighbor.
-- **Rank 7** = pedda-most distance (Row 4, Dist=180) → Test1 ki **most far** point.
+- **Rank 1** = chinna-most distance (Row 2, Dist=11.41) â†’ Test1 ki **most daggari** neighbor.
+- **Rank 7** = pedda-most distance (Row 4, Dist=180) â†’ Test1 ki **most far** point.
 - Idi chesthe, ye rows Test1 ki daggara unnayo, ye rows dooram unnayo clean ga telustundi.
 
 ### Step 4: Top K Nearest Neighbors ni teeskovadam
 
-- **K → Top K Nearest Neighbors (values)** — Rank prakaram, **modati K rows** ni teeskuni, migilinavi ignore chestham.
+- **K â†’ Top K Nearest Neighbors (values)** â€” Rank prakaram, **modati K rows** ni teeskuni, migilinavi ignore chestham.
 - Ikkada **K = 3** ani decide chesukunnam (circle chesina value).
 - So **Rank 1, 2, 3** unna rows matrame teeskuntam:
 
@@ -2073,52 +2073,52 @@ Ee top-K (K=3) neighbors ni **classes prakaram group** chesi, ye class ki **ekku
     (3 votes)             (0 votes)
 ```
 
-- **3 neighbors lo → anni 3 "Yes"** class ki veltaayi, **"No" ki 0 votes**.
-- **Majority vote = Yes** (3 > 0) → so final prediction = **Yes**.
-- Idi **majority voting** ani antaru — K neighbors ni classes prakaram split chesi, **ekkuva vote vachina class** ni final answer ga teeskovadam.
+- **3 neighbors lo â†’ anni 3 "Yes"** class ki veltaayi, **"No" ki 0 votes**.
+- **Majority vote = Yes** (3 > 0) â†’ so final prediction = **Yes**.
+- Idi **majority voting** ani antaru â€” K neighbors ni classes prakaram split chesi, **ekkuva vote vachina class** ni final answer ga teeskovadam.
 
-- Ee top-3 lo **anni "Yes"** → majority vote = **Yes** → Test1 (730, 18) ki prediction = **Loan Eligible: Yes** ✅.
+- Ee top-3 lo **anni "Yes"** â†’ majority vote = **Yes** â†’ Test1 (730, 18) ki prediction = **Loan Eligible: Yes** âœ….
 
 ---
 
 ## Importance of K Value (Enduku K chala mukhyam?)
 
-K-NN lo **K** ye **most important hyperparameter** — idi wrong ga pettesthe, model tappu ga predict chestundi. Enduku mukhyamo, ela choose cheyyalo chuddam:
+K-NN lo **K** ye **most important hyperparameter** â€” idi wrong ga pettesthe, model tappu ga predict chestundi. Enduku mukhyamo, ela choose cheyyalo chuddam:
 
 ### K enduku important?
 
-1. **Model behavior ni control chestundi** — K value batti model **simple** (smooth) or **complex** (sensitive) avutundi.
-2. **Overfitting vs Underfitting decide chestundi** — chinna K = overfitting risk, pedda K = underfitting risk.
-3. **Noise/Outliers ni handle cheyyadam** — correct K unte, oka-two wrong/noisy points model ni confuse cheyyavu.
-4. **Accuracy meeda direct effect** — different K values tho accuracy maarutundi, so best K select cheyyadam model performance ki key.
+1. **Model behavior ni control chestundi** â€” K value batti model **simple** (smooth) or **complex** (sensitive) avutundi.
+2. **Overfitting vs Underfitting decide chestundi** â€” chinna K = overfitting risk, pedda K = underfitting risk.
+3. **Noise/Outliers ni handle cheyyadam** â€” correct K unte, oka-two wrong/noisy points model ni confuse cheyyavu.
+4. **Accuracy meeda direct effect** â€” different K values tho accuracy maarutundi, so best K select cheyyadam model performance ki key.
 
 ### K chinna unte (Example: K = 1)
 
 - Kevalam **1 nearest neighbor** matrame chusi decide chestundi.
-- **Chala sensitive** — daggarlo unna oka **outlier/noise point** unte, ade wrong ga follow chestundi.
-- **Overfitting** avvachu — training data ni **exact ga gurthu pettukuntundi** (memorize), kani kotha (unseen) data meeda baaga perform cheyyadu.
+- **Chala sensitive** â€” daggarlo unna oka **outlier/noise point** unte, ade wrong ga follow chestundi.
+- **Overfitting** avvachu â€” training data ni **exact ga gurthu pettukuntundi** (memorize), kani kotha (unseen) data meeda baaga perform cheyyadu.
 
 ### K pedda unte (Example: K = 15, chala pedda)
 
-- Chala **ekkuva neighbors** ni kaluputundi — decision **over-smooth** avutundi.
-- **Underfitting** avvachu — chinna, important patterns ni **miss** chestundi, anni points ni okate laaga treat chestundi.
-- Different classes madhya **boundary blur** aipotundi — accuracy takkuva avvachu.
+- Chala **ekkuva neighbors** ni kaluputundi â€” decision **over-smooth** avutundi.
+- **Underfitting** avvachu â€” chinna, important patterns ni **miss** chestundi, anni points ni okate laaga treat chestundi.
+- Different classes madhya **boundary blur** aipotundi â€” accuracy takkuva avvachu.
 
 ### K ni ela choose cheyyali? (How to choose K)
 
-1. **Odd number pettadam better** (K = 3, 5, 7, ...) — classification lo **tie (equal vote)** raakunda undataniki. Example: K=2 lo 1 vote "Yes", 1 vote "No" aithe decide cheyyalem — kabatti **K ni odd ga pettadam** ee tie problem ni avoid chestundi.
-2. **sqrt(n) rule (thumb rule)** — total training samples (`n`) ki **square root** ni approximate K ga teesukovadam common practice. Example: n=100 aithe, K ≈ 10 (odd ki round: 9 or 11).
-3. **Cross-Validation tho test cheyyadam** — different K values (3, 5, 7, 9...) tho model run chesi, **best accuracy/lowest error** icche K ni select cheyyadam — ide **most reliable** method.
+1. **Odd number pettadam better** (K = 3, 5, 7, ...) â€” classification lo **tie (equal vote)** raakunda undataniki. Example: K=2 lo 1 vote "Yes", 1 vote "No" aithe decide cheyyalem â€” kabatti **K ni odd ga pettadam** ee tie problem ni avoid chestundi.
+2. **sqrt(n) rule (thumb rule)** â€” total training samples (`n`) ki **square root** ni approximate K ga teesukovadam common practice. Example: n=100 aithe, K â‰ˆ 10 (odd ki round: 9 or 11).
+3. **Cross-Validation tho test cheyyadam** â€” different K values (3, 5, 7, 9...) tho model run chesi, **best accuracy/lowest error** icche K ni select cheyyadam â€” ide **most reliable** method.
 4. **Dataset size batti decide cheyyadam:**
-   - **Chinna dataset** → chinna K (3, 5) — ekkuva neighbors teesukunte migilina anni points dooram ainaa kuda kalipesukuntundi.
-   - **Pedda dataset** → koncham pedda K (7, 9, 11) — noise ni better handle chestundi.
-5. **Domain knowledge** — data lo entha noise unde, classes entha clear ga separate ga unnayo batti kuda judge cheyyachu.
+   - **Chinna dataset** â†’ chinna K (3, 5) â€” ekkuva neighbors teesukunte migilina anni points dooram ainaa kuda kalipesukuntundi.
+   - **Pedda dataset** â†’ koncham pedda K (7, 9, 11) â€” noise ni better handle chestundi.
+5. **Domain knowledge** â€” data lo entha noise unde, classes entha clear ga separate ga unnayo batti kuda judge cheyyachu.
 
 ### Kid Analogy (K value)
 
-- **K=1** = friend group lo **oka friend ni matrame** adagadam — aa okka friend tappu chepthe, nuvvu kuda tappu decision teeskuntaav.
-- **K=15** = **mothaम class ni** adagadam — ekkuva mandi confuse aithe, correct answer dilute aipotundi.
-- **K=3, 5 (balanced)** = **konchem mandi close friends ni** adagadam — accurate kuda, fair kuda.
+- **K=1** = friend group lo **oka friend ni matrame** adagadam â€” aa okka friend tappu chepthe, nuvvu kuda tappu decision teeskuntaav.
+- **K=15** = **mothaà¤® class ni** adagadam â€” ekkuva mandi confuse aithe, correct answer dilute aipotundi.
+- **K=3, 5 (balanced)** = **konchem mandi close friends ni** adagadam â€” accurate kuda, fair kuda.
 
 > **Quick Rule:** Confusion unte, **odd K** tho start cheyyandi (K=5 common default), tarvata **Cross-Validation** tho best K ni fine-tune cheyyandi.
 
@@ -2128,14 +2128,14 @@ K-NN lo **K** ye **most important hyperparameter** — idi wrong ga pettesthe, m
 
 K-NN model entha baaga predict chestundo measure cheyyadaniki (classification):
 
-- **Accuracy** — total predictions lo enni correct: $\frac{correct}{total}$.
-- **Confusion Matrix** — actual vs predicted table (True/False Positives & Negatives).
-- **Precision** — model "Yes" ani cheppinavi lo entha **nijamga Yes**.
-- **Recall** — nijamga "Yes" unna vaatilo entha model **pattukundi**.
-- **F1-Score** — Precision and Recall rendintini balance chese single score.
-- **Train-Test Split / Cross Validation** — data ni train + test ga vibhajinchi, unseen data meeda check cheyyadam (data leakage avoid).
+- **Accuracy** â€” total predictions lo enni correct: $\frac{correct}{total}$.
+- **Confusion Matrix** â€” actual vs predicted table (True/False Positives & Negatives).
+- **Precision** â€” model "Yes" ani cheppinavi lo entha **nijamga Yes**.
+- **Recall** â€” nijamga "Yes" unna vaatilo entha model **pattukundi**.
+- **F1-Score** â€” Precision and Recall rendintini balance chese single score.
+- **Train-Test Split / Cross Validation** â€” data ni train + test ga vibhajinchi, unseen data meeda check cheyyadam (data leakage avoid).
 
-> **Feature Scaling MUST:** K-NN **distance** meeda depend avutundi. Credit Score (600-810) and Income (5-15) chala different scales lo unnai → **StandardScaler / MinMaxScaler** tho scale cheyyakapothe, pedda number (Credit Score) dominate chestundi. So **scaling mandatory**.
+> **Feature Scaling MUST:** K-NN **distance** meeda depend avutundi. Credit Score (600-810) and Income (5-15) chala different scales lo unnai â†’ **StandardScaler / MinMaxScaler** tho scale cheyyakapothe, pedda number (Credit Score) dominate chestundi. So **scaling mandatory**.
 
 ---
 
@@ -2189,15 +2189,15 @@ print("Loan Eligible?", model.predict(new_person)[0])
 ```
 
 ### Code lo prathi step enduku?
-- **`StandardScaler`** — features ni same scale loki (K-NN distance fair ga undadaniki).
-- **`KNeighborsClassifier(n_neighbors=3)`** — K=3 tho model create.
-- **`fit(X_train, y_train)`** — training data store cheyyadam (lazy learner).
-- **`predict(X_test)`** — test points ki daggari 3 neighbors chusi majority vote.
-- **`new_person`** — kotha input ni kuda **same scaler** tho transform chesi predict.
+- **`StandardScaler`** â€” features ni same scale loki (K-NN distance fair ga undadaniki).
+- **`KNeighborsClassifier(n_neighbors=3)`** â€” K=3 tho model create.
+- **`fit(X_train, y_train)`** â€” training data store cheyyadam (lazy learner).
+- **`predict(X_test)`** â€” test points ki daggari 3 neighbors chusi majority vote.
+- **`new_person`** â€” kotha input ni kuda **same scaler** tho transform chesi predict.
 
 ---
 
-## K-NN — Quick Summary (Gurthu pettuko)
+## K-NN â€” Quick Summary (Gurthu pettuko)
 
 | Point | Value |
 |-------|-------|
@@ -2210,7 +2210,7 @@ print("Loan Eligible?", model.predict(new_person)[0])
 | **Best for** | Chinna/medium datasets, clear patterns |
 | **Weakness** | Pedda data lo **slow** (anni distances calculate cheyyali) |
 
-> **Final gurthu:** K-NN = *"Cheppu nee friends evaru, nuvvu evaru ani cheptaa."* Daggari neighbors batti decide — simple kani effective.
+> **Final gurthu:** K-NN = *"Cheppu nee friends evaru, nuvvu evaru ani cheptaa."* Daggari neighbors batti decide â€” simple kani effective.
 
 | 40 | 80000 | 1 |
 
@@ -2220,11 +2220,11 @@ Ikkada:
 
 ---
 
-# Support Vector Machine (SVM) — Algorithm 3
+# Support Vector Machine (SVM) â€” Algorithm 3
 
 SVM (full form: **Support Vector Machine**) ante oka **powerful classification algorithm** (regression ki kuda vadatam, kani mostly **classification** ki famous). Idi mana third major algorithm deep-dive (Linear Regression, K-NN tarvata).
 
-> **SVM main idea (oka line lo):** rendu classes ni separate chese **best boundary (line/plane)** ni kanukkovadam — aa boundary rendu groups ki **maximum gap (margin)** icche laaga undali.
+> **SVM main idea (oka line lo):** rendu classes ni separate chese **best boundary (line/plane)** ni kanukkovadam â€” aa boundary rendu groups ki **maximum gap (margin)** icche laaga undali.
 
 ---
 
@@ -2235,7 +2235,7 @@ SVM ni ardham chesukovadaniki, mundu **data ela untundo** telusukovali. Data ren
 ### 1. Linearly Separable (Straight line tho separate avuthundi)
 
 - Rendu classes ni **oka straight line** (2D lo line, 3D lo plane) tho **clean ga separate cheyyagalam**.
-- Line ki oka vaipu oka class, inko vaipu inko class — **overlap ledu**.
+- Line ki oka vaipu oka class, inko vaipu inko class â€” **overlap ledu**.
 
 ```
 Feature 2
@@ -2256,7 +2256,7 @@ Feature 2
 
 ### 2. Non-Linearly Separable (Straight line tho separate avvadu)
 
-- Classes **mix ayipoyi** untai — **oka straight line tho separate cheyyalemu**.
+- Classes **mix ayipoyi** untai â€” **oka straight line tho separate cheyyalemu**.
 - Points ala scatter ayyi untai ki, ye straight line geesina, rendu vaipula rendu classes kalisi untai.
 
 ```
@@ -2270,19 +2270,19 @@ Feature 2
    +----------------------> Feature 1
 ```
 
-- **Ikkada:** ye straight line geesina, rendu vaipula "+" and "x" rendu untai — clean separation possible kaadu. Idi **Non-Linearly Separable**.
-- **Ee case lo SVM oka trick vadutundi** — **Kernel trick** (data ni higher dimension loki teeskuni velli, akkada straight line/plane tho separate cheyyadam). Kernel details tarvata section lo.
+- **Ikkada:** ye straight line geesina, rendu vaipula "+" and "x" rendu untai â€” clean separation possible kaadu. Idi **Non-Linearly Separable**.
+- **Ee case lo SVM oka trick vadutundi** â€” **Kernel trick** (data ni higher dimension loki teeskuni velli, akkada straight line/plane tho separate cheyyadam). Kernel details tarvata section lo.
 
 ---
 
 ## Straight Line (Hyperplane) enti?
 
-- Whiteboard lo "straight line" ani raasindi — SVM lo ee separating line ni **Hyperplane** antaru.
-- **2D data** (2 features) → hyperplane oka **line**.
-- **3D data** (3 features) → hyperplane oka **plane** (flat sheet).
-- **More dimensions** → hyperplane oka **higher-dimensional flat surface** (imagine cheyyadam kastam, kani math same).
+- Whiteboard lo "straight line" ani raasindi â€” SVM lo ee separating line ni **Hyperplane** antaru.
+- **2D data** (2 features) â†’ hyperplane oka **line**.
+- **3D data** (3 features) â†’ hyperplane oka **plane** (flat sheet).
+- **More dimensions** â†’ hyperplane oka **higher-dimensional flat surface** (imagine cheyyadam kastam, kani math same).
 
-Ee terms (Hyperplane, Support Vectors, Margin) gurinchi detail "8.6 Support Vector Machine (SVM)" section lo unnai — akkada refer cheyyi.
+Ee terms (Hyperplane, Support Vectors, Margin) gurinchi detail "8.6 Support Vector Machine (SVM)" section lo unnai â€” akkada refer cheyyi.
 
 ---
 
@@ -2291,27 +2291,27 @@ Ee terms (Hyperplane, Support Vectors, Margin) gurinchi detail "8.6 Support Vect
 Linearly separable data lo, rendu classes ni separate chese lines **chala undachu** (infinite). Kani SVM **oke best line** ni enchukuntundi:
 
 - **Best line = rendu classes madhya maximum gap (margin) icche line.**
-- Margin ekkuva unte → kotha (unseen) data vachina, model **confident ga, correct ga** classify chestundi.
-- Margin takkuva (line oka class ki chala daggara) unte → chinna change tho kuda misclassify avvachu.
+- Margin ekkuva unte â†’ kotha (unseen) data vachina, model **confident ga, correct ga** classify chestundi.
+- Margin takkuva (line oka class ki chala daggara) unte â†’ chinna change tho kuda misclassify avvachu.
 
 **Kid Analogy:**
 - Rendu warring groups (students) madhyalo oka **rope (line)** veyyali anuko.
 - Rope ni oka group ki chala daggara veste, aa group anger avuthundi (risky).
-- Rope ni **rendu groups ki equal distance (madhyalo)** veste, adi **fair and safe** — ade SVM chese pani (maximum margin).
+- Rope ni **rendu groups ki equal distance (madhyalo)** veste, adi **fair and safe** â€” ade SVM chese pani (maximum margin).
 
 ---
 
-## Working Principle (W.P) — Step by Step
+## Working Principle (W.P) â€” Step by Step
 
-> **Agenda (goal):** *"Draw a straight line with **max distance** between data."* — ante rendu classes ni separate chese line ni geeyadam, kani aa line rendu groups ki **maximum gap** icche laaga undali.
+> **Agenda (goal):** *"Draw a straight line with **max distance** between data."* â€” ante rendu classes ni separate chese line ni geeyadam, kani aa line rendu groups ki **maximum gap** icche laaga undali.
 
-SVM internally ela aa best line ni kanukkuntundo, **4 steps** lo chuddam. (Whiteboard lo linearly separable example — "+" class top-left, "x" class bottom-right.)
+SVM internally ela aa best line ni kanukkuntundo, **4 steps** lo chuddam. (Whiteboard lo linearly separable example â€” "+" class top-left, "x" class bottom-right.)
 
 ### Step 1: Identify the closest data points from BOTH classes
 
 - Rendu classes lo, oka daaniki inko class **chala daggara unna points** ni gurthinchadam.
 - Ee **closest / border-lo unna points** ni **Support Vectors** antaru (SVM peru ikkade nunchi vachindi!).
-- Migilina (lopala, deep-lo unna) points important kaadu — **border points matrame** line position ni decide chestai.
+- Migilina (lopala, deep-lo unna) points important kaadu â€” **border points matrame** line position ni decide chestai.
 
 ```
 Feature 2 (y)
@@ -2372,9 +2372,9 @@ Feature 2 (y)
 
 ### Step 4: The final decision line = middle of the margin (D / 2)
 
-- Best jodi (max D) dorikaka, **actual separating line (hyperplane)** ni **rendu boundaries madhyalo** — exactly **D/2** distance lo — geeyadam.
-- Ee middle line ye **final decision boundary** — kotha point vasthe, ee line ki **ye vaipu padithe** aa class ani predict.
-- Rendu boundaries ki **equal distance (D/2)** lo undadam valla, margin **rendu vaipula equal** — idi max-margin classifier.
+- Best jodi (max D) dorikaka, **actual separating line (hyperplane)** ni **rendu boundaries madhyalo** â€” exactly **D/2** distance lo â€” geeyadam.
+- Ee middle line ye **final decision boundary** â€” kotha point vasthe, ee line ki **ye vaipu padithe** aa class ani predict.
+- Rendu boundaries ki **equal distance (D/2)** lo undadam valla, margin **rendu vaipula equal** â€” idi max-margin classifier.
 
 ```
 Feature 2 (y)
@@ -2398,20 +2398,20 @@ Feature 2 (y)
 | 1 | Rendu classes nunchi **closest points** (support vectors) identify cheyyadam |
 | 2 | Aa points gunda **parallel boundary lines** geeyadam |
 | 3 | Boundaries madhya **distance (D)** calc chesi, **max D** unna jodi enchukovadam |
-| 4 | **D/2** — middle lo final **decision line (hyperplane)** geeyadam |
+| 4 | **D/2** â€” middle lo final **decision line (hyperplane)** geeyadam |
 
-> **Oka line lo working principle:** *support vectors → parallel boundaries → max gap (D) → middle line (D/2) = best classifier.*
+> **Oka line lo working principle:** *support vectors â†’ parallel boundaries â†’ max gap (D) â†’ middle line (D/2) = best classifier.*
 
 ---
 
-## Kernel Trick — Non-Linearly Separable data ni handle cheyyadam
+## Kernel Trick â€” Non-Linearly Separable data ni handle cheyyadam
 
-Paina 4 steps anni **linearly separable** data ki (straight line tho separate cheyyagalige data). Kani konni sarlu data **non-linearly separable** — ye straight line geesina separate cheyyalemu. Alaanti time lo SVM oka clever trick vadutundi: **Kernel Trick**.
+Paina 4 steps anni **linearly separable** data ki (straight line tho separate cheyyagalige data). Kani konni sarlu data **non-linearly separable** â€” ye straight line geesina separate cheyyalemu. Alaanti time lo SVM oka clever trick vadutundi: **Kernel Trick**.
 
 ### Problem: Non-linearly separable data (straight line pani cheyyadu)
 
 - Whiteboard example: **"x" class middle lo** (oka circle laaga group), and **"+" class chuttu** (outside) untai.
-- Idi 2D lo — ye straight line geesina, circle lopala "x", bayata "+" — rendu kalisipotai. **Straight line saripodu.**
+- Idi 2D lo â€” ye straight line geesina, circle lopala "x", bayata "+" â€” rendu kalisipotai. **Straight line saripodu.**
 
 ```
 Feature 2 (y = Height)
@@ -2424,14 +2424,14 @@ Feature 2 (y = Height)
    +--------------------------> Feature 1 (x = width)
 ```
 
-### Idea: 2-D → 3-D (oka kotha dimension add cheyyadam)
+### Idea: 2-D â†’ 3-D (oka kotha dimension add cheyyadam)
 
-- **Kernel trick** ante: data ni **higher dimension** loki teeskuni vellayadam — akkada adi **linearly separable** avuthundi.
+- **Kernel trick** ante: data ni **higher dimension** loki teeskuni vellayadam â€” akkada adi **linearly separable** avuthundi.
 - Whiteboard lo dimensions:
-  - **x → width**
-  - **y → Height**
-  - **z → Depth** (kotha 3rd dimension = "**Space**")
-- 2D lo circle laaga unna data ni, **3rd dimension (z = depth)** add chesi 3D loki teeste — "x" points (middle) **paiki (or kindaki) lift** ayyi, "+" points nunchi **separate** ayipotai.
+  - **x â†’ width**
+  - **y â†’ Height**
+  - **z â†’ Depth** (kotha 3rd dimension = "**Space**")
+- 2D lo circle laaga unna data ni, **3rd dimension (z = depth)** add chesi 3D loki teeste â€” "x" points (middle) **paiki (or kindaki) lift** ayyi, "+" points nunchi **separate** ayipotai.
 
 ```
    2-D (flat, non-separable)          3-D (z = depth add chesaka, separable)
@@ -2442,7 +2442,7 @@ Feature 2 (y = Height)
    +  +  +  +                                  +---------------------> (x, y plane)
 ```
 
-- Ippudu 3D lo, oka **flat plane** (2D hyperplane) tho "x" and "+" ni **clean ga separate cheyyachu** — ante data 3D lo **linearly separable** ayipoyindi.
+- Ippudu 3D lo, oka **flat plane** (2D hyperplane) tho "x" and "+" ni **clean ga separate cheyyachu** â€” ante data 3D lo **linearly separable** ayipoyindi.
 
 ### Full flow (whiteboard prakaram)
 
@@ -2460,31 +2460,31 @@ best separating plane in 3-D
 ```
 
 - **Step-by-step:**
-  1. **2-D → 3-D:** kernel tho kotha dimension (space/depth) add cheyyadam.
-  2. **3-D lo linearly separable** ayindi → **4 steps** (mundu nerchukunna working principle) apply cheyyadam.
+  1. **2-D â†’ 3-D:** kernel tho kotha dimension (space/depth) add cheyyadam.
+  2. **3-D lo linearly separable** ayindi â†’ **4 steps** (mundu nerchukunna working principle) apply cheyyadam.
   3. Best separating **plane** (3D hyperplane) dorukutundi.
-  4. Aa boundary ni malli **3-D → 2-D** loki tecchi chuste, adi 2D lo oka **curve (circle laaga)** kanipisthundi — original "x" middle, "+" outside ni chuttu separate chestundi.
+  4. Aa boundary ni malli **3-D â†’ 2-D** loki tecchi chuste, adi 2D lo oka **curve (circle laaga)** kanipisthundi â€” original "x" middle, "+" outside ni chuttu separate chestundi.
 
 ### "Kernel Trick" enduku "trick"?
 
 - Nijam ga anni points ni higher dimension loki convert chesi, akkada calculations cheyyadam **chala costly** (time + memory).
-- **Kernel function** oka **math shortcut** — actual ga higher dimension coordinates compute cheyyakundane, "higher dimension lo distance/dot product entha untundo" **direct ga** calculate chestundi.
-- Anduke deeni "**trick**" antaru — **higher dimension benefit vasthundi, kani higher dimension cost undadu.**
+- **Kernel function** oka **math shortcut** â€” actual ga higher dimension coordinates compute cheyyakundane, "higher dimension lo distance/dot product entha untundo" **direct ga** calculate chestundi.
+- Anduke deeni "**trick**" antaru â€” **higher dimension benefit vasthundi, kani higher dimension cost undadu.**
 - Common kernels: **Linear, Polynomial, RBF (Radial Basis Function / Gaussian)**. RBF chala popular (circle/complex shapes ki baaga pani chestundi).
 
-> **Oka line lo Kernel Trick:** *straight line pani cheyyani data ni, oka kotha dimension loki teeskuni velli akkada straight plane tho separate chesi, malli venakki teeskuravadam — costly math lekunda.*
+> **Oka line lo Kernel Trick:** *straight line pani cheyyani data ni, oka kotha dimension loki teeskuni velli akkada straight plane tho separate chesi, malli venakki teeskuravadam â€” costly math lekunda.*
 
 ---
 
 ## SVM Hyperparameters (C and gamma)
 
-**Hyperparameters** = model training **mundu** manam set chese settings (model vaatini nerchukodu — manam ivvali). SVM lo tune cheyyalsina main **2 hyperparameters: `C` and `gamma`.** Rendu kalisi **bias-variance tradeoff** ni control chestai.
+**Hyperparameters** = model training **mundu** manam set chese settings (model vaatini nerchukodu â€” manam ivvali). SVM lo tune cheyyalsina main **2 hyperparameters: `C` and `gamma`.** Rendu kalisi **bias-variance tradeoff** ni control chestai.
 
-### 1. `C` — Penalty for misclassification
+### 1. `C` â€” Penalty for misclassification
 
-- `C` cheppedi: model **misclassification (tappu classify)** ni entha strict ga treat chestundo — ante tappulaki entha **penalty** pettalo.
-- **Small C (example `C = 0.01`):** penalty **takkuva** → konni points tappu ga classify aina paravaledu → **wide margin, soft boundary** → too simple → **underfit** risk.
-- **Large C (example `C = 100`):** penalty **ekkuva** → prathi point correct ga classify cheyyali ani force → **narrow margin, hard boundary** → training data ki chala tight → **overfit** risk.
+- `C` cheppedi: model **misclassification (tappu classify)** ni entha strict ga treat chestundo â€” ante tappulaki entha **penalty** pettalo.
+- **Small C (example `C = 0.01`):** penalty **takkuva** â†’ konni points tappu ga classify aina paravaledu â†’ **wide margin, soft boundary** â†’ too simple â†’ **underfit** risk.
+- **Large C (example `C = 100`):** penalty **ekkuva** â†’ prathi point correct ga classify cheyyali ani force â†’ **narrow margin, hard boundary** â†’ training data ki chala tight â†’ **overfit** risk.
 
 ```
 C = 0.01  (low penalty)        C = 100  (high penalty)
@@ -2494,11 +2494,11 @@ soft margin, misses allowed    hard margin, every point matters
    (underfit side)                 (overfit side)
 ```
 
-### 2. `gamma` — Decision Boundary shape (handle)
+### 2. `gamma` â€” Decision Boundary shape (handle)
 
-- `gamma` cheppedi: **oka single training point** decision boundary ni **entha dooram varaku influence** chestundo — ante boundary entha **curvy/wiggly** ga untundo. (Mostly **RBF kernel** tho vadatam.)
-- **Small gamma (example `gamma = 0.01`):** prathi point ki **far-reaching, broad influence** → boundary **smooth, almost straight** → too simple → **underfit**.
-- **Large gamma (example `gamma = 10`):** prathi point ki **chinna, local influence** → boundary **chala wiggly** (prathi point chuttu tightly wrap avuthundi) → **overfit**.
+- `gamma` cheppedi: **oka single training point** decision boundary ni **entha dooram varaku influence** chestundo â€” ante boundary entha **curvy/wiggly** ga untundo. (Mostly **RBF kernel** tho vadatam.)
+- **Small gamma (example `gamma = 0.01`):** prathi point ki **far-reaching, broad influence** â†’ boundary **smooth, almost straight** â†’ too simple â†’ **underfit**.
+- **Large gamma (example `gamma = 10`):** prathi point ki **chinna, local influence** â†’ boundary **chala wiggly** (prathi point chuttu tightly wrap avuthundi) â†’ **overfit**.
 
 ```
 gamma = 0.01 (smooth)          gamma = 10 (wiggly)
@@ -2510,17 +2510,17 @@ gamma = 0.01 (smooth)          gamma = 10 (wiggly)
 ### Bias-Variance Tradeoff connection
 
 - Rendu `C` and `gamma` **bias-variance tradeoff** ni handle chestai:
-  - **Chinna C / chinna gamma** → **high bias → underfit** (too simple, training and test rendu poor).
-  - **Pedda C / pedda gamma** → **high variance → overfit** (training super, kotha data meeda fail).
-  - **Middle (balanced) values** → best **generalization** (kotha data meeda kuda baaga pani chestundi).
+  - **Chinna C / chinna gamma** â†’ **high bias â†’ underfit** (too simple, training and test rendu poor).
+  - **Pedda C / pedda gamma** â†’ **high variance â†’ overfit** (training super, kotha data meeda fail).
+  - **Middle (balanced) values** â†’ best **generalization** (kotha data meeda kuda baaga pani chestundi).
 - Correct `C`, `gamma` ni guess cheyyakunda, **Grid Search / Cross-Validation** tho tune chestham (mundu "Hyperparameters" and "Cross Validation" sections lo chusam).
 
 ### Summary Table
 
 | Hyperparameter | Chinna value | Pedda value |
 |----------------|--------------|-------------|
-| **C** (penalty) | `0.01` → soft margin, tolerant → **underfit** | `100` → hard margin, strict → **overfit** |
-| **gamma** (boundary) | `0.01` → smooth boundary → **underfit** | `10` → wiggly boundary → **overfit** |
+| **C** (penalty) | `0.01` â†’ soft margin, tolerant â†’ **underfit** | `100` â†’ hard margin, strict â†’ **overfit** |
+| **gamma** (boundary) | `0.01` â†’ smooth boundary â†’ **underfit** | `10` â†’ wiggly boundary â†’ **overfit** |
 
 > **Gurthu:** `C` = "tappulaki entha penalty", `gamma` = "boundary entha curvy". Rendintini **balance** chesthe best model. Next: **Practical** (scikit-learn code lo `SVC(C=..., gamma=..., kernel='rbf')`).
 
@@ -2534,7 +2534,7 @@ gamma = 0.01 (smooth)          gamma = 10 (wiggly)
 | **Type** | Supervised (mostly Classification) |
 | **Idea** | Classes ni max-margin hyperplane tho separate cheyyadam |
 | **Linearly Separable** | Straight line tho clean separation possible |
-| **Non-Linearly Separable** | Straight line saripodu → Kernel trick kavali |
+| **Non-Linearly Separable** | Straight line saripodu â†’ Kernel trick kavali |
 | **Boundary** | Hyperplane (2D=line, 3D=plane) |
 | **Best when** | Clear margin/gap between classes unnappudu |
 
@@ -2542,9 +2542,9 @@ gamma = 0.01 (smooth)          gamma = 10 (wiggly)
 
 ---
 
-# Decision Tree — Algorithm 4
+# Decision Tree â€” Algorithm 4
 
-Decision Tree ante **yes/no (question by question)** series use chesi final decision ki reach avvadam. SVM laaga line geeyadu — **questions adugutu** data ni chinna chinna groups ga vidagottutundi.
+Decision Tree ante **yes/no (question by question)** series use chesi final decision ki reach avvadam. SVM laaga line geeyadu â€” **questions adugutu** data ni chinna chinna groups ga vidagottutundi.
 
 > **Main idea (oka line lo):** *"Data ni best ga separate chese question ni mundu adigi, step by step chinna groups ga vidagotti, chivarilo answer (Yes/No) ivvadam."*
 
@@ -2581,11 +2581,11 @@ Ee data lo **weather conditions** batti *"aa roju tennis aaduthara?"* ani predic
 | 10 | Rain | Mild | Normal | Weak | Yes |
 
 - **Independent variables (Features / X):** `Outlook`, `Temperature`, `Humidity`, `Wind`.
-- **Target (Label / y):** `PlayTennis` — whiteboard lo **red circle** chesindi ide. Idi predict cheyyalsina answer.
-- `PlayTennis` = **Yes / No** (categorical) → so idi **Classification** problem.
-- **Total rows = 10** → **6 Yes**, **4 No**.
+- **Target (Label / y):** `PlayTennis` â€” whiteboard lo **red circle** chesindi ide. Idi predict cheyyalsina answer.
+- `PlayTennis` = **Yes / No** (categorical) â†’ so idi **Classification** problem.
+- **Total rows = 10** â†’ **6 Yes**, **4 No**.
 
-> **Gurthu:** anni features **categorical** (Sunny/Rain, Hot/Cool, High/Normal, Weak/Strong). Decision Tree ki **feature scaling avasaram ledu** — distance meeda kaadu, **questions** meeda pani chestundi.
+> **Gurthu:** anni features **categorical** (Sunny/Rain, Hot/Cool, High/Normal, Weak/Strong). Decision Tree ki **feature scaling avasaram ledu** â€” distance meeda kaadu, **questions** meeda pani chestundi.
 
 ---
 
@@ -2610,7 +2610,7 @@ flowchart TD
 | **Root Node** | `Outlook` | Tree lo **modati (first) question**. Motham data ikkade start avtundi. |
 | **Branch** | `Sunny`, `Overcast`, `Rain` | Question ki **answer paths** (edges). Prathi branch data ni oka vaipuki teeskeltundi. |
 | **Internal / Decision Node** | `Humidity?`, `Wind?` | Madhyalo unna **inko question**. Inka split avvali ani ardham. |
-| **Leaf Node (Target)** | `Yes` / `No` boxes | **Final answer** ichche node. Ikkada question undadu — idi target value. |
+| **Leaf Node (Target)** | `Yes` / `No` boxes | **Final answer** ichche node. Ikkada question undadu â€” idi target value. |
 | **Depth** | ikkada **2** | Root nunchi longest leaf varaku enni questions unnayo. |
 
 ### Branch lo enni rows veltayi? (Whiteboard lo circle chesina numbers)
@@ -2619,22 +2619,22 @@ flowchart TD
 
 | Branch | Rows | Which rows | Yes / No | Status |
 |--------|:----:|------------|:--------:|--------|
-| **Sunny** | **4** | 1, 2, 8, 9 | 1 Yes / 3 No | mixed → inka question kavali |
-| **Overcast** | **2** | 3, 7 | 2 Yes / 0 No | **pure** → direct leaf **Yes** |
-| **Rain** | **4** | 4, 5, 6, 10 | 3 Yes / 1 No | mixed → inka question kavali |
+| **Sunny** | **4** | 1, 2, 8, 9 | 1 Yes / 3 No | mixed â†’ inka question kavali |
+| **Overcast** | **2** | 3, 7 | 2 Yes / 0 No | **pure** â†’ direct leaf **Yes** |
+| **Rain** | **4** | 4, 5, 6, 10 | 3 Yes / 1 No | mixed â†’ inka question kavali |
 
-> **`Overcast` enduku direct answer?** Aa branch lo unna **rendu rows kuda "Yes"** — mixing ledu. Idi **pure node**. Pure ayipoyaka inka question adagatam waste, so **direct leaf** ga marchestham.
+> **`Overcast` enduku direct answer?** Aa branch lo unna **rendu rows kuda "Yes"** â€” mixing ledu. Idi **pure node**. Pure ayipoyaka inka question adagatam waste, so **direct leaf** ga marchestham.
 
 ### Migilina branches ni malli split cheyyadam
 
 - **Sunny (4 rows)** ni `Humidity?` tho split:
-  - `High` → rows 1, 2, 8 → anni **No** → leaf **No** (0 Yes / 3 No) ✅ pure
-  - `Normal` → row 9 → **Yes** → leaf **Yes** (1 Yes / 0 No) ✅ pure
+  - `High` â†’ rows 1, 2, 8 â†’ anni **No** â†’ leaf **No** (0 Yes / 3 No) âœ… pure
+  - `Normal` â†’ row 9 â†’ **Yes** â†’ leaf **Yes** (1 Yes / 0 No) âœ… pure
 - **Rain (4 rows)** ni `Wind?` tho split:
-  - `Weak` → rows 4, 5, 10 → anni **Yes** → leaf **Yes** (3 Yes / 0 No) ✅ pure
-  - `Strong` → row 6 → **No** → leaf **No** (0 Yes / 1 No) ✅ pure
+  - `Weak` â†’ rows 4, 5, 10 â†’ anni **Yes** â†’ leaf **Yes** (3 Yes / 0 No) âœ… pure
+  - `Strong` â†’ row 6 â†’ **No** â†’ leaf **No** (0 Yes / 1 No) âœ… pure
 
-**Anni leaves pure ayyayi → tree aagipotundi (stop).** Ide "training complete".
+**Anni leaves pure ayyayi â†’ tree aagipotundi (stop).** Ide "training complete".
 
 ### Tree ni rules ga chadavadam (If-Else form)
 
@@ -2646,7 +2646,7 @@ IF Outlook = Rain   AND Wind     = Weak    -> Yes
 IF Outlook = Rain   AND Wind     = Strong  -> No
 ```
 
-> Idi Decision Tree **biggest advantage** — model ni **plain English rules** ga chadavachu. Anduke "explainable model" antaru.
+> Idi Decision Tree **biggest advantage** â€” model ni **plain English rules** ga chadavachu. Anduke "explainable model" antaru.
 
 ---
 
@@ -2656,18 +2656,18 @@ IF Outlook = Rain   AND Wind     = Strong  -> No
 
 Root node ante tree lo **first question**. Idi **most important split**, enduku ante:
 
-1. **Motham data ikkade divide avtundi** — first split correct aithe, migilina pani easy.
-2. **Whole tree structure root meeda depend avtundi** — root marithe, kinda unna tree motham marutundi.
-3. **Wrong root select chesthe** — tree **deep** (chala levels) avtundi, rules complicated avtai, **overfitting** and accuracy problem vastundi.
-4. **Correct root select chesthe** — tree **chinnaga (shallow)**, simple ga, fast ga untundi.
+1. **Motham data ikkade divide avtundi** â€” first split correct aithe, migilina pani easy.
+2. **Whole tree structure root meeda depend avtundi** â€” root marithe, kinda unna tree motham marutundi.
+3. **Wrong root select chesthe** â€” tree **deep** (chala levels) avtundi, rules complicated avtai, **overfitting** and accuracy problem vastundi.
+4. **Correct root select chesthe** â€” tree **chinnaga (shallow)**, simple ga, fast ga untundi.
 
 **Kid analogy:** Nuvvu oka person ni guess cheyyali (20 questions game).
-- Modati question *"Aa person peru lo 'a' undaa?"* — idi weak question, pedda help ledu.
-- Modati question *"Aa person magavaadaa/aadadaa?"* — idi **half mandini ventane** teesestundi. Idi **strong root question**.
+- Modati question *"Aa person peru lo 'a' undaa?"* â€” idi weak question, pedda help ledu.
+- Modati question *"Aa person magavaadaa/aadadaa?"* â€” idi **half mandini ventane** teesestundi. Idi **strong root question**.
 
 **Inko analogy (filter):** Root node = **first filter**.
-- First filter lo rough ga separate chesthe → later questions easy.
-- First filter bad ga unte → later tree chala complicated avtundi.
+- First filter lo rough ga separate chesthe â†’ later questions easy.
+- First filter bad ga unte â†’ later tree chala complicated avtundi.
 
 ### Root node ela select chestaru?
 
@@ -2677,7 +2677,7 @@ Rendu common criteria (measures):
 
 | Criterion | Ela pani chestundi | Best value |
 |-----------|--------------------|------------|
-| **Entropy → Information Gain** | Data lo unna **confusion (impurity)** entha thaggindo measure chestundi | **Information Gain ekkuva** unna feature = root (ID3 algorithm) |
+| **Entropy â†’ Information Gain** | Data lo unna **confusion (impurity)** entha thaggindo measure chestundi | **Information Gain ekkuva** unna feature = root (ID3 algorithm) |
 | **Gini Impurity** | Random ga oka row ni tappuga label chese **chance** entha undo | **Gini ekkuva thaggithe (impurity takkuva)** = root (CART / sklearn default) |
 
 ### Entropy ante enti? (Confusion measure)
@@ -2686,31 +2686,31 @@ Rendu common criteria (measures):
 
 $$Entropy = -\sum p_i \log_2(p_i)$$
 
-- **Entropy = 0** → group **pure** (anni okate answer). Example: 4 Yes / 0 No → **0** (no confusion).
-- **Entropy = 1** → group **fully mixed** (perfect 50-50). Example: 2 Yes / 2 No → **1** (max confusion).
-- Madhyalo unte → partially mixed.
+- **Entropy = 0** â†’ group **pure** (anni okate answer). Example: 4 Yes / 0 No â†’ **0** (no confusion).
+- **Entropy = 1** â†’ group **fully mixed** (perfect 50-50). Example: 2 Yes / 2 No â†’ **1** (max confusion).
+- Madhyalo unte â†’ partially mixed.
 
-**Kid explanation:** oka box lo **anni red balls** unte, "next ball ye color?" ani cheppadam easy → confusion **0**. Box lo **half red, half blue** unte → confusion **max (1)**.
+**Kid explanation:** oka box lo **anni red balls** unte, "next ball ye color?" ani cheppadam easy â†’ confusion **0**. Box lo **half red, half blue** unte â†’ confusion **max (1)**.
 
 ### Information Gain ante enti?
 
 $$Information\ Gain = Entropy(parent) - Weighted\ Entropy(children)$$
 
-Ante: *"Ee question adigina tarvata confusion **entha thaggindi**?"* — **ekkuva thaggithe ee question better.**
+Ante: *"Ee question adigina tarvata confusion **entha thaggindi**?"* â€” **ekkuva thaggithe ee question better.**
 
 ---
 
-## Worked Example — Play Tennis data tho root node kanukkovadam
+## Worked Example â€” Play Tennis data tho root node kanukkovadam
 
 ### Step 1: Parent entropy (split cheyyaka mundu)
 
-Motham 10 rows → **6 Yes, 4 No**.
+Motham 10 rows â†’ **6 Yes, 4 No**.
 
 $$Entropy(parent) = -\frac{6}{10}\log_2\frac{6}{10} - \frac{4}{10}\log_2\frac{4}{10}$$
 
-- `= -(0.6 × -0.737) - (0.4 × -1.322)`
+- `= -(0.6 Ã— -0.737) - (0.4 Ã— -1.322)`
 - `= 0.442 + 0.529`
-- **`= 0.971`** ← starting confusion (dadapu max, ante data baaga mixed).
+- **`= 0.971`** â† starting confusion (dadapu max, ante data baaga mixed).
 
 ### Step 2: Prathi feature ki split chesi entropy chudadam
 
@@ -2724,10 +2724,10 @@ $$Entropy(parent) = -\frac{6}{10}\log_2\frac{6}{10} - \frac{4}{10}\log_2\frac{4}
 
 Weighted entropy = rows count batti average:
 
-- `= (4/10 × 0.811) + (2/10 × 0.000) + (4/10 × 0.811)`
+- `= (4/10 Ã— 0.811) + (2/10 Ã— 0.000) + (4/10 Ã— 0.811)`
 - `= 0.325 + 0 + 0.325 = 0.649`
 
-**Information Gain(Outlook) = 0.971 − 0.649 = `0.322`** ✅
+**Information Gain(Outlook) = 0.971 âˆ’ 0.649 = `0.322`** âœ…
 
 **Option B: `Humidity` ni root ga pedithe**
 
@@ -2736,8 +2736,8 @@ Weighted entropy = rows count batti average:
 | High | 5 | 2 Y / 3 N | 0.971 |
 | Normal | 5 | 4 Y / 1 N | 0.722 |
 
-- Weighted = `(5/10 × 0.971) + (5/10 × 0.722)` = `0.486 + 0.361` = `0.846`
-- **Information Gain(Humidity) = 0.971 − 0.846 = `0.125`**
+- Weighted = `(5/10 Ã— 0.971) + (5/10 Ã— 0.722)` = `0.486 + 0.361` = `0.846`
+- **Information Gain(Humidity) = 0.971 âˆ’ 0.846 = `0.125`**
 
 **Option C: `Temperature` ni root ga pedithe**
 
@@ -2747,7 +2747,7 @@ Weighted entropy = rows count batti average:
 | Mild | 3 | 2 Y / 1 N | 0.918 |
 | Cool | 4 | 3 Y / 1 N | 0.811 |
 
-- Weighted = `0.876` → **Information Gain(Temperature) = `0.095`**
+- Weighted = `0.876` â†’ **Information Gain(Temperature) = `0.095`**
 
 **Option D: `Wind` ni root ga pedithe**
 
@@ -2756,40 +2756,40 @@ Weighted entropy = rows count batti average:
 | Weak | 7 | 5 Y / 2 N | 0.863 |
 | Strong | 3 | 1 Y / 2 N | 0.918 |
 
-- Weighted = `0.880` → **Information Gain(Wind) = `0.091`**
+- Weighted = `0.880` â†’ **Information Gain(Wind) = `0.091`**
 
 ### Step 3: Winner ni select cheyyadam
 
 | Feature | Weighted Entropy | **Information Gain** | Rank |
 |---------|:----------------:|:--------------------:|:----:|
-| **`Outlook`** | 0.649 | **0.322** | 🥇 **1 (ROOT)** |
+| **`Outlook`** | 0.649 | **0.322** | ðŸ¥‡ **1 (ROOT)** |
 | `Humidity` | 0.846 | 0.125 | 2 |
 | `Temperature` | 0.876 | 0.095 | 3 |
 | `Wind` | 0.880 | 0.091 | 4 |
 
-> **Result:** `Outlook` ki **Information Gain highest (0.322)** → so **`Outlook` = Root Node**. Ee reason valle whiteboard diagram lo root lo `Outlook` undi!
+> **Result:** `Outlook` ki **Information Gain highest (0.322)** â†’ so **`Outlook` = Root Node**. Ee reason valle whiteboard diagram lo root lo `Outlook` undi!
 
-**Enduku `Outlook` gelichindi?** Enduku ante `Outlook = Overcast` branch **fully pure** (2 Yes / 0 No, entropy = 0) — okka question tho ne 2 rows ki answer fix ayipoyindi. Migilina features lo **e branch kuda pure kaadu** — anni branches lo Yes/No mixed ga unnayi.
+**Enduku `Outlook` gelichindi?** Enduku ante `Outlook = Overcast` branch **fully pure** (2 Yes / 0 No, entropy = 0) â€” okka question tho ne 2 rows ki answer fix ayipoyindi. Migilina features lo **e branch kuda pure kaadu** â€” anni branches lo Yes/No mixed ga unnayi.
 
-### Same example — Gini Impurity tho
+### Same example â€” Gini Impurity tho
 
 $$Gini = 1 - \sum p_i^2$$
 
-- **Parent Gini:** `1 − (0.6)² − (0.4)²` = `1 − 0.36 − 0.16` = **`0.48`**
-- **Outlook:** Sunny `0.375`, Overcast `0.000`, Rain `0.375` → weighted `0.300` → **gain = `0.180`** 🥇
-- **Humidity:** High `0.480`, Normal `0.320` → weighted `0.400` → gain = `0.080`
-- **Temperature:** weighted `0.417` → gain = `0.063`
-- **Wind:** weighted `0.419` → gain = `0.061`
+- **Parent Gini:** `1 âˆ’ (0.6)Â² âˆ’ (0.4)Â²` = `1 âˆ’ 0.36 âˆ’ 0.16` = **`0.48`**
+- **Outlook:** Sunny `0.375`, Overcast `0.000`, Rain `0.375` â†’ weighted `0.300` â†’ **gain = `0.180`** ðŸ¥‡
+- **Humidity:** High `0.480`, Normal `0.320` â†’ weighted `0.400` â†’ gain = `0.080`
+- **Temperature:** weighted `0.417` â†’ gain = `0.063`
+- **Wind:** weighted `0.419` â†’ gain = `0.061`
 
-> **Gini kuda `Outlook` ne root ga chepthundi.** Rendu methods mostly **same answer** istai — Gini calculate cheyyadam fast (log ledu), anduke **sklearn default = `gini`**.
+> **Gini kuda `Outlook` ne root ga chepthundi.** Rendu methods mostly **same answer** istai â€” Gini calculate cheyyadam fast (log ledu), anduke **sklearn default = `gini`**.
 
 ### Ee process ni repeat cheyyadam (Recursion)
 
 Root fix ayyaka, **prathi branch ki same process malli** jarugutundi:
 
-1. `Sunny` branch (4 rows) lo migilina features (`Temperature`, `Humidity`, `Wind`) ni compare → **`Humidity`** best → adi aa branch node.
-2. `Rain` branch (4 rows) lo compare → **`Wind`** best → adi aa branch node.
-3. `Overcast` branch already **pure** → **stop**, leaf ga marchadam.
+1. `Sunny` branch (4 rows) lo migilina features (`Temperature`, `Humidity`, `Wind`) ni compare â†’ **`Humidity`** best â†’ adi aa branch node.
+2. `Rain` branch (4 rows) lo compare â†’ **`Wind`** best â†’ adi aa branch node.
+3. `Overcast` branch already **pure** â†’ **stop**, leaf ga marchadam.
 
 **Stop eppudu avtundi?**
 - Node **pure** ayipoyindi (anni okate class), **or**
@@ -2808,11 +2808,11 @@ GOOD root question:              BAD root question:
    -> confusion 0, pani ayipoyindi  -> inka chala questions kavali
 ```
 
-**Rule:** oka side **mostly Yes**, inko side **mostly No** vasthe → adi **good root**. Rendu sides lo Yes/No **mix** ga unte → **bad root**.
+**Rule:** oka side **mostly Yes**, inko side **mostly No** vasthe â†’ adi **good root**. Rendu sides lo Yes/No **mix** ga unte â†’ **bad root**.
 
 ---
 
-## Prediction — Kotha row vasthe ela answer istundi?
+## Prediction â€” Kotha row vasthe ela answer istundi?
 
 Kotha day: **Outlook = Rain, Temperature = Mild, Humidity = High, Wind = Strong**
 
@@ -2824,7 +2824,7 @@ Start -> Outlook? = Rain      -> Rain branch loki
 
 **Prediction: `No` (tennis aadaru).**
 
-- Gamanika: `Temperature` and `Humidity` ee prediction lo **vaadanu** — Rain path lo aa questions ravu. Tree **avasaramaina questions matrame** adugutundi.
+- Gamanika: `Temperature` and `Humidity` ee prediction lo **vaadanu** â€” Rain path lo aa questions ravu. Tree **avasaramaina questions matrame** adugutundi.
 
 ---
 
@@ -2833,39 +2833,39 @@ Start -> Outlook? = Rain      -> Rain branch loki
 | Path | Leaf | Counts |
 |------|:----:|:------:|
 | `Outlook = Overcast` | **Yes** | 2 Yes / 0 No |
-| `Outlook = Sunny` → `Humidity = High` | **No** | 0 Yes / 3 No |
-| `Outlook = Sunny` → `Humidity = Normal` | **Yes** | 1 Yes / 0 No |
-| `Outlook = Rain` → `Wind = Weak` | **Yes** | 3 Yes / 0 No |
-| `Outlook = Rain` → `Wind = Strong` | **No** | 0 Yes / 1 No |
+| `Outlook = Sunny` â†’ `Humidity = High` | **No** | 0 Yes / 3 No |
+| `Outlook = Sunny` â†’ `Humidity = Normal` | **Yes** | 1 Yes / 0 No |
+| `Outlook = Rain` â†’ `Wind = Weak` | **Yes** | 3 Yes / 0 No |
+| `Outlook = Rain` â†’ `Wind = Strong` | **No** | 0 Yes / 1 No |
 
 ---
 
-## ⚠️ Main Disadvantage — **Decision Trees are prone to overfit**
+## âš ï¸ Main Disadvantage â€” **Decision Trees are prone to overfit**
 
-> **Whiteboard point:** *"Decision Trees are prone to overfit"* — idi Decision Tree yokka **biggest disadvantage**.
+> **Whiteboard point:** *"Decision Trees are prone to overfit"* â€” idi Decision Tree yokka **biggest disadvantage**.
 
 **Overfit ante enti (quick recall):** model training data ni **baaga baaga memorize** chesi, **kotha (unseen) data meeda fail** avvadam.
-- Training accuracy → **chala ekkuva** (dadapu 100%)
-- Test accuracy → **takkuva**
+- Training accuracy â†’ **chala ekkuva** (dadapu 100%)
+- Test accuracy â†’ **takkuva**
 - Ee **gap** ye overfitting signal.
 
 ---
 
-### 🔍 WHY? — Decision Trees enduku overfit avthai (5 reasons)
+### ðŸ” WHY? â€” Decision Trees enduku overfit avthai (5 reasons)
 
 #### Reason 1: Tree **"pure" ayye varaku aagadu** (main reason)
 
-Idi **most important reason**. Default ga Decision Tree ki **stop cheyyadaniki limit ledu** — prathi leaf **pure** (anni okate class) ayye varaku **splits chestune untundi**.
+Idi **most important reason**. Default ga Decision Tree ki **stop cheyyadaniki limit ledu** â€” prathi leaf **pure** (anni okate class) ayye varaku **splits chestune untundi**.
 
-- Impurity `> 0` unnanta varaku → *"inko question adugutha"*
+- Impurity `> 0` unnanta varaku â†’ *"inko question adugutha"*
 - Chivariki prathi leaf lo **1 or 2 rows** matrame migulutai
-- **1 row ki oka rule** ante adi **learning kaadu — memorizing**
+- **1 row ki oka rule** ante adi **learning kaadu â€” memorizing**
 
 ```text
 Correct learning:            Overfitting (memorizing):
   "Rain + Strong -> No"        "Rain + Strong + Mild + Humidity=Normal
    (30 rows batti nerchindi)     + Day=Tuesday -> No"  (1 row batti!)
-   -> general rule ✅            -> aa okka row ki matrame rule ❌
+   -> general rule âœ…            -> aa okka row ki matrame rule âŒ
 ```
 
 #### Reason 2: **Noise / wrong rows ni kuda rule ga marchestundi**
@@ -2873,9 +2873,9 @@ Correct learning:            Overfitting (memorizing):
 - Data lo oka row **tappu ga label** ayindi anuko (mistake / noise).
 - Normal model adi **ignore** cheyyali.
 - Kani tree *"ee row kuda pure ga separate cheyyali"* ani, aa **okka row kosam prathyekam ga oka branch** create chestundi.
-- Aa branch **nijamaina pattern kaadu** — kevalam **noise** ni gurthu pettukunnadi.
+- Aa branch **nijamaina pattern kaadu** â€” kevalam **noise** ni gurthu pettukunnadi.
 
-#### Reason 3: **Greedy algorithm** — munduki chuudadu
+#### Reason 3: **Greedy algorithm** â€” munduki chuudadu
 
 - Tree prathi step lo **"ippudu best split edi?"** ani matrame chustundi (greedy).
 - *"Ee split valla tarvata tree entha complicated avtundi?"* ani **alochinchadu**.
@@ -2883,8 +2883,8 @@ Correct learning:            Overfitting (memorizing):
 
 #### Reason 4: **Enni splits ayina cheyyagaladu** (no natural limit)
 
-- Linear Regression ki oka **line** matrame — adi entha ayina complicated avvadu (limited flexibility).
-- Kani Decision Tree **entha deep ayina** vellagaladu → **unlimited flexibility**.
+- Linear Regression ki oka **line** matrame â€” adi entha ayina complicated avvadu (limited flexibility).
+- Kani Decision Tree **entha deep ayina** vellagaladu â†’ **unlimited flexibility**.
 - Flexibility ekkuva = **variance ekkuva** = **overfit chance ekkuva**.
 
 #### Reason 5: **Jagged (unancha) boundary**
@@ -2893,7 +2893,7 @@ Correct learning:            Overfitting (memorizing):
 
 ```text
 Good (general) boundary:        Overfit boundary (deep tree):
-    ___________                     _|‾|__|‾‾|_|‾|_
+    ___________                     _|â€¾|__|â€¾â€¾|_|â€¾|_
    /           \                   | prathi point ni    |
   |  class A    |                  | separate ga wrap   |
    \___________/                   |_chestundi__________|
@@ -2902,41 +2902,41 @@ Good (general) boundary:        Overfit boundary (deep tree):
 
 ---
 
-### 📊 Mana Play Tennis example lone overfitting evidence
+### ðŸ“Š Mana Play Tennis example lone overfitting evidence
 
 Mana tree lo ee leaves chudandi:
 
 | Leaf | Rows aa leaf lo | Problem? |
 |------|:---------------:|----------|
-| `Sunny → Humidity = Normal` → **Yes** | **1 row** (row 9) | ⚠️ **okka row** batti rule! |
-| `Rain → Wind = Strong` → **No** | **1 row** (row 6) | ⚠️ **okka row** batti rule! |
-| `Sunny → Humidity = High` → **No** | 3 rows | ✅ koncham better |
+| `Sunny â†’ Humidity = Normal` â†’ **Yes** | **1 row** (row 9) | âš ï¸ **okka row** batti rule! |
+| `Rain â†’ Wind = Strong` â†’ **No** | **1 row** (row 6) | âš ï¸ **okka row** batti rule! |
+| `Sunny â†’ Humidity = High` â†’ **No** | 3 rows | âœ… koncham better |
 
-- *"Rain + Strong Wind aithe tennis aadaru"* — ee rule **okka roju data** batti nerchukunnadi!
-- Nijam ga rain + strong wind lo evaro aadi undachu — kani mana tree **"eppudu No"** ani **gudlu moosukuni** cheptundi.
-- **Idi exactly overfitting** — chinna data batti **too confident** rule.
+- *"Rain + Strong Wind aithe tennis aadaru"* â€” ee rule **okka roju data** batti nerchukunnadi!
+- Nijam ga rain + strong wind lo evaro aadi undachu â€” kani mana tree **"eppudu No"** ani **gudlu moosukuni** cheptundi.
+- **Idi exactly overfitting** â€” chinna data batti **too confident** rule.
 
 ---
 
-### 🧪 Real Proof (numbers tho) — sklearn experiment
+### ðŸ§ª Real Proof (numbers tho) â€” sklearn experiment
 
 Breast Cancer dataset (569 rows) meeda **same data**, kevalam **tree depth** matrame maarchi test chesam:
 
 | Setting | Depth | Leaves | Train Accuracy | Test Accuracy | **Gap** |
 |---------|:-----:|:------:|:--------------:|:-------------:|:-------:|
-| **No limit (default)** | 7 | 16 | **1.000** (100%!) | 0.942 | **0.058** ❌ |
+| **No limit (default)** | 7 | 16 | **1.000** (100%!) | 0.942 | **0.058** âŒ |
 | `max_depth=4` | 4 | 12 | 0.995 | 0.953 | 0.042 |
-| `max_depth=3` | 3 | 8 | 0.970 | **0.965** | **0.005** ✅ |
-| `min_samples_leaf=5` | 5 | 12 | 0.980 | **0.971** | 0.009 ✅ |
+| `max_depth=3` | 3 | 8 | 0.970 | **0.965** | **0.005** âœ… |
+| `min_samples_leaf=5` | 5 | 12 | 0.980 | **0.971** | 0.009 âœ… |
 
 **Ee table nunchi em ardham avtundi?**
 
-1. **No limit tree → training accuracy `1.000` (100%)** — ante **prathi training row ni correct** ga cheppindi. Idi *"model super"* kaadu — idi **memorization warning sign** ⚠️.
-2. Kani aa same tree **test meeda `0.942`** matrame — **shallow tree (`0.965`) kanna takkuva!**
+1. **No limit tree â†’ training accuracy `1.000` (100%)** â€” ante **prathi training row ni correct** ga cheppindi. Idi *"model super"* kaadu â€” idi **memorization warning sign** âš ï¸.
+2. Kani aa same tree **test meeda `0.942`** matrame â€” **shallow tree (`0.965`) kanna takkuva!**
 3. **Chinna tree (depth 3), pedda tree (depth 7) kanna kotha data meeda BETTER.** Idi overfitting ki **clear proof**.
-4. **Gap `0.058` → `0.005`** ki thaggindi — ante model **generalize** avtundi.
+4. **Gap `0.058` â†’ `0.005`** ki thaggindi â€” ante model **generalize** avtundi.
 
-> **Key insight:** Training accuracy 100% vasthe **santhoshapadaku** — mostly adi **overfitting** signal. Eppudu **test accuracy** ni chudu.
+> **Key insight:** Training accuracy 100% vasthe **santhoshapadaku** â€” mostly adi **overfitting** signal. Eppudu **test accuracy** ni chudu.
 
 ```python
 from sklearn.datasets import load_breast_cancer
@@ -2960,20 +2960,20 @@ print("Depth 3    -> train:", accuracy_score(y_train, small.predict(X_train)),
 
 ---
 
-### ✅ Overfitting ni ela aapali? (Solutions)
+### âœ… Overfitting ni ela aapali? (Solutions)
 
 | Solution | Ela pani chestundi |
 |----------|--------------------|
 | **`max_depth`** set cheyyadam | Tree ni **konni levels ki** aapesthundi (most common fix) |
-| **`min_samples_leaf`** | Leaf lo **kanisam N rows** undali — 1-row rules raavu |
+| **`min_samples_leaf`** | Leaf lo **kanisam N rows** undali â€” 1-row rules raavu |
 | **`min_samples_split`** | Node lo N rows unte ne split cheyyi |
 | **Pruning** (`ccp_alpha`) | Mundu **full tree** penchi, tarvata **useless branches ni kattirinchadam** |
 | **Cross Validation** | Best `max_depth` ni **guess kaakunda**, test chesi kanukkovadam |
-| **🌲 Random Forest** | **Chala trees** build chesi **vote** teeskovadam — **best solution** |
+| **ðŸŒ² Random Forest** | **Chala trees** build chesi **vote** teeskovadam â€” **best solution** |
 
 > **Enduku Random Forest best fix?** Oka tree tappu cheyyachu (overfit). Kani **100 trees** different ga overfit avtai, and vaati **average/vote** teeskunte aa tappulu **cancel** ayipotai. Idi *"okkariki adagakunda, 100 mandini adigi majority teeskovadam"*. (Detail: section 8.4)
 
-> **Ee reason valle Random Forest, XGBoost lantivi puttayi** — anni **Decision Tree base** meeda kattinave, kani **overfitting problem ni fix** chesthu.
+> **Ee reason valle Random Forest, XGBoost lantivi puttayi** â€” anni **Decision Tree base** meeda kattinave, kani **overfitting problem ni fix** chesthu.
 
 ---
 
@@ -2987,7 +2987,7 @@ print("Depth 3    -> train:", accuracy_score(y_train, small.predict(X_train)),
 | `min_samples_leaf` | Leaf lo undalsina min rows | overfit | underfit |
 
 - **Pruning** = penchina tree lo unnecessary branches ni **kattirinchadam** (trim), overfitting thaggadaniki.
-- Deep tree = prathi row ni gurthu pettukuntundi (**overfit**) → training 100%, test poor.
+- Deep tree = prathi row ni gurthu pettukuntundi (**overfit**) â†’ training 100%, test poor.
 
 ---
 
@@ -3058,18 +3058,18 @@ Outlook_Rain        0.000000
 Play Tennis? No
 ```
 
-- **Root node = `Outlook_Sunny`** → ante **`Outlook`** ye root ✅ (manam paina Information Gain tho calculate chesindi correct ani proof).
-- **Prediction = `No`** → manam manual ga chesina walkthrough (Rain → Strong → No) tho **exact ga match ayyindi** ✅.
-- `Outlook = Sunny` aithe → `Humidity` question, `Wind = Weak` aithe → direct `Yes` — whiteboard tree logic ne.
+- **Root node = `Outlook_Sunny`** â†’ ante **`Outlook`** ye root âœ… (manam paina Information Gain tho calculate chesindi correct ani proof).
+- **Prediction = `No`** â†’ manam manual ga chesina walkthrough (Rain â†’ Strong â†’ No) tho **exact ga match ayyindi** âœ….
+- `Outlook = Sunny` aithe â†’ `Humidity` question, `Wind = Weak` aithe â†’ direct `Yes` â€” whiteboard tree logic ne.
 
 ### Code lo prathi step enduku?
-- **`get_dummies`** — sklearn ki text panicheyyadu, so categories ni 0/1 columns ga marchali.
-- **`criterion="entropy"`** — manam paina chesina Information Gain method ne vaadutundi (`"gini"` default).
-- **`export_text`** — tree ni **if-else rules** ga chupistundi (root node ye feature o **modati line lo** kanipistundi).
-- **`feature_importances_`** — ye feature entha useful ani score. (Gamanika: idi feature **motham** contribution — root node ni telusukovadaniki `export_text` modati line chudadam correct way.)
-- **Scaling ledu** — Decision Tree ki scaling avasaram ledu (splits meeda pani chestundi, distance meeda kaadu).
+- **`get_dummies`** â€” sklearn ki text panicheyyadu, so categories ni 0/1 columns ga marchali.
+- **`criterion="entropy"`** â€” manam paina chesina Information Gain method ne vaadutundi (`"gini"` default).
+- **`export_text`** â€” tree ni **if-else rules** ga chupistundi (root node ye feature o **modati line lo** kanipistundi).
+- **`feature_importances_`** â€” ye feature entha useful ani score. (Gamanika: idi feature **motham** contribution â€” root node ni telusukovadaniki `export_text` modati line chudadam correct way.)
+- **Scaling ledu** â€” Decision Tree ki scaling avasaram ledu (splits meeda pani chestundi, distance meeda kaadu).
 
-> **Important note (whiteboard tree vs sklearn tree):** Whiteboard lo `Outlook` ni **3 branches** (Sunny / Overcast / Rain) ga split chesam — idi **multi-way split** (ID3 style). Kani **sklearn eppudu binary (2-way) splits** matrame chestundi, and one-hot encoding valla `Outlook_Sunny = 0 or 1` laaga questions adugutundi. So **shape koncham different** ga kanipistundi, kani **rules and final answers same**.
+> **Important note (whiteboard tree vs sklearn tree):** Whiteboard lo `Outlook` ni **3 branches** (Sunny / Overcast / Rain) ga split chesam â€” idi **multi-way split** (ID3 style). Kani **sklearn eppudu binary (2-way) splits** matrame chestundi, and one-hot encoding valla `Outlook_Sunny = 0 or 1` laaga questions adugutundi. So **shape koncham different** ga kanipistundi, kani **rules and final answers same**.
 
 ---
 
@@ -3077,40 +3077,40 @@ Play Tennis? No
 
 ### Enduku Decision Tree? (Advantages)
 
-- **Easy to understand** — tree ni chusi direct ga ardham avtundi (visual).
-- **Explainable** — if-else rules ga chadavachu ("enduku ee answer icchindi" ani cheppachu).
-- **Feature scaling avasaram ledu** — StandardScaler/MinMaxScaler avasaram ledu.
+- **Easy to understand** â€” tree ni chusi direct ga ardham avtundi (visual).
+- **Explainable** â€” if-else rules ga chadavachu ("enduku ee answer icchindi" ani cheppachu).
+- **Feature scaling avasaram ledu** â€” StandardScaler/MinMaxScaler avasaram ledu.
 - **Categorical + numerical** rendu types data ki work avtundi.
 - **Missing values / outliers** ni koncham baaga tolerate chestundi (distance based kaadu kabatti).
 - **Non-linear relations** ni handle chestundi (SVM kernel laanti trick avasaram ledu).
 
 ### Weakness
 
-- **⚠️ Overfitting avvachu (BIGGEST disadvantage)** — tree **pure ayye varaku** splits chestune, training data ni memorize chestundi. (Full "why" explanation paina **"Main Disadvantage"** section lo undi.)
+- **âš ï¸ Overfitting avvachu (BIGGEST disadvantage)** â€” tree **pure ayye varaku** splits chestune, training data ni memorize chestundi. (Full "why" explanation paina **"Main Disadvantage"** section lo undi.)
   - Fix: **pruning**, `max_depth`, `min_samples_leaf`, **Random Forest**.
-- **Unstable** — data lo chinna change vachina, tree structure motham marochu (high variance).
-  - Fix: **Random Forest** (chala trees vote chestai — section 8.4).
-- **Biased towards features with many categories** — ekkuva unique values unna column ni root ga select chese tendency.
-- **Greedy** — prathi step lo local best chustundi, globally best tree guarantee ledu.
+- **Unstable** â€” data lo chinna change vachina, tree structure motham marochu (high variance).
+  - Fix: **Random Forest** (chala trees vote chestai â€” section 8.4).
+- **Biased towards features with many categories** â€” ekkuva unique values unna column ni root ga select chese tendency.
+- **Greedy** â€” prathi step lo local best chustundi, globally best tree guarantee ledu.
 
 > **Short summary:** Decision Tree = *"Best question ni root ga adigi, question by question data ni pure groups ga vidagotti, leaf node lo final answer ivvadam."* Root node = **highest Information Gain (or lowest Gini)** unna feature.
 
 ---
 
-## Decision Tree — Quick Summary (Gurthu pettuko)
+## Decision Tree â€” Quick Summary (Gurthu pettuko)
 
 | Point | Value |
 |-------|-------|
 | **Type** | Supervised (Classification + Regression) |
 | **Idea** | Questions adugutu data ni pure groups ga split cheyyadam |
-| **Root Node** | Modati question — **best split** unna feature (`Outlook`) |
+| **Root Node** | Modati question â€” **best split** unna feature (`Outlook`) |
 | **Branch** | Question ki answer path (`Sunny`, `Overcast`, `Rain`) |
-| **Leaf Node** | Final answer (target) — `Yes` / `No` |
+| **Leaf Node** | Final answer (target) â€” `Yes` / `No` |
 | **Split criteria** | **Information Gain** (entropy) or **Gini Impurity** |
 | **Best root rule** | IG **highest** / Gini **lowest** |
 | **Scaling** | **Avasaram ledu** (distance based kaadu) |
 | **Stop eppudu** | Node pure ayinapudu, or `max_depth` reach ayinapudu |
-| **⚠️ Main Weakness** | **Prone to OVERFIT** (pure ayye varaku split chestundi) |
+| **âš ï¸ Main Weakness** | **Prone to OVERFIT** (pure ayye varaku split chestundi) |
 | **Overfit signal** | Train accuracy ~100%, test accuracy takkuva |
 | **Fix** | `max_depth`, `min_samples_leaf`, Pruning, or **Random Forest** |
 
@@ -3202,8 +3202,8 @@ Metrics problem type batti change avuthayi.
 
 Ee 4 terms anni classification metrics ki base. Prathi prediction ni rendu things tho compare chestham: **Actual** (nijam) vs **Predicted** (model cheppindi).
 
-- **TP (True Positive):** Actual **Yes**, model predicted **Yes** — correct.
-- **TN (True Negative):** Actual **No**, model predicted **No** — correct.
+- **TP (True Positive):** Actual **Yes**, model predicted **Yes** â€” correct.
+- **TN (True Negative):** Actual **No**, model predicted **No** â€” correct.
 - **FP (False Positive):** Actual **No**, kani model **Yes** ani wrong ga predict chesindi.
 - **FN (False Negative):** Actual **Yes**, kani model **No** ani wrong ga miss chesindi.
 
@@ -3262,7 +3262,7 @@ Squared error average
 
 Square root of MSE
 
-### R² Score
+### RÂ² Score
 
 Model data variation ni entha explain chestundo chepthundi.
 
@@ -3281,7 +3281,7 @@ Bad data unte good model kuda fail avvachu.
 
 #### Encoding categorical data
 - **label encoding:** category ni oka number ga marchadam (example: Low=0, Medium=1, High=2). Categories madhya **order/rank** unnappudu (ordinal data) bagundi.
-- **one-hot encoding:** prathi category ki separate 0/1 column create cheyyadam (example: City_Hyd, City_Chennai). Categories madhya order lekapothe (nominal data) idi correct choice — order lekunda direct numbers (0,1,2) isthe model wrong ranking assume chestundi.
+- **one-hot encoding:** prathi category ki separate 0/1 column create cheyyadam (example: City_Hyd, City_Chennai). Categories madhya order lekapothe (nominal data) idi correct choice â€” order lekunda direct numbers (0,1,2) isthe model wrong ranking assume chestundi.
 
 #### Feature scaling
 
@@ -3750,7 +3750,7 @@ print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred))
 3. Overfitting ni ignore cheyyadam
 4. Wrong metric use cheyyadam
 5. Feature scaling avasaram unna place lo cheyyakapovadam
-6. Imbalanced data ni ignore cheyyadam — **imbalanced data** ante oka class rows chala ekkuva, inko class rows chala takkuva unte (example: 950 "No Disease" vs 50 "Disease"). Ala unte model majority class ni matrame nerchukuni, accuracy high ga kanipinchina minority class ni sarigga predict cheyyaledu.
+6. Imbalanced data ni ignore cheyyadam â€” **imbalanced data** ante oka class rows chala ekkuva, inko class rows chala takkuva unte (example: 950 "No Disease" vs 50 "Disease"). Ala unte model majority class ni matrame nerchukuni, accuracy high ga kanipinchina minority class ni sarigga predict cheyyaledu.
 7. Business problem ardham kakunda direct algorithm run cheyyadam
 
 ---
@@ -3878,3 +3878,1028 @@ Similar data ni groups ga divide cheyyadam.
 
 ### Evaluation Metric
 Model performance ni measure cheyyadaniki use chese value.
+
+
+---
+
+## GINI Index (Gini Impurity) â€” Decision Tree lo Split Select Cheyyataniki
+
+![GINI Index Formula](./images/GINI_Index_Formula.png)
+
+### GINI Index Ante Enti?
+
+**GINI Index** (Gini Impurity) = oka node lo **impurity** (mixture) enta undo cheppedi.
+
+Simple ga cheppalante:
+
+- Oka bag lo anni same color balls unte â†’ **pure** â†’ GI = 0
+- Bag lo anni different color balls unte â†’ **impure** â†’ GI = 0.5 (maximum)
+
+Decision Tree **best split** choose cheyyataniki GINI use chesthundi â€” **least impurity unna column** ni select chesthundi.
+
+---
+
+### Formula
+
+```
+GI = 1 - Î£ (Pi)Â²
+         i=1
+```
+
+- `Pi` = class i probability (aa class fraction)
+- Anni classes ki (Pi)Â² calculate chesi, anni add chesi, 1 nundi minus cheyyi
+
+**Range:** 0 (pure) to 0.5 (most impure â€” binary classification)
+
+---
+
+### Example â€” Weather Dataset
+
+Oka dataset lo 10 records unnay:
+- **Yes (Play):** 6 records
+- **No (Don't Play):** 4 records
+
+---
+
+### Step 1: Target Column Gini Index Calculate Cheyyi
+
+![GINI Step 1 - Target Column](./images/GINI_Index_Formula.png)
+
+```
+Yes = 6/10
+No  = 4/10
+
+GI(Target) = 1 - [(6/10)Â² + (4/10)Â²]
+           = 1 - [0.36 + 0.16]
+           = 1 - 0.52
+           = 0.48
+```
+
+**Meaning:** Target column lo 0.48 impurity undi â€” chala mixed undi, pure kaadu.
+
+---
+
+### Step 2: Outlook Column â€” Prathi Value Ki Gini Calculate Cheyyi
+
+![GINI Step 2 - Outlook Splits](./images/GINI_Step2_Outlook.png)
+
+Outlook column lo 3 values unnay: **Sunny, Overcast, Rain**
+
+#### Sunny (4 records total):
+- Yes: 1, No: 3
+
+```
+GI(Sunny) = 1 - [(1/4)Â² + (3/4)Â²]
+          = 1 - [0.0625 + 0.5625]
+          = 1 - 0.625
+          = 0.375
+```
+
+#### Overcast (2 records total):
+- Yes: 2, No: 0
+
+```
+GI(Overcast) = 1 - [(2/2)Â² + (0/2)Â²]
+             = 1 - [1 + 0]
+             = 1 - 1
+             = 0
+```
+
+**Perfectly pure!** Overcast lo anni records Yes â€” GI = 0.
+
+#### Rain (4 records total):
+- Yes: 3, No: 1
+
+```
+GI(Rain) = 1 - [(3/4)Â² + (1/4)Â²]
+         = 1 - [0.5625 + 0.0625]
+         = 1 - 0.625
+         = 0.375
+```
+
+---
+
+### Step 3: Weighted Gini of Outlook Column Calculate Cheyyi
+
+![GINI Step 3 - Weighted Gini Final](./images/GINI_Step3_WeightedGini.png)
+
+Total records = 10
+
+Prathi split ki **weight** = aa split lo records / total records
+
+```
+Weighted GI(Outlook) = (4/10)(0.375) + (2/10)(0) + (4/10)(0.375)
+
+                     = 0.15 + 0 + 0.15
+
+                     = 0.30
+```
+
+**Final Gini of Outlook = 0.30**
+
+---
+
+### Gini Index Interpretation
+
+```
+GI = 0.30  â†’  "final Gini of outlook"
+            â†“
+     measure of impurity  â†’  random (anta impure aithe random tho equal)
+            â†“
+     lesser the value â†’ Better the column
+```
+
+**Key Rule:**
+> **Lesser the Gini value â†’ Better the column for splitting**
+
+Anni columns ki weighted Gini calculate chesi, **minimum Gini unna column** ni root node (first split) ga select chestam.
+
+| Column | Weighted Gini |
+|--------|--------------|
+| Outlook | **0.30** |
+| Temperature | (calculate cheyyali) |
+| Humidity | (calculate cheyyali) |
+| Wind | (calculate cheyyali) |
+
+Anni calculate chesaka, minimum value unna column â†’ **Root Node** avutundi.
+
+---
+
+### GINI vs Entropy â€” Quick Comparison
+
+| Property | GINI Index | Entropy |
+|----------|-----------|---------|
+| Formula | 1 - Î£(PiÂ²) | -Î£(Pi Ã— log2(Pi)) |
+| Range | 0 to 0.5 | 0 to 1 |
+| Computation | Fast (no log) | Slow (log calculation) |
+| Used in | CART (sklearn default) | ID3, C4.5 |
+| Result | Similar splits | Similar splits |
+
+**Sklearn Decision Tree default** = GINI use chesthundi (`criterion="gini"`).
+
+---
+
+### Summary â€” GINI Index 3 Steps
+
+```
+Step 1: Target column GI calculate cheyyi
+        GI(Target) = 1 - [(Yes/Total)Â² + (No/Total)Â²]
+        â†’ Baseline impurity telusukuntam
+
+Step 2: Each feature column ki, prathi value ki GI calculate cheyyi
+        GI(value) = 1 - [Î£(class_count/value_total)Â²]
+        â†’ Prathi split ela pure avutundo chustam
+
+Step 3: Weighted GI calculate cheyyi
+        Weighted GI = Î£ [(value_count/total) Ã— GI(value)]
+        â†’ Column overall impurity
+
+Final Decision:
+        Minimum Weighted GI unna column â†’ Best Split â†’ Root Node
+        "Lesser the Gini value â†’ Better the column" âœ…
+```
+
+---
+
+---
+
+## Bagging â€” Decision Trees Overfit Problem ki Solution
+
+---
+
+### Mundu Artham Chesukoddam â€” Decision Tree Problem Enti?
+
+Decision Tree oka chala **powerful** algorithm â€” data baga fit avutundi.
+
+Kani ikkade oka **serious problem** undi:
+
+#### Decision Tree Overfit Avutundi
+
+```
+Training Data:    100% accuracy  âœ…  (baga nerchukuntundi)
+Test Data:        55% accuracy   âŒ  (new data meeda badly fails)
+```
+
+**Overfitting ante enti?**
+
+> Decision Tree training data ni **antha chinna details tho kuda** nerchukuntundi â€” noise, outliers anni include chesthundi. Daani valla new/unseen data meeda poorly perform chesthundi.
+
+**Real life analogy:**
+> Oka student exam questions ni exact ga rote learn chestadu â€” answers memorize chestadu. Kani exam lo slightly different question vachinappudu fail avutadu. Adi overfitting.
+
+Decision Tree exact ga same â€” training data perfectly memorize chesthundi, real world lo fail avutundi.
+
+---
+
+### Eppudu Overfit Avutundi Decision Tree?
+
+```
+Tree Depth â†‘ (peddaga grow avutundi)
+    â†“
+Prathi small pattern, noise kuda learn chesthundi
+    â†“
+Training accuracy = 100% (or near)
+    â†“
+Test accuracy = very low
+    â†“
+OVERFIT âŒ
+```
+
+**Symptoms:**
+- Training accuracy >> Test accuracy (chala gap)
+- Tree chala deep ga untundi â€” 20, 30 levels
+- Chinnachinna splits chesthundi (1-2 samples per leaf)
+
+---
+
+### Solution â€” Bagging (Bootstrap Aggregating)
+
+**Bagging** = **B**ootstrap **Ag**gregat**ing**
+
+Oka single tree overfit avutundi kaabatti â€” **multiple trees** build chesi, vallani **combine** chestam.
+
+#### Core Idea:
+
+> "Oka expert wrong answer cheppavachu. Kani 100 experts average chesthe, correct answer vasthundi."
+
+```
+Single Decision Tree â†’ Overfit â†’ Bad generalization âŒ
+
+Multiple Decision Trees â†’ Each slightly different â†’ Average/Vote â†’ Good generalization âœ…
+```
+
+---
+
+### Bagging Ela Work Chesthundi? â€” Step by Step
+
+#### Original Dataset: 1000 rows
+
+```
+Step 1: Bootstrap Sampling
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+Original data nundi, WITH REPLACEMENT, random samples teesukovadam.
+
+Sample 1:  800 random rows (kà±Šà°¨à±à°¨à°¿ repeat avutay)  â†’ Tree 1 train
+Sample 2:  800 random rows (different combination) â†’ Tree 2 train
+Sample 3:  800 random rows (yet another combo)     â†’ Tree 3 train
+...
+Sample N:  800 random rows                          â†’ Tree N train
+
+(Typical N = 100 to 500 trees)
+```
+
+#### "With Replacement" Ante Enti?
+
+```
+Original: [A, B, C, D, E]
+
+With Replacement sample:
+  â†’ Pick A â†’ put back â†’ Pick A again â†’ put back â†’ Pick C â†’ ...
+  â†’ Result: [A, A, C, B, E]  (A repeat avvachu, D miss avvachu)
+
+Without Replacement:
+  â†’ Prathi element once only
+  â†’ Result: [C, A, E, B, D]  (no repeats)
+```
+
+Bagging **with replacement** use chesthundi â€” daani valla prathi sample **different** avutundi â†’ prathi tree **different** avutundi.
+
+```
+Step 2: Train Multiple Trees
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+Prathi bootstrap sample meeda oka full Decision Tree train chestam.
+Prathi tree **slightly different data** chusuundi â†’ **slightly different** splits chesthundi.
+
+Tree 1: "Outlook first split cheyyi"
+Tree 2: "Humidity first split cheyyi"
+Tree 3: "Wind first split cheyyi"
+...
+```
+
+```
+Step 3: Aggregate Predictions
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+New data point vachinappudu, anni trees ki predict cheyyi:
+
+Classification (voting):
+  Tree 1 â†’ YES
+  Tree 2 â†’ YES
+  Tree 3 â†’ NO
+  Tree 4 â†’ YES
+  Tree 5 â†’ NO
+  â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  Majority Vote â†’ YES âœ…
+
+Regression (averaging):
+  Tree 1 â†’ 150
+  Tree 2 â†’ 160
+  Tree 3 â†’ 145
+  â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  Average â†’ 151.67 âœ…
+```
+
+---
+
+### Why Bagging Overfit Reduce Chesthundi?
+
+#### Variance Reduction
+
+Decision Tree problem = **High Variance** â€” training data thodi chinna change aite, completely different tree build avutundi.
+
+```
+Without Bagging:
+  Dataset A â†’ Tree X (very specific to A)
+  Dataset B â†’ Tree Y (very specific to B, totally different from X)
+  High Variance âŒ
+
+With Bagging:
+  100 trees train chesam â€” prathi slightly different
+  Average/Vote chestam
+  Individual errors cancel out avutay
+  Overall variance â†“ Low âœ…
+```
+
+#### Mathematical Intuition:
+
+```
+Single Tree Variance = ÏƒÂ²
+
+100 Trees Average Variance = ÏƒÂ²/100  (100x improvement!)
+
+More trees â†’ Lower variance â†’ Better generalization
+```
+
+---
+
+### Bagging vs No Bagging â€” Comparison
+
+| Property | Single Decision Tree | Bagging (Multiple Trees) |
+|----------|---------------------|--------------------------|
+| Training Accuracy | ~100% (overfit) | Slightly less |
+| Test Accuracy | Low (overfit) | **High** âœ… |
+| Variance | High | **Low** âœ… |
+| Bias | Low | Low |
+| Interpretability | Easy to visualize | Hard (100 trees) |
+| Computation | Fast | Slower (N trees) |
+| Robust to noise | No | **Yes** âœ… |
+
+---
+
+### Bias-Variance Tradeoff Connection
+
+```
+Overfit = High Variance + Low Bias
+Underfit = Low Variance + High Bias
+
+Ideal = Low Variance + Low Bias
+
+Decision Tree alone:
+  â†’ Low Bias âœ… (flexible model)
+  â†’ High Variance âŒ (overfit)
+
+Bagging:
+  â†’ Low Bias âœ… (still using decision trees)
+  â†’ Low Variance âœ… (averaging reduces variance)
+  â†’ Best of both! ðŸŽ¯
+```
+
+---
+
+### Bagging â†’ Random Forest Connection
+
+**Random Forest = Bagging + Extra Randomness**
+
+Bagging lo: prathi tree full features use chestundi
+
+Random Forest lo: prathi tree **random subset of features** use chesthundi (extra randomness)
+
+```
+Bagging:
+  Bootstrap samples âœ…
+  All features used for each split
+
+Random Forest:
+  Bootstrap samples âœ…
+  Random subset of features for each split âœ…
+  (e.g., 10 features unte, prathi split ki only 3 random features consider)
+```
+
+**Why extra feature randomness?**
+> Trees inka **different** avutay â†’ correlation thagutundi â†’ variance inka thaggutundi â†’ better performance
+
+```
+Bagging Accuracy:      ~85%
+Random Forest Accuracy: ~90%  (because less correlated trees)
+```
+
+---
+
+### Bagging â€” OOB (Out-of-Bag) Error
+
+Bootstrap sampling lo ~37% data prathi sample lo **miss** avutundi (not picked).
+
+Aa missed data â†’ **Out-of-Bag (OOB) samples** â†’ free validation set!
+
+```
+Tree 1 trained on: rows [1,2,2,4,5,5,7,...] â†’ OOB: rows [3,6,8,...]
+Tree 2 trained on: rows [2,3,5,6,6,8,...]   â†’ OOB: rows [1,4,7,...]
+
+OOB Error = OOB samples meeda predict chesi error calculate cheyyatam
+          = Separate validation set avasaram ledu âœ…
+          = Cross-validation laaga work chesthundi
+```
+
+---
+
+### Code â€” Sklearn Lo Bagging
+
+```python
+from sklearn.ensemble import BaggingClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+
+# Data
+X, y = load_iris(return_X_y=True)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+# Single Decision Tree (overfit check)
+dt = DecisionTreeClassifier()
+dt.fit(X_train, y_train)
+print("Single Tree Train:", dt.score(X_train, y_train))  # ~1.0 (overfit)
+print("Single Tree Test:", dt.score(X_test, y_test))     # ~0.85
+
+# Bagging
+bagging = BaggingClassifier(
+    estimator=DecisionTreeClassifier(),
+    n_estimators=100,      # 100 trees
+    max_samples=0.8,       # 80% rows per sample
+    bootstrap=True,        # with replacement
+    oob_score=True,        # OOB error calculate
+    random_state=42
+)
+bagging.fit(X_train, y_train)
+print("Bagging Train:", bagging.score(X_train, y_train))
+print("Bagging Test:", bagging.score(X_test, y_test))    # better!
+print("OOB Score:", bagging.oob_score_)                  # free validation
+```
+
+---
+
+### Summary â€” Key Points
+
+```
+Problem:
+  Decision Tree â†’ Overfit â†’ High Variance â†’ Poor test accuracy
+
+Root Cause:
+  Single tree entire training data memorize chesthundi
+  Noise, outliers kuda learn chesthundi
+
+Solution â€” Bagging:
+  1. Bootstrap: Original data nundi N different random samples (with replacement)
+  2. Train: Prathi sample meeda oka full Decision Tree
+  3. Aggregate: Predictions vote (classification) or average (regression)
+
+Why it works:
+  â†’ Prathi tree different data chustu â†’ different errors chesthundi
+  â†’ Errors average chesthe cancel avutay
+  â†’ Variance â†“ drastically
+  â†’ Generalization â†‘
+
+Key Formula:
+  Single Tree Variance = ÏƒÂ²
+  N Trees Average Variance = ÏƒÂ²/N
+
+Bagging â†’ Random Forest:
+  Bagging + random feature subset = Random Forest
+  Even less correlation â†’ Even better performance
+
+Remember:
+  "Lesser the Gini â†’ Better the split"
+  "More the trees in Bagging â†’ Lesser the variance â†’ Better the model" âœ…
+```
+
+---
+
+---
+
+## Random Forest â€” Complete In-Depth Explanation with Diagrams
+
+---
+
+### Random Forest Ante Enti?
+
+![Random Forest - Bagging Definition](./images/RF_Bagging_Definition.png)
+
+**Random Forest = Bagging technique use chesina oka ensemble algorithm**
+
+Paina image lo chupinchina laaga:
+
+```
+Bagging = B + agging
+             â†“        â†“
+         Bootstrap + Aggregation
+
+Bootstrap = Sampling with replacement
+```
+
+**Simple ga cheppalante:**
+
+> Oka single Decision Tree overfit avutundi â€” training data baga nerchukuntundi, new data meeda fail avutundi.
+>
+> Solution: **Chala trees build cheyyi (forest), anni trees vote cheyyi â€” majority wins.**
+
+---
+
+### Random Forest Big Picture
+
+![Random Forest - Sampling to Trees](./images/RF_Summary_Concept.png)
+
+```
+Random Forest
+      â†“
+  Sampling â†’ N Samples â†’ Trees (N trees)
+                              â†“
+                             n (n = number of trees)
+```
+
+- **Sampling** â†’ Original data nundi N different samples teesukuntam (Bootstrap)
+- **N Samples** â†’ N different datasets
+- **Trees** â†’ Prathi sample meeda oka Decision Tree build chestam
+- **n** â†’ Total trees count (hyperparameter, tune cheyyachu)
+
+---
+
+### Step 1: Sampling (Bootstrap) â€” N Samples Create Cheyyi
+
+![Random Forest Step 1 - Sampling](./images/RF_Step1_Sampling.png)
+
+**Paina diagram explanation:**
+
+Original training data lo 10 rows unnay (1 to 10).
+
+**N Samples = 5** (5 different bootstrap samples create chestam)
+
+```
+Original Dataset: rows 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+
+Sample 1: rows [1, 3, 3, 7, 7, 2]   â† row 3 and 7 repeat (with replacement)
+Sample 2: rows [2, 3, 9, 6, 8, 3]   â† different combination
+Sample 3: rows [1, 3, 5, 7, 9]      â† yet another combo
+Sample 4: rows [...]                 â† different again
+Sample 5: rows [...]                 â† different again
+```
+
+**Bootstrap ante:**
+- Original dataset nundi **random ga rows pick** chestam
+- **With replacement** â€” oka row already picked aite, again pick cheyyachu
+- Daani valla prathi sample **slightly different** avutundi
+- ~63% unique rows + ~37% repeats (mathematically proven)
+
+**Why N=5 example lo?**
+> N = hyperparameter. Real world lo N = 100, 200, 500 trees use chestam. Eppudu eppudu N = 1000 kuda use chestam. Paina diagram lo concept chupeyyadaniki N=5 use chesaru.
+
+---
+
+### Step 2: Train Decision Trees
+
+![Random Forest Step 2 - Tree Training](./images/RF_Step2_Training.png)
+
+**Paina diagram explanation:**
+
+Prathi bootstrap sample meeda **oka full Decision Tree** train chestam.
+
+```
+Sample 1 â†’ Tree 1 â†’ Prediction: YES
+Sample 2 â†’ Tree 2 â†’ Prediction: NO
+Sample 3 â†’ Tree 3 â†’ Prediction: NO
+Sample 4 â†’ Tree 4 â†’ Prediction: YES
+Sample 5 â†’ Tree 5 â†’ Prediction: NO
+```
+
+**Random Forest extra randomness â€” Feature Subsampling:**
+
+Regular Bagging lo:
+- Prathi split ki **all features** consider chestam
+
+Random Forest lo:
+- Prathi split ki **random subset of features** consider chestam
+- Example: 4 features unte (Outlook, Temp, Humidity, Wind)
+  â†’ Prathi split ki only **âˆš4 = 2 features** random ga select chesi consider chestam
+
+```
+Tree 1, Split 1: Consider [Outlook, Wind]      â†’ best split choose
+Tree 1, Split 2: Consider [Temp, Humidity]     â†’ best split choose
+Tree 2, Split 1: Consider [Humidity, Outlook]  â†’ best split choose
+...
+```
+
+**Why feature subsampling?**
+> Trees inka **less correlated** avutay â†’ vaati errors cancel avutay â†’ overall better accuracy
+
+---
+
+### Step 3: Aggregation (Voting)
+
+![Random Forest Step 3 - Aggregation](./images/RF_Step3_Aggregation.png)
+
+**Paina diagram explanation:**
+
+5 trees train chesam. New data point vaccinappudu, anni 5 trees ki predict cheyyamani cheptam:
+
+```
+Tree 1 â†’ YES
+Tree 2 â†’ NO
+Tree 3 â†’ NO
+Tree 4 â†’ YES
+Tree 5 â†’ NO
+
+Voting:
+  YES: 2
+  NO:  3
+  â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  Majority â†’ NO  âœ…  (Final Prediction)
+```
+
+**Classification lo:** Majority Vote
+**Regression lo:** Average of all tree predictions
+
+**Paina diagram lo:**
+```
+Yes: 2  |  No: 3
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+Final â†’ NO (majority)
+```
+
+---
+
+### Random Forest â€” Full Flow Oka Chota
+
+```
+Original Dataset (10 rows, 4 features)
+         â”‚
+         â–¼
+â”Œâ”€â”€â”€ Bootstrap Sampling â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Sample 1: [1,3,3,7,2,...]  â†’ Tree 1         â”‚
+â”‚  Sample 2: [2,6,8,9,3,...]  â†’ Tree 2         â”‚
+â”‚  Sample 3: [1,5,7,3,9,...]  â†’ Tree 3         â”‚
+â”‚  Sample 4: [4,4,6,2,8,...]  â†’ Tree 4         â”‚
+â”‚  Sample 5: [9,1,3,7,5,...]  â†’ Tree 5         â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+         â”‚
+         â–¼
+â”Œâ”€â”€â”€ Train Trees (with feature subsampling) â”€â”€â”€â”
+â”‚  Tree 1: "Outlook â†’ Humidity â†’ ..."          â”‚
+â”‚  Tree 2: "Wind â†’ Outlook â†’ ..."              â”‚
+â”‚  Tree 3: "Humidity â†’ Temp â†’ ..."             â”‚
+â”‚  Tree 4: "Outlook â†’ Wind â†’ ..."              â”‚
+â”‚  Tree 5: "Temp â†’ Humidity â†’ ..."             â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+         â”‚
+         â–¼
+New data point â†’ All 5 trees predict
+         â”‚
+         â–¼
+â”Œâ”€â”€â”€ Aggregation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  YES: 2,  NO: 3                              â”‚
+â”‚  Majority â†’ Final Prediction: NO             â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+```
+
+---
+
+### Random Forest vs Single Decision Tree
+
+| Property | Single Decision Tree | Random Forest |
+|----------|---------------------|---------------|
+| Overfitting | High âŒ | Low âœ… |
+| Training Accuracy | ~100% | Slightly less |
+| Test Accuracy | Low (overfit) | High âœ… |
+| Variance | High âŒ | Low âœ… |
+| Interpretability | Easy (visual) | Hard (N trees) |
+| Speed | Fast | Slower (N trees) |
+| Noise sensitivity | High âŒ | Low âœ… |
+| Feature importance | Limited | âœ… Built-in |
+
+---
+
+### Hyperparameters â€” Random Forest Tune Cheyyatam
+
+```python
+from sklearn.ensemble import RandomForestClassifier
+
+rf = RandomForestClassifier(
+    n_estimators=100,        # N trees â€” eppudu eppudu 200-500 better
+    max_features='sqrt',     # prathi split ki âˆš(total features) â€” default
+    max_depth=None,          # trees ni puri ga grow cheyyi (bagging handles overfit)
+    min_samples_split=2,     # split ki minimum samples
+    min_samples_leaf=1,      # leaf lo minimum samples
+    bootstrap=True,          # sampling with replacement âœ…
+    oob_score=True,          # Out-of-bag validation
+    random_state=42
+)
+```
+
+**Key hyperparameters:**
+
+| Parameter | Meaning | Typical Values |
+|-----------|---------|----------------|
+| `n_estimators` | Number of trees (N) | 100â€“500 |
+| `max_features` | Features per split | 'sqrt' (classification), 'auto' |
+| `max_depth` | Tree max depth | None (full) or 5â€“20 |
+| `bootstrap` | Sampling with replacement | True (always for RF) |
+| `oob_score` | OOB validation | True (free cross-validation) |
+
+---
+
+### Summary â€” Random Forest = Bagging Tho Build Chesina Forest
+
+```
+Random Forest
+  = Multiple Decision Trees
+  + Bootstrap Sampling (Bagging â€” B + aggregation)
+  + Feature Subsampling (random features per split)
+  + Aggregation (vote or average)
+
+3 Steps:
+  Step 1 â†’ Sampling: N bootstrap samples (with replacement)
+  Step 2 â†’ Training: Prathi sample meeda oka tree (random features)
+  Step 3 â†’ Aggregation: Majority vote (classification) or average (regression)
+
+Why Single Tree Overfit Avutundi?
+  â†’ Training data memorize chesthundi (high variance)
+
+Why Random Forest Overfit Avoid Chesthundi?
+  â†’ N different trees â†’ N different errors
+  â†’ Errors average/vote lo cancel avutay
+  â†’ Final prediction stable and generalized
+
+Key Rule:
+  "More trees â†’ Less variance â†’ Better generalization"
+  n_estimators â†‘ â†’ accuracy â†‘ (certain point daka, after that diminishing returns)
+```
+
+---
+
+---
+
+### Random Forest â€” Disadvantages
+
+Random Forest chala powerful ainappatiki, kà±Šà°¨à±à°¨à°¿ serious drawbacks unnay:
+
+#### 1. Training Time Chala Ekkuva â€” Slow âŒ
+
+```
+Single Decision Tree:
+  â†’ 1 tree train â†’ fast âš¡
+
+Random Forest (n_estimators = 100):
+  â†’ 100 trees train â†’ 100x slow ðŸ¢
+  â†’ Prathi tree ki bootstrap sample + full tree build
+  â†’ Large dataset + many trees = hours of training
+```
+
+**Real example:**
+> 1 million rows dataset unte:
+> - Single Tree: 2 seconds
+> - Random Forest (100 trees): 200+ seconds
+
+#### 2. Prediction Time Slow â€” Real-time lo Problem
+
+```
+Predict chesappudu kuda:
+  â†’ New data point â†’ 100 trees lo pass cheyyali
+  â†’ 100 predictions collect â†’ vote cheyyali
+  â†’ Single tree: 1 lookup
+  â†’ Random Forest: 100 lookups â†’ slow âŒ
+```
+
+Real-time applications (fraud detection, live recommendations) lo idi bottleneck avutundi.
+
+#### 3. Memory Usage Ekkuva â€” RAM Problem
+
+```
+Single Tree memory: small
+100 Trees memory:   100x more RAM
+
+Large datasets + many trees = RAM out of memory errors âŒ
+```
+
+#### 4. Interpretability Ledu â€” Black Box
+
+```
+Single Decision Tree:
+  â†’ Visualize cheyyachu âœ…
+  â†’ "Why this prediction?" explain cheyyachu âœ…
+
+Random Forest (100 trees):
+  â†’ 100 trees visualize cheyyatam impossible âŒ
+  â†’ "Why NO?" â†’ "Because 60 trees NO cheppay" â†’ not useful âŒ
+  â†’ Black box model
+```
+
+Banking, medical, legal sectors lo **explainability required** â€” Random Forest use cheyyatam difficult.
+
+#### 5. Feature Selection â€” Noisy Features Tho Slow
+
+```
+Chala features unte (100+ columns):
+  â†’ Prathi split ki random features subset evaluate cheyyali
+  â†’ More features â†’ More computation â†’ Slower âŒ
+```
+
+#### Summary Table
+
+| Disadvantage | Impact |
+|-------------|--------|
+| **Slow training** | N trees Ã— training time = very long âŒ |
+| **Slow prediction** | N trees ki predict â†’ real-time lo unsuitable âŒ |
+| **High memory** | N trees in RAM â†’ large datasets lo memory issues âŒ |
+| **Not interpretable** | Black box â€” explain cheyyatam impossible âŒ |
+| **Noisy features tho worse** | Feature subsampling useless columns kuda pick chestundi âŒ |
+
+#### When Random Forest Avoid Cheyyali?
+
+```
+âŒ Real-time predictions kavali aithe (use: single tree or linear model)
+âŒ Memory limited environment (use: single tree)
+âŒ Explainability required (use: Decision Tree or Logistic Regression)
+âŒ Very large datasets with tight time constraints (use: LightGBM, XGBoost â€” faster)
+âœ… Accuracy important, time not a constraint â†’ Random Forest is great
+```
+
+> **Bottom line:** Random Forest = "Accuracy ki best, Speed ki worst" â€” tradeoff ni batti decide cheyyali.
+
+---
+
+---
+
+## Decision Tree Output â€” Confusion Matrix & Classification Report Ela Chudali?
+
+![Decision Tree Output](./images/DT_Output.png)
+
+Ee output **rendu parts** lo undi:
+- **Top half** â†’ Test data meeda performance (200 rows â€” unseen data)
+- **Bottom half** â†’ Train data meeda performance (680 rows â€” training data)
+
+---
+
+### Part 1 â€” TEST DATA Performance (Top Half)
+
+#### Confusion Matrix â€” [[58, 31], [28, 53]]
+
+```
+Actual \ Predicted â†’    0 (dissatisfied)    1 (satisfied)
+0 (dissatisfied)              58                 31
+1 (satisfied)                 28                 53
+```
+
+| Cell | Meaning | Count |
+|------|---------|-------|
+| **58** (top-left)  | **TN** â€” Actually 0, Predicted 0 âœ… | Correctly dissatisfied identify chesam |
+| **31** (top-right) | **FP** â€” Actually 0, Predicted 1 âŒ | Dissatisfied passenger ni satisfied ani wrong ga chesam |
+| **28** (bot-left)  | **FN** â€” Actually 1, Predicted 0 âŒ | Satisfied passenger ni dissatisfied ani wrong ga chesam |
+| **53** (bot-right) | **TP** â€” Actually 1, Predicted 1 âœ… | Correctly satisfied identify chesam |
+
+```
+Total test rows = 58 + 31 + 28 + 53 = 170
+
+Correct predictions = 58 (TN) + 53 (TP) = 111
+Wrong predictions   = 31 (FP) + 28 (FN) = 59
+
+Accuracy = 111 / 170 = 0.65 (65%) â† matches classification report
+```
+
+#### Classification Report â€” Test Data
+
+```
+               precision   recall   f1-score   support
+0 (dissatisfied)  0.67      0.65      0.66        89
+1 (satisfied)     0.63      0.65      0.64        81
+accuracy                              0.65       170
+```
+
+**Support:**
+- Class 0: 89 actual dissatisfied passengers in test set
+- Class 1: 81 actual satisfied passengers in test set
+
+**Precision (0.67 for class 0):**
+```
+Precision = TP / (TP + FP)
+
+For class 0:
+  Model "0" predict chesina 89 lo enni correct?
+  = 58 / (58 + 31) = 58/89 = 0.65 â‰ˆ 0.67
+
+"Model dissatisfied ani cheppinappudu, 67% correct"
+```
+
+**Recall (0.65 for class 0):**
+```
+Recall = TP / (TP + FN)
+
+For class 0:
+  Actual 89 dissatisfied lo, model enni correct ga catch chesindhi?
+  = 58 / (58 + 28) = 58/86 = 0.67 â‰ˆ 0.65
+
+"Actual dissatisfied passengers lo 65% ni correctly identify chesam"
+```
+
+**F1-Score (0.66 for class 0):**
+```
+F1 = 2 Ã— (Precision Ã— Recall) / (Precision + Recall)
+   = 2 Ã— (0.67 Ã— 0.65) / (0.67 + 0.65)
+   = 0.66
+
+Precision and Recall renditini balance chese single score
+```
+
+---
+
+### Part 2 â€” TRAIN DATA Performance (Bottom Half)
+
+#### Confusion Matrix â€” [[383, 0], [0, 297]]
+
+```
+Actual \ Predicted â†’    0 (dissatisfied)    1 (satisfied)
+0 (dissatisfied)             383                  0
+1 (satisfied)                  0                297
+```
+
+| Cell | Value | Meaning |
+|------|-------|---------|
+| **383** | TN | Anni 383 dissatisfied correctly predicted âœ… |
+| **0**   | FP | Zero wrong predictions! |
+| **0**   | FN | Zero missed satisfied! |
+| **297** | TP | Anni 297 satisfied correctly predicted âœ… |
+
+**Accuracy = (383 + 297) / 680 = 680/680 = 1.00 = 100%** ðŸš¨
+
+#### Classification Report â€” Train Data
+
+```
+               precision   recall   f1-score   support
+0               1.00        1.00      1.00       383
+1               1.00        1.00      1.00       297
+accuracy                              1.00       680
+```
+
+Anni metrics 1.00 = **perfect score** on training data.
+
+---
+
+### ðŸš¨ Most Important â€” OVERFIT Detected!
+
+```
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Train Accuracy  =  100%  (1.00)    â”‚
+â”‚  Test  Accuracy  =   65%  (0.65)    â”‚
+â”‚                                     â”‚
+â”‚  Gap = 35% â†’ SEVERE OVERFITTING âŒ  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+```
+
+**Idi cheppedi:**
+> Decision Tree training data **perfectly memorize** chesindi â€” noise, outliers anni include chesi.
+> Kani new/unseen test data vachinappudu 65% mathrame correct chesindi.
+
+**Analogy:**
+> Student exam questions answers exact ga rote chestadu (100% training).
+> Exam lo slightly different question vastundi â€” 65% mathrame correct (test).
+> That's overfitting.
+
+**Idi exactly mana Bagging/Random Forest section lo cheppindi:**
+> Single Decision Tree â†’ High Variance â†’ Overfit
+> Random Forest â†’ Bagging â†’ Variance â†“ â†’ Better test accuracy âœ…
+
+---
+
+### Quick Reading Guide â€” Output Vasthunappudu Ela Chudali?
+
+```
+Step 1: Train accuracy vs Test accuracy compare cheyyi
+        Gap > 10% â†’ Overfit suspect
+
+Step 2: Confusion matrix diagonal chudhu
+        Top-left (TN) and Bottom-right (TP) peddaga unte â†’ good
+
+Step 3: Off-diagonal (FP, FN) chudhu
+        Peddaga unte â†’ model errors ekkuva
+
+Step 4: F1-score chudhu (precision + recall balance)
+        0.85+ â†’ Good
+        0.65   â†’ Average (ee case)
+        0.50   â†’ Random guessing level
+
+Step 5: Class balance chudhu (support column)
+        89 vs 81 â†’ almost balanced â†’ accuracy reliable
+        900 vs 80 â†’ imbalanced â†’ f1-score more important than accuracy
+```
+
+**Ee output lo conclusion:**
+> Decision Tree = **Overfit** (Train 100%, Test 65%)
+> Solution = **Random Forest** run chesi test accuracy improvement chudatam âœ…
+
+---
+
