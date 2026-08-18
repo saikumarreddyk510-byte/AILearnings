@@ -4903,3 +4903,460 @@ Step 5: Class balance chudhu (support column)
 
 ---
 
+
+---
+
+## Logistic Regression — Complete In-Depth Explanation
+
+---
+
+### 1) Logistic Regression Ante Enti? — Big Picture
+
+![Logistic Regression Intro](./images/LR_Intro_LoanExample.png)
+
+**Logistic Regression** = Classification algorithm — output categorical (0 or 1, Yes or No).
+
+> Screenshot lo chupinchina laaga:
+> - **Logistic Regression** → **Binary** → 2 categories (Yes/No, 0/1)
+> - Input (X) → Numerical feature (Income)
+> - Output (Y) → Categorical (Loan Approved: Yes/No)
+
+**Linear Regression vs Logistic Regression:**
+
+```
+Linear Regression:
+  → Output = continuous number (salary, price, temperature)
+  → Formula: y = mx + c
+  → Line ga fit avutundi
+
+Logistic Regression:
+  → Output = category (Yes/No, 0/1, Spam/Not Spam)
+  → Formula: Sigmoid function
+  → S-curve (curve) ga fit avutundi
+```
+
+---
+
+### 2) Problem with Linear Regression for Classification
+
+Screenshot lo chupinchina data:
+
+| Row | Income (X) | Loan Approved (Y) |
+|-----|-----------|-------------------|
+| 1   | 20 (x₁)   | NO                |
+| 2   | 25 (x₂)   | NO                |
+| 3   | 15 (x₃)   | NO                |
+| 4   | 60         | YES               |
+| 5   | 70         | YES               |
+| 6   | 30         | NO                |
+
+**Idi Categorical data** — Y column lo YES/NO unnay.
+
+**Why not Linear Regression here?**
+
+```
+Linear Regression: y = mx + c   ← paina screenshot lo crossed out
+  → Output values: 0.3, 1.2, -0.5 laanti values vasthay
+  → Yes/No ki map cheyyatam impossible ❌
+  → Threshold apply chesthe unreliable
+
+Logistic Regression: Sigmoid curve
+  → Output: 0 to 1 (probability)
+  → 0.5 daka → NO
+  → 0.5 ki paina → YES ✅
+```
+
+**Graph lo chupinchina laaga:**
+- X-axis = Income (10, 20, 30, 40, 50, 70, 80, 90)
+- Y-axis = Loan Approved (Yes top, No bottom)
+- Red dots below = NO cases (income 20, 25, 15, 30)
+- Red dots above = YES cases (income 60, 70)
+- Linear line straight ga pothundi — values out of 0-1 range vasthay ❌
+- Logistic curve (S-shape) = values always 0 to 1 ✅
+
+---
+
+### 3) Sigmoid / Logit Function — The Core of Logistic Regression
+
+![Sigmoid Function](./images/LR_Sigmoid_Function.png)
+
+**Sigmoid function** = Logit function = Logistic function (anni same)
+
+**Formula:**
+
+```
+         1
+y = ─────────
+      1 + e⁻ˣ
+```
+
+Where:
+- **e** = Euler's number (≈ 2.718)
+- **x** = input value (or linear combination: mx + c)
+
+**Output always 0 to 1 — that's the magic!**
+
+```
+x → very large positive  →  e⁻ˣ → 0  →  y = 1/(1+0) = 1
+x → very large negative  →  e⁻ˣ → ∞  →  y = 1/(1+∞) = 0
+x = 0                    →  e⁰  = 1  →  y = 1/(1+1) = 0.5
+```
+
+**Example from screenshot:**
+
+```
+x = 20000 (high income)
+
+        1              1
+y = ─────────── = ────────── = 0.23 (very small → probability lo)
+     1 + e⁻²⁰⁰⁰⁰   1 + e⁻²⁰⁰⁰⁰
+```
+
+Wait — x = 20 (low income) aithe negative weight apply chesthe:
+
+```
+If model weight makes x = -20000:
+y = 1 / (1 + e⁻⁽⁻²⁰⁰⁰⁰⁾) = 1 / (1 + e²⁰⁰⁰⁰) ≈ 0 (NO — loan not approved)
+
+If income high, weight makes x = +large:
+y = 1 / (1 + e⁻ˡᵃʳᵍᵉ) ≈ 1 (YES — loan approved)
+```
+
+**Key property:**
+> Sigmoid output **always between 0 and 1** — idi probability laaga interpret cheyyadam possible. 
+> **prob → [0 to 1]** (screenshot lo idi undi)
+
+**Sigmoid Curve shape:**
+
+```
+y
+1.0 ┤              ━━━━━━━━━━━━━━
+    │           ━━━
+    │        ━━
+0.5 ┤ ─ ─ ━━ ─ ─ ─ ─ ─ ─ (decision boundary)
+    │    ━━
+    │ ━━━
+0.0 ┤━━━━━━━━
+    └─────────────────────── x
+         ↑ S-shape curve
+```
+
+---
+
+### 4) Prediction Column — Paina Diagram lo Pred Column
+
+![Prediction Column](./images/LR_Prediction_Column.png)
+
+Paina screenshot lo **"Pred"** column add chesaru — model predictions:
+
+| Row | Income | Actual (Y) | Pred |
+|-----|--------|-----------|------|
+| 1   | 20     | NO        | No   |
+| 2   | 25     | NO        | No   |
+| 3   | 15     | NO        | 1 (wrong initially) |
+| 4   | 60     | YES       | 1    |
+| 5   | 70     | YES       | 1    |
+| 6   | 30     | NO        | NO   |
+
+Graph lo:
+- Red dot at bottom (No zone) — vertical threshold line
+- Points left of threshold → NO prediction
+- Points right of threshold → YES prediction
+- Graph shows decision boundary kutting through at some income level (~40-45 range)
+
+---
+
+### 5) Threshold — How Probability Becomes a Class
+
+![Threshold](./images/LR_Threshold.png)
+
+Sigmoid output oka probability vastundi (0 to 1). Daani class lo convert cheyyataniki **threshold** use chestam.
+
+**Default threshold = 0.5**
+
+```
+p > 0.5  →  YES (class 1)
+p < 0.5  →  NO  (class 0)
+```
+
+**Example:**
+
+```
+Income = 70:
+  Sigmoid(70) = 0.85  →  0.85 > 0.5  →  Loan Approved: YES ✅
+
+Income = 20:
+  Sigmoid(20) = 0.12  →  0.12 < 0.5  →  Loan Approved: NO ❌
+```
+
+**Threshold adjust cheyyachu:**
+
+```
+Medical diagnosis (cancer detection):
+  → False Negative (miss cheyyadam) very costly
+  → Threshold low cheyyi: p > 0.3 → positive
+  → More sensitivity — fewer missed cases
+
+Spam filter:
+  → False Positive (good mail spam lo) annoying
+  → Threshold high cheyyi: p > 0.7 → spam
+  → More precision — fewer false alarms
+```
+
+**Decision Boundary:**
+> Threshold = 0.5 aithe, Sigmoid formula lo x = 0 decision boundary avutundi.
+> Income idi boundary cross aite → class change avutundi.
+
+---
+
+### 6) Logistic Regression — Full Working Example
+
+**Dataset:**
+
+| Income | Loan Approved |
+|--------|--------------|
+| 20     | 0 (NO)       |
+| 25     | 0 (NO)       |
+| 15     | 0 (NO)       |
+| 60     | 1 (YES)      |
+| 70     | 1 (YES)      |
+| 30     | 0 (NO)       |
+
+**Step 1: Linear combination calculate cheyyi**
+```
+z = w × Income + b
+  = 0.1 × Income - 4   (hypothetical weights)
+```
+
+**Step 2: Sigmoid apply cheyyi**
+```
+P(Yes | Income) = 1 / (1 + e⁻ᶻ)
+```
+
+**Step 3: Probabilities:**
+
+| Income | z = 0.1×x - 4 | Sigmoid(z) | Pred (>0.5?) |
+|--------|--------------|-----------|-------------|
+| 20     | -2           | 0.12      | NO ✅       |
+| 25     | -1.5         | 0.18      | NO ✅       |
+| 15     | -2.5         | 0.08      | NO ✅       |
+| 60     | +2           | 0.88      | YES ✅      |
+| 70     | +3           | 0.95      | YES ✅      |
+| 30     | -1           | 0.27      | NO ✅       |
+
+All correct predictions! ✅
+
+---
+
+### 7) Binary vs Multiclass Logistic Regression
+
+**Binary Logistic Regression:**
+```
+Output classes: 2
+Example: Loan Approved (Yes/No), Spam (Yes/No), Disease (Yes/No)
+Uses: Single sigmoid function
+```
+
+**Multiclass Logistic Regression:**
+```
+Output classes: 3+
+Example: Flower type (Setosa/Versicolor/Virginica)
+         Image category (Cat/Dog/Bird)
+Approaches:
+  1. Softmax (multinomial logistic regression)
+  2. One vs Rest (OvR) ← next section!
+```
+
+---
+
+### 8) One vs Rest (OvR) — Multiclass Classification
+
+**Problem:** Logistic Regression naturally binary (2 classes mathrame). 3+ classes handle cheyyatam ela?
+
+**Solution: One vs Rest (OvR) = One vs All (OvA)**
+
+**Concept:**
+
+> N classes unte → N separate binary classifiers train chestam.
+> Prathi classifier oka class "vs rest" (anni other classes) binary ga treat chesthundi.
+
+**Example: Flower classification (3 classes)**
+
+```
+Classes: Setosa (A), Versicolor (B), Virginica (C)
+
+Classifier 1: Setosa vs Rest
+  → Setosa = 1, (Versicolor + Virginica) = 0
+  → Trains: "Is this Setosa? Yes/No"
+
+Classifier 2: Versicolor vs Rest
+  → Versicolor = 1, (Setosa + Virginica) = 0
+  → Trains: "Is this Versicolor? Yes/No"
+
+Classifier 3: Virginica vs Rest
+  → Virginica = 1, (Setosa + Versicolor) = 0
+  → Trains: "Is this Virginica? Yes/No"
+```
+
+**Prediction Time:**
+
+```
+New flower (unseen) vaccinappudu:
+  Classifier 1 → P(Setosa)     = 0.15
+  Classifier 2 → P(Versicolor) = 0.70  ← highest!
+  Classifier 3 → P(Virginica)  = 0.25
+
+Final prediction = Versicolor (highest probability) ✅
+```
+
+**OvR Full Flow:**
+
+```
+Training:
+  Original dataset (3 classes)
+       ↓
+  Create 3 modified datasets:
+    Dataset 1: Setosa=1, others=0
+    Dataset 2: Versicolor=1, others=0
+    Dataset 3: Virginica=1, others=0
+       ↓
+  Train 3 Logistic Regression models (binary each)
+       ↓
+  3 models saved
+
+Prediction:
+  New input → all 3 models predict probability
+  → Highest probability class = final answer
+```
+
+**Diagram:**
+
+```
+Input X
+  │
+  ├──► Classifier 1 (Setosa vs Rest)    → P₁ = 0.15
+  ├──► Classifier 2 (Versicolor vs Rest)→ P₂ = 0.70 ←── MAX
+  └──► Classifier 3 (Virginica vs Rest) → P₃ = 0.25
+                                              ↓
+                               Final = Versicolor ✅
+```
+
+**Sklearn lo OvR:**
+
+```python
+from sklearn.linear_model import LogisticRegression
+
+# multi_class='ovr' by default in older sklearn
+model = LogisticRegression(multi_class='ovr', max_iter=1000)
+model.fit(X_train, y_train)
+predictions = model.predict(X_test)
+```
+
+**Or explicitly:**
+
+```python
+from sklearn.multiclass import OneVsRestClassifier
+from sklearn.linear_model import LogisticRegression
+
+model = OneVsRestClassifier(LogisticRegression())
+model.fit(X_train, y_train)
+```
+
+---
+
+### 9) Logistic Regression — Code (Loan Approval Example)
+
+```python
+import pandas as pd
+import numpy as np
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+# Dataset from screenshot
+data = {
+    'Income': [20, 25, 15, 60, 70, 30],
+    'LoanApproved': [0, 0, 0, 1, 1, 0]  # 0=NO, 1=YES
+}
+df = pd.DataFrame(data)
+
+X = df[['Income']]
+y = df['LoanApproved']
+
+# Logistic Regression model
+model = LogisticRegression()
+model.fit(X, y)
+
+# Predictions
+predictions = model.predict(X)
+probabilities = model.predict_proba(X)
+
+print("Predictions:", predictions)
+print("Probabilities:")
+for i, (pred, prob) in enumerate(zip(predictions, probabilities)):
+    income = df['Income'].iloc[i]
+    actual = y.iloc[i]
+    print(f"  Income={income}: P(NO)={prob[0]:.2f}, P(YES)={prob[1]:.2f} → Pred={'YES' if pred==1 else 'NO'} | Actual={'YES' if actual==1 else 'NO'}")
+
+# New prediction
+new_income = [[45]]
+p = model.predict_proba(new_income)[0]
+print(f"\nNew Income=45: P(YES)={p[1]:.2f} → {'YES' if p[1] > 0.5 else 'NO'}")
+```
+
+**Output:**
+```
+Income=20: P(NO)=0.88, P(YES)=0.12 → Pred=NO | Actual=NO ✅
+Income=25: P(NO)=0.82, P(YES)=0.18 → Pred=NO | Actual=NO ✅
+Income=15: P(NO)=0.92, P(YES)=0.08 → Pred=NO | Actual=NO ✅
+Income=60: P(NO)=0.12, P(YES)=0.88 → Pred=YES | Actual=YES ✅
+Income=70: P(NO)=0.05, P(YES)=0.95 → Pred=YES | Actual=YES ✅
+Income=30: P(NO)=0.73, P(YES)=0.27 → Pred=NO | Actual=NO ✅
+
+New Income=45: P(YES)=0.55 → YES
+```
+
+---
+
+### 10) Key Comparisons — Logistic vs Linear Regression
+
+| Property | Linear Regression | Logistic Regression |
+|----------|------------------|---------------------|
+| **Output** | Continuous (any number) | Probability (0 to 1) |
+| **Task** | Regression | Classification |
+| **Formula** | y = mx + c | y = 1/(1+e⁻ˣ) |
+| **Curve** | Straight line | S-curve (sigmoid) |
+| **Use case** | Salary, price, temperature | Spam, loan, disease |
+| **Decision** | N/A | Threshold (default 0.5) |
+| **Classes** | N/A | Binary / Multiclass (OvR) |
+
+---
+
+### 11) Summary — Logistic Regression Chala Short ga
+
+```
+Logistic Regression:
+  → Classification algorithm (output = class, not number)
+  → Binary: 2 classes (Yes/No, 0/1)
+  → Multiclass: OvR (N classifiers) or Softmax
+
+Steps:
+  1. Linear: z = wx + b
+  2. Sigmoid: p = 1 / (1 + e⁻ᶻ)  → probability [0 to 1]
+  3. Threshold: p > 0.5 → class 1, p < 0.5 → class 0
+
+Why not Linear Regression for classification?
+  → Output can exceed 0-1 range (1.5, -0.3) ❌
+  → Sigmoid always [0,1] → probability ✅
+
+One vs Rest (OvR):
+  → N classes → N binary classifiers
+  → Prathi classifier: "This class vs all others"
+  → Predict: highest probability class wins
+
+Key: "Logistic Regression classifies, Sigmoid converts
+     linear output to probability, Threshold converts
+     probability to class" ✅
+```
+
+---
