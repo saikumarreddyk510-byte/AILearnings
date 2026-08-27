@@ -770,3 +770,246 @@ Prathi file oka concept add chestundi. Last file (`llama_langchain.py`) anni con
 ---
 
 *Ee section lo actual project files (groq_langchain, llama_langchain, PromptTemplate, OutputParser, LECL, memory) step-by-step ela work avutayо explain chesam.*
+
+---
+
+---
+
+# <span style="color:#0B7285;"><strong>.env File — API Keys Setup</strong></span>
+
+---
+
+## <span style="color:#364FC7;"><strong>1) .env File Ante Enti?</strong></span>
+
+`.env` file lo **secret API keys** store chestam — source code lo directly raayam.
+
+**Why?**
+- API keys ni code lo hardcode chesthe → GitHub ki push chesthe world ki visible avutundi → **security risk**
+- `.env` file ni `.gitignore` lo add chestam → keys safe ga untay
+- Different environments (dev, prod) ki different keys use cheyyachu — code change cheyyakarledu
+
+---
+
+## <span style="color:#5F3DC4;"><strong>2) Mana Project .env Structure</strong></span>
+
+```ini
+# Groq Cloud LLM API Key
+GROQ_API_KEY=gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+# Anthropic Claude API Key
+CLAUDE_API_KEY=sk-ant-api03-xxxxxxxxxxxxxxxxxxxx
+
+# LangSmith (LangChain tracing & observability) API Key
+LANGCHAIN_API_KEY=lsv2_pt_xxxxxxxxxxxxxxxxxxxx
+
+# LangSmith Project Name — runs group chessukovadam kosam
+LANGCHAIN_PROJECT=GENAIAPPWITHCLAUDE
+```
+
+### 3 keys — 3 different services:
+
+| Key | Service | Use |
+|-----|---------|-----|
+| `GROQ_API_KEY` | **Groq Cloud** | Fast LLM inference — Llama, Mixtral models cloud lo run cheyyataniki |
+| `CLAUDE_API_KEY` | **Anthropic Claude** | Claude AI models (claude-3-opus, claude-3-sonnet) use cheyyataniki |
+| `LANGCHAIN_API_KEY` | **LangSmith** | LangChain traces, runs, prompts monitor cheyyataniki |
+| `LANGCHAIN_PROJECT` | **LangSmith Project** | LangSmith dashboard lo runs group chessukovadam — `GENAIAPPWITHCLAUDE` |
+
+---
+
+## <span style="color:#2B8A3E;"><strong>3) Groq API Key — What It Does</strong></span>
+
+**Groq** = Cloud platform that runs LLMs extremely fast using custom hardware (LPU chips).
+
+```python
+from langchain_groq import ChatGroq
+import os
+from dotenv import load_dotenv
+
+load_dotenv()  # .env file read chestundi
+
+llm = ChatGroq(
+    model="llama-3.3-70b-versatile",
+    api_key=os.getenv("GROQ_API_KEY")  # .env nundi key teesukuntundi
+)
+```
+
+- `gsk_` tho start avutundi — Groq API key prefix
+- **Free tier available** — limited requests per minute
+- Get it: https://console.groq.com
+
+---
+
+## <span style="color:#E67700;"><strong>4) Claude API Key — What It Does</strong></span>
+
+**Anthropic Claude** = Powerful AI models by Anthropic — claude-3-opus, claude-3-sonnet, claude-3-haiku.
+
+```python
+from langchain_anthropic import ChatAnthropic
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+llm = ChatAnthropic(
+    model="claude-3-5-sonnet-20241022",
+    api_key=os.getenv("CLAUDE_API_KEY")  # .env nundi key teesukuntundi
+)
+
+response = llm.invoke("What is LangChain?")
+print(response.content)
+```
+
+- `sk-ant-api03-` tho start avutundi — Anthropic key prefix
+- **Paid service** — free credits tho start cheyyachu
+- Get it: https://console.anthropic.com
+
+---
+
+## <span style="color:#C92A2A;"><strong>5) LangSmith API Key — What It Does</strong></span>
+
+**LangSmith** = LangChain team develop chesina **observability & debugging platform**.
+
+LangChain application run chessinappudu — LangSmith:
+- Every LLM call track chesthundi
+- Input → Output chustundi
+- Latency, token usage chupistundi
+- Prompt versions manage cheyyadam
+- Chains debug cheyyadam — eppati emi jarigindo chupistundi
+
+```python
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# LangSmith enable cheyyadaniki environment variables set cheyyadam
+os.environ["LANGCHAIN_TRACING_V2"] = "true"
+os.environ["LANGCHAIN_API_KEY"] = os.getenv("LANGCHAIN_API_KEY")
+os.environ["LANGCHAIN_PROJECT"] = os.getenv("LANGCHAIN_PROJECT", "my-langchain-project")  # project name
+
+# Ika normal ga LangChain use cheyyandi — automatically track avutundi
+from langchain_groq import ChatGroq
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+
+llm = ChatGroq(model="llama-3.1-8b-instant")
+chain = ChatPromptTemplate.from_messages([("human", "{question}")]) | llm | StrOutputParser()
+
+result = chain.invoke({"question": "What is Python?"})
+print(result)
+# LangSmith dashboard lo ee run trace ga kanipistundi
+```
+
+- `lsv2_pt_` tho start avutundi — LangSmith key prefix
+- **Free tier available**
+- Dashboard: https://smith.langchain.com
+
+### LANGCHAIN_PROJECT — `GENAIAPPWITHCLAUDE`
+
+LangSmith dashboard lo **anni runs oka project lo group** chestundi.
+
+```ini
+LANGCHAIN_PROJECT=GENAIAPPWITHCLAUDE
+```
+
+```python
+os.environ["LANGCHAIN_PROJECT"] = os.getenv("LANGCHAIN_PROJECT")
+# → "GENAIAPPWITHCLAUDE"
+```
+
+- LangSmith site lo left panel lo **"GENAIAPPWITHCLAUDE"** project name tho folder laaga kanipistundi
+- Aa project click chesthe — mana application lo jarugina **prathi LLM call, chain run, prompt** anni trace ga listlo untay
+- Multiple projects create cheyyachu — different apps or experiments separate ga track cheyyataniki
+- `.env` lo set chessinamu kabatti — code lo hardcode cheyyakarledu
+
+---
+
+## <span style="color:#0B7285;"><strong>6) .env File load cheyyadam — dotenv</strong></span>
+
+```python
+from dotenv import load_dotenv
+import os
+
+# .env file lo unna variables ni os.environ lo load chestundi
+load_dotenv()
+
+# Ika anywhere in code use cheyyachu
+groq_key     = os.getenv("GROQ_API_KEY")
+claude_key   = os.getenv("CLAUDE_API_KEY")
+langchain_key = os.getenv("LANGCHAIN_API_KEY")
+```
+
+**`load_dotenv()` ela work chesthundi:**
+```
+.env file read chestundi
+    ↓
+Key=Value pairs parse chestundi
+    ↓
+os.environ lo set chestundi
+    ↓
+os.getenv("KEY") tho anywhere access cheyyachu
+```
+
+Install: `pip install python-dotenv`
+
+---
+
+## <span style="color:#5F3DC4;"><strong>7) .env Safety Rules</strong></span>
+
+```
+# .gitignore lo add cheyyi — MUST
+.env
+
+# .env.example create cheyyi — keys lekapotha structure chupiyyadam kosam
+# .env.example (safe to commit — no real keys)
+GROQ_API_KEY=your_groq_api_key_here
+CLAUDE_API_KEY=your_claude_api_key_here
+LANGCHAIN_API_KEY=your_langsmith_api_key_here
+```
+
+| Rule | Reason |
+|------|--------|
+| Never commit `.env` | Real keys GitHub ki velthay — compromised |
+| Always add to `.gitignore` | Git track cheyyadu |
+| Create `.env.example` | Team members ki structure telustundi, keys ledu |
+| Never hardcode in `.py` files | Code review lo visible avutundi |
+
+---
+
+## <span style="color:#2B8A3E;"><strong>8) Summary</strong></span>
+
+```
+Mana project lo 3 API keys:
+
+GROQ_API_KEY       → Groq cloud lo fast LLM inference
+                     gsk_ prefix
+                     groq_langchain.py lo use avutundi
+
+CLAUDE_API_KEY     → Anthropic Claude models
+                     sk-ant-api03- prefix
+                     ChatAnthropic() tho use cheyyachu
+
+LANGCHAIN_API_KEY  → LangSmith tracing & observability
+                     lsv2_pt_ prefix
+                     LANGCHAIN_TRACING_V2=true set chesthe auto-track
+
+LANGCHAIN_PROJECT  → LangSmith lo project/folder name
+                     GENAIAPPWITHCLAUDE
+                     Anni runs ee project lo grouped avutay
+
+Load cheyyadam:
+  from dotenv import load_dotenv
+  load_dotenv()
+  os.getenv("KEY_NAME")
+
+Safety:
+  .env → .gitignore lo add cheyyi
+  .env.example → commit cheyyi (no real keys)
+```
+
+<p><span style="color:#364FC7;"><strong>Bottom Line:</strong></span> Mana project ippudu 3 powerful services tho connected — <strong>Groq</strong> (fast LLM), <strong>Claude</strong> (powerful LLM), <strong>LangSmith</strong> (observability). Anni keys <code>.env</code> lo safe ga store chesam — code lo eppudu raayam. 🔐</p>
+
+---
+
+*Ee section lo .env file, GROQ_API_KEY (Groq), CLAUDE_API_KEY (Anthropic), LANGCHAIN_API_KEY (LangSmith), dotenv usage, safety rules cover chesam.*

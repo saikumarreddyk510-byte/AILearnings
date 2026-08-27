@@ -32,21 +32,26 @@
 
 # PDF file ni LangChain Document objects ga load cheyyadaniki importer.
 from langchain_community.document_loaders import PyPDFLoader
-# RAG helper function ni local helper file nundi teeskuntam.
-from helper import ask_from_docs
+# Groq helper
+from helper import ask_from_docs as ask_groq
+# Claude helper
+from claude_helper import ask_from_docs as ask_claude
 
 # Step 1: E PDF file read cheyyalo path ivvadam.
-loader = PyPDFLoader(r"LangChain/SaiKumar.Kambam.Resume.pdf")
+loader = PyPDFLoader(r"C:\learnAi\LangChain\SaiKumar.Kambam.Resume.pdf")
 # Step 2: PDF ni parse chesi page-wise documents list create cheyyadam.
 docs = loader.load()
-
-# print(docs[0].metadata)
-# print(docs[0].page_content[:2000])
+print(f"Loaded {len(docs)} pages from PDF")
 
 # Step 3: User question define chestunnam.
 question = "what is the current working company name in the resume? and what is the role in that company?"
 
-# Step 4: docs + question helper ki pampinchi answer generate cheyyadam.
-answer = ask_from_docs(docs, question)
-# Step 5: Final answer print.
-print(answer)
+# ── Groq answer ──────────────────────────────────────────
+print("\n--- Groq (qwen3.6-27b) ---")
+groq_answer = ask_groq(docs, question)
+print(groq_answer.encode("ascii", errors="replace").decode())
+
+# ── Claude answer ─────────────────────────────────────────
+print("\n--- Claude (claude-3-5-haiku) ---")
+claude_answer = ask_claude(docs, question)
+print(claude_answer)
