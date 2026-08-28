@@ -734,6 +734,202 @@ from langchain_chroma import Chroma
 #  → Like binary search but for high-dimensional vectors
 #
 # =============================================================================
+# FAISS — Alternative to ChromaDB (Facebook AI Similarity Search)
+# =============================================================================
+#
+# "Facebook AI Similarity Search (FAISS) is a library for efficient similarity
+#  search and clustering of dense vectors. It contains algorithms that search
+#  in sets of vectors of any size, up to ones that possibly do not fit in RAM.
+#  It also contains supporting code for evaluation and parameter tuning."
+#                                                   — Meta AI (original authors)
+#
+# FAISS = Meta (Facebook) develop chesina library for fast vector search
+# Open-source, free, runs locally — no server needed
+#
+# ─────────────────────────────────────────────────────────────────────────────
+#  FAISS vs CHROMA — Key Differences
+# ─────────────────────────────────────────────────────────────────────────────
+#
+#  Feature              │ Chroma                    │ FAISS
+#  ─────────────────────┼───────────────────────────┼──────────────────────────
+#  Made by              │ Chroma AI startup         │ Meta (Facebook)
+#  Primary use          │ Full-featured vector DB   │ Pure vector search library
+#  Storage              │ SQLite + HNSW index       │ Custom binary index files
+#  Metadata storage     │ ✅ Built-in (SQLite)       │ ⚠️  Manual (store separately)
+#  Persistence          │ Optional persist_directory│ save_local() / load_local()
+#  RAM handling         │ Loads all into RAM        │ Memory-mapped (disk→RAM lazy)
+#  Scale                │ Up to ~500K vectors well  │ Millions to billions ✅
+#  Search algorithms    │ HNSW only                 │ Multiple: Flat, IVF, HNSW, PQ
+#  Speed (small data)   │ Similar                   │ Similar
+#  Speed (large data)   │ Slower                    │ Much faster ✅
+#  Setup                │ pip install langchain-chroma │ pip install faiss-cpu
+#  Server               │ ❌ None needed             │ ❌ None needed
+#  API key              │ ❌ None needed             │ ❌ None needed
+#  ─────────────────────┴───────────────────────────┴──────────────────────────
+#
+#  Simple rule:
+#  → Small/medium data + metadata queries → Chroma ✅
+#  → Large data + pure search speed       → FAISS  ✅
+#
+# ─────────────────────────────────────────────────────────────────────────────
+#  FAISS SEARCH ALGORITHMS — Multiple options (Chroma has only HNSW)
+# ─────────────────────────────────────────────────────────────────────────────
+#
+#  IndexFlatL2 / IndexFlatIP — Exact search (brute force)
+#    → Compares question vector with EVERY stored vector
+#    → 100% accurate — no approximation
+#    → Slow for large data, fast for small (<100K vectors)
+#    → Use: small datasets where 100% accuracy required
+#
+#  IndexIVFFlat — Inverted File Index (approximate)
+#    → Vectors ni clusters lo group chestundi (like sorting books by genre)
+#    → Search time lo only relevant clusters check chestundi
+#    → 10-100x faster than Flat, ~95-99% accuracy
+#    → Use: millions of vectors
+#
+#  IndexHNSW — Same as Chroma uses
+#    → Graph-based, fast approximate search
+#    → Good balance of speed + accuracy
+#
+#  IndexPQ — Product Quantization (compressed vectors)
+#    → Vectors ni compress chestundi — less memory
+#    → 4-8x less RAM, slightly lower accuracy
+#    → Use: RAM limited systems with huge datasets
+#
+# ─────────────────────────────────────────────────────────────────────────────
+#  FAISS — How to Use (Drop-in replacement for Chroma)
+# ─────────────────────────────────────────────────────────────────────────────
+#
+#  Install:
+#    pip install faiss-cpu             ← CPU version (works everywhere)
+#    pip install faiss-gpu             ← GPU version (faster, needs NVIDIA GPU)
+#    pip install langchain-community   ← already installed ✅
+#
+#  CODE — In-memory (same as current Chroma usage):
+#
+#  from langchain_community.vectorstores import FAISS
+#
+#  # Build index — same call as Chroma.from_documents()
+#  vectorstore = FAISS.from_documents(
+#      documents=chunks,         # same chunks
+#      embedding=embeddings      # same HuggingFace/Ollama embeddings
+#  )
+#  retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
+#  relevant_docs = retriever.invoke(question)
+#  # Everything else same ✅ — ask_from_docs() rest unchanged
+#
+#  CODE — Persistent (save to disk, reload next run):
+#
+#  # Save (one time after building):
+#  vectorstore.save_local("./faiss_index")
+#  # Creates: faiss_index/index.faiss + faiss_index/index.pkl
+#
+#  # Load next run (skip embedding step — instant):
+#  from langchain_community.vectorstores import FAISS
+#  vectorstore = FAISS.load_local(
+#      "./faiss_index",
+#      embeddings,
+#      allow_dangerous_deserialization=True  # security flag for loading pkl files
+#  )
+#  retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
+#
+# ─────────────────────────────────────────────────────────────────────────────
+#  HOW FAISS HANDLES DATA LARGER THAN RAM
+# ─────────────────────────────────────────────────────────────────────────────
+#
+#  Memory-mapped files (mmap):
+#    → Index file disk lo untundi (e.g. 10GB faiss_index/index.faiss)
+#    → RAM lo full load cheyyadu
+#    → OS file pages use chestundi — only accessed pages RAM lo untay
+#    → Search chessinappudu relevant pages only RAM lo load avutay (lazy loading)
+#    → RAM 4GB aina 10GB index use cheyyachu ✅
+#
+#  Analogy:
+#    Book library — every book shelf lo untundi.
+#    Chroma: anni books table mida spread out chestundi (RAM)
+#    FAISS:  shelf nundi only needed book teesukuntundi (lazy mmap)
+#
+# ─────────────────────────────────────────────────────────────────────────────
+#  SWITCHING FROM CHROMA TO FAISS — 3 line change in ask_from_docs()
+# ─────────────────────────────────────────────────────────────────────────────
+#
+#  Current (Chroma):
+#    vectorstore = Chroma.from_documents(documents=chunks, embedding=embeddings)
+#
+#  Switch to FAISS:
+#    from langchain_community.vectorstores import FAISS
+#    vectorstore = FAISS.from_documents(documents=chunks, embedding=embeddings)
+#
+#  Everything else (retriever, invoke, context building) same ✅
+#  LangChain common interface power — vectorstore swap chesthe pipeline works!
+#
+# ─────────────────────────────────────────────────────────────────────────────
+#  FAISS SPECIFIC — similarity_search_with_score
+# ─────────────────────────────────────────────────────────────────────────────
+#
+#  "There are some FAISS specific methods. One of them is
+#   similarity_search_with_score, which allows you to return not only the
+#   documents but also the distance score of the query to them.
+#   The returned distance score is L2 distance. Therefore, a lower score
+#   is better."
+#
+#  Normal retriever.invoke() — only documents return chestundi (no score)
+#  similarity_search_with_score() — documents + score rendu return chestundi
+#
+#  L2 distance (Euclidean distance) ante enti?
+#    → Rendu vectors madhya "straight line" distance
+#    → Chinna number = vectors close = similar meaning ✅
+#    → Pedda number = vectors far = dissimilar meaning ✗
+#    → 0.0 = identical vectors (same text)
+#    → Unlike cosine similarity (higher = better), L2 = lower is better
+#
+#  CODE — similarity_search_with_score():
+#
+#  from langchain_community.vectorstores import FAISS
+#
+#  vectorstore = FAISS.from_documents(chunks, embeddings)
+#
+#  # Returns: List of (Document, score) tuples
+#  results = vectorstore.similarity_search_with_score(
+#      "What is the current company?",
+#      k=3   # top 3 results
+#  )
+#
+#  for doc, score in results:
+#      print(f"Score: {score:.4f}")          # L2 distance — lower is better
+#      print(f"Content: {doc.page_content}") # actual chunk text
+#      print(f"Source: {doc.metadata}")      # metadata (page, source file)
+#      print("---")
+#
+#  Example output:
+#  Score: 0.1823   ← very close (low L2 = high similarity) ✅
+#  Content: April 2024 - Present | Test Automation Engineer | HeartCentrix...
+#  Source: {'source': 'resume.pdf', 'page': 2}
+#  ---
+#  Score: 0.3421   ← somewhat relevant
+#  Content: Responsibilities: Developed and maintained automated tests...
+#  Source: {'source': 'resume.pdf', 'page': 3}
+#  ---
+#  Score: 0.8934   ← less relevant (higher L2 = less similar)
+#  Content: Skills: Java, Python, Selenium, Cucumber...
+#  Source: {'source': 'resume.pdf', 'page': 1}
+#
+#  WHY USE SCORE?
+#  → Relevance filtering — score > threshold aithe skip cheyyachu
+#  → Debugging — which chunks actually relevant undo chudachu
+#  → Quality check — all scores high (bad match) → question ki answer ledu
+#
+#  Example with threshold filter:
+#  results = vectorstore.similarity_search_with_score("question", k=5)
+#  relevant = [(doc, score) for doc, score in results if score < 0.5]
+#  # Only chunks with L2 distance < 0.5 (close enough) keep chestam
+#
+#  Chroma equivalent (cosine similarity — higher is better):
+#  # Chroma lo score filter cheyyatam differently — score range 0 to 1
+#  # FAISS L2: 0 best, ∞ worst
+#  # Chroma cosine: 1 best, 0 worst
+#
+# =============================================================================
 
 # Prompt template build cheyyadaniki.
 from langchain_core.prompts import ChatPromptTemplate
@@ -1463,6 +1659,10 @@ def ask_from_docs(docs, question):
     # Key point: HuggingFace produces the numbers, Chroma stores+searches them.
     # They are separate tools connected via the `embedding=embeddings` parameter.
     #
+    # ── VECTOR STORE CHOICE — uncomment one, comment the other ──────────────
+    #
+    # OPTION A — Chroma (in-memory)  ← CURRENTLY ACTIVE
+    # Best for: learning, small-medium data (<500K chunks), quick setup
     vectorstore = Chroma.from_documents(
         documents=chunks,
         # documents — chunks list (List[Document]) ni vectorstore lo store cheyyali
@@ -1474,6 +1674,31 @@ def ask_from_docs(docs, question):
         # Provider change chessinappudu (Ollama/OpenAI) — only this line changes ✅
     )
     # vectorstore — in-memory Chroma DB ready, all chunks embedded + stored
+
+    # OPTION B — FAISS (Facebook AI Similarity Search)  ← READY TO USE
+    # Best for: large data (millions of vectors), faster search, memory-mapped
+    # "FAISS is a library for efficient similarity search and clustering of
+    #  dense vectors. It contains algorithms that search in sets of vectors of
+    #  any size, up to ones that possibly do not fit in RAM." — Meta AI
+    #
+    # Install: pip install faiss-cpu  (or faiss-gpu for NVIDIA GPU)
+    #
+    # In-memory (same as Chroma usage above):
+    # from langchain_community.vectorstores import FAISS
+    # vectorstore = FAISS.from_documents(documents=chunks, embedding=embeddings)
+    #
+    # Persistent (save index to disk, reload without re-embedding next run):
+    # from langchain_community.vectorstores import FAISS
+    # vectorstore = FAISS.from_documents(documents=chunks, embedding=embeddings)
+    # vectorstore.save_local("./faiss_index")   ← run once, creates index files
+    #
+    # Reload saved index (skip embedding — instant load):
+    # vectorstore = FAISS.load_local(
+    #     "./faiss_index", embeddings,
+    #     allow_dangerous_deserialization=True
+    # )
+    #
+    # After either option — retriever + rest of pipeline unchanged ✅
 
     # ── Step 4: Create retriever ──────────────────────────────────────────────
     retriever = vectorstore.as_retriever(
@@ -1740,3 +1965,121 @@ If the answer is not available in the context, say:
 # ------------------------------------------------------------
 # Key insight: Loader emi use chessinappatiki — output always `List[Document]`
 # ask_from_docs(docs, question) — same function, any source works! ✅
+
+
+# =============================================================================
+# FAISS similarity_search_with_score — Working Implementation
+# =============================================================================
+# Image lo chupinchindi: docs_and_score = db.similarity_search_with_score(query)
+# Idi FAISS specific method — documents + L2 distance score rendu return chestundi
+# Lower score = better match (unlike cosine similarity where higher = better)
+
+def search_with_scores(docs, query, k=3):
+    """
+    FAISS similarity_search_with_score demo function.
+
+    Chroma retriever tho compare chesthe:
+      retriever.invoke()                → only documents (no score)
+      db.similarity_search_with_score() → documents + L2 score ✅
+
+    Args:
+        docs  : List[Document] — any loader nundi loaded documents
+        query : str            — search question
+        k     : int            — how many results return (default 3)
+
+    Returns:
+        List of (Document, float) tuples — (chunk text, L2 distance score)
+    """
+    from langchain_community.vectorstores import FAISS
+    # FAISS import — langchain_community.vectorstores nundi
+    # Install: pip install faiss-cpu  (if not installed)
+
+    # Step 1: Split documents into chunks
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=1000,
+        # chunk_size — same as ask_from_docs() — 1000 chars per chunk
+        chunk_overlap=200
+        # chunk_overlap — 200 chars overlap between consecutive chunks
+    )
+    chunks = splitter.split_documents(docs)
+    # chunks — List[Document] of smaller text pieces
+
+    # Step 2: Build FAISS vectorstore
+    db = FAISS.from_documents(
+        documents=chunks,
+        # documents — embedded + indexed ayye chunks
+        embedding=embeddings
+        # embeddings — HuggingFace/Ollama/OpenAI — same global embeddings object
+    )
+    # db — FAISS in-memory index ready
+    # Variable name "db" — image lo exact ga use chesindi (db.similarity_search_with_score)
+
+    # Step 3: similarity_search_with_score — FAISS specific method
+    docs_and_score = db.similarity_search_with_score(query, k=k)
+    # similarity_search_with_score(query, k=k) — image lo exact same call
+    # query — search question string
+    # k     — how many results return (passed from function argument)
+    # Returns: List[(Document, float)] — (chunk, L2_distance_score)
+
+    # Step 4: Print results with scores
+    print(f"\n{'='*60}")
+    print(f"Query: {query}")
+    print(f"Total results: {len(docs_and_score)}")
+    print(f"{'='*60}")
+
+    for i, (doc, score) in enumerate(docs_and_score):
+        # doc   — LangChain Document object (page_content + metadata)
+        # score — L2 distance (float) — LOWER = BETTER MATCH
+        print(f"\nResult {i+1}:")
+        print(f"  L2 Score : {score:.4f}  {'[Close match]' if score < 1.5 else '[Distant match]'}")
+        # L2 distance threshold: < 1.5 = good match for 384-dim HuggingFace vectors
+        # Note: L2 range depends on embedding dimensions — 384-dim typically 0.5 to 2.5
+        # 0.0 - 0.5 = nearly identical  |  0.5 - 1.5 = relevant  |  1.5+ = less relevant
+        print(f"  Content  : {doc.page_content[:200]}...")
+        # [:200] — first 200 chars preview (full content can be long)
+        print(f"  Metadata : {doc.metadata}")
+        # metadata — source file, page number etc.
+
+    return docs_and_score
+    # Caller ki full (doc, score) list return chestundi — further processing cheyyachu
+
+
+# =============================================================================
+# HOW TO USE search_with_scores() — Example
+# =============================================================================
+#
+#  from langchain_community.document_loaders import PyPDFLoader
+#  from helper import search_with_scores
+#
+#  # Load PDF
+#  loader = PyPDFLoader(r"C:\learnAi\LangChain\SaiKumar.Kambam.Resume.pdf")
+#  docs = loader.load()
+#
+#  # Search with scores
+#  query = "What is the current company?"
+#  results = search_with_scores(docs, query, k=3)
+#
+#  # Output:
+#  # ============================================================
+#  # Query: What is the current company?
+#  # Total results: 3
+#  # ============================================================
+#  #
+#  # Result 1:
+#  #   L2 Score : 0.1823  ✅ Close match
+#  #   Content  : April 2024 - Present | Test Automation Engineer | HeartCentrix...
+#  #   Metadata : {'source': 'resume.pdf', 'page': 2}
+#  #
+#  # Result 2:
+#  #   L2 Score : 0.3412  ✅ Close match
+#  #   Content  : Responsibilities: Developed and maintained automated tests...
+#  #   Metadata : {'source': 'resume.pdf', 'page': 3}
+#  #
+#  # Result 3:
+#  #   L2 Score : 0.7823  ⚠️  Distant match
+#  #   Content  : Skills: Java, Python, Selenium, Cucumber...
+#  #   Metadata : {'source': 'resume.pdf', 'page': 1}
+#
+# ask_from_docs()  → full RAG pipeline → LLM answer generate
+# search_with_scores() → FAISS specific → raw scores + chunks (no LLM call)
+# Use search_with_scores() to debug / inspect what chunks are being retrieved
