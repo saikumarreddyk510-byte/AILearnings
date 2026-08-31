@@ -2080,6 +2080,97 @@ def search_with_scores(docs, query, k=3):
 #  #   Content  : Skills: Java, Python, Selenium, Cucumber...
 #  #   Metadata : {'source': 'resume.pdf', 'page': 1}
 #
-# ask_from_docs()  → full RAG pipeline → LLM answer generate
+# ask_from_docs()      → full RAG pipeline → LLM answer generate
 # search_with_scores() → FAISS specific → raw scores + chunks (no LLM call)
 # Use search_with_scores() to debug / inspect what chunks are being retrieved
+
+# =============================================================================
+# WHY DID search_with_scores() RETURN IRRELEVANT RESULTS?
+# =============================================================================
+#
+# Question asked: "What is the current company?"
+# Expected:       HeartCentrix Solutions (page 2-3)
+# Got:            Pages 5, 7, 11 — job responsibilities, education
+#
+# ROOT CAUSE: VOCABULARY MISMATCH
+# ─────────────────────────────────────────────────────────────────────────────
+#
+#  Your question words:    "current",  "company"
+#  Resume actual words:    "Present",  "HeartCentrix Solutions"
+#
+#  ┌─────────────────────────────────────────────────────────────────────────┐
+#  │  Question vector:   "What is the current company?"                      │
+#  │  [0.45, -0.12, 0.78, ...]   ← embedding of your question words         │
+#  │                                                                          │
+#  │  Chunk (page 2):  "April 2024 - Present | HeartCentrix Solutions"       │
+#  │  [0.31, -0.45, 0.52, ...]   ← embedding of resume words                │
+#  │                                                                          │
+#  │  "current" ≠ "Present"  in vector space (small model doesn't know)      │
+#  │  "company" ≠ "HeartCentrix" in vector space                             │
+#  │  → Similarity score HIGH (bad match) → not returned ❌                  │
+#  └─────────────────────────────────────────────────────────────────────────┘
+#
+#  Pages 5, 7, 11 returned because they contain words like:
+#  "test", "automation", "scripts", "execution" — which happen to be
+#  slightly closer in vector space to "current company" than page 2-3
+#  (wrong reasons, but mathematically closer)
+#
+# ─────────────────────────────────────────────────────────────────────────────
+# WHY DID ask_from_docs() GIVE CORRECT ANSWER THEN?
+# ─────────────────────────────────────────────────────────────────────────────
+#
+#  ask_from_docs() uses Chroma (same vector search) but Chroma retrieved
+#  different chunks (different random initialization + different splitting).
+#  Even if retrieval is imperfect, the LLM REASONS over the context:
+#
+#  LLM gets context (even if slightly wrong page):
+#    "...April 2024 - Present\nTest Automation Engineer | HeartCentrix..."
+#
+#  LLM understands:
+#    "Present" = current  (LLM knows this!)
+#    "HeartCentrix" = company name
+#
+#  LLM answers: "The current company is HeartCentrix Solutions" ✅
+#
+#  This is why RAG = Retrieval + LLM together — even imperfect retrieval
+#  often gives correct answers because LLM reasoning compensates.
+#
+# ─────────────────────────────────────────────────────────────────────────────
+# HOW TO FIX — Better Retrieval Quality
+# ─────────────────────────────────────────────────────────────────────────────
+#
+#  FIX 1: Rephrase question to match document vocabulary:
+#    Bad:  "What is the current company?"
+#    Good: "Where is the candidate currently working? What is the present employer?"
+#    Good: "Which company does the person work at as of 2024 or Present?"
+#
+#  FIX 2: Use a bigger/better embedding model:
+#    Current:  all-MiniLM-L6-v2  (22MB, 384-dim, fast but limited semantics)
+#    Better:   all-mpnet-base-v2  (420MB, 768-dim, better semantic understanding)
+#    Better:   OpenAI text-embedding-3-small (cloud, 1536-dim, best)
+#
+#    # Switch embedding:
+#    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2")
+#    # Same code, better results ✅
+#
+#  FIX 3: Increase k to retrieve more chunks:
+#    results = search_with_scores(docs, query, k=10)
+#    # More chunks = higher chance relevant one is included
+#
+#  FIX 4: Reduce chunk_size to keep related content together:
+#    chunk_size=500 instead of 1000
+#    # "April 2024 - Present | HeartCentrix" stays in one chunk with context
+#
+# ─────────────────────────────────────────────────────────────────────────────
+# KEY LESSON
+# ─────────────────────────────────────────────────────────────────────────────
+#
+#  search_with_scores() = what FAISS sees     (raw vector similarity)
+#  ask_from_docs()      = what LLM answers    (vector search + LLM reasoning)
+#
+#  search_with_scores() "wrong" result + ask_from_docs() "right" result
+#  → shows how LLM compensates for imperfect retrieval
+#  → production RAG lo search_with_scores() use chesi retrieval quality
+#    monitor chesthe — consistently bad retrieval = embedding model improve cheyyi
+#
+# =============================================================================

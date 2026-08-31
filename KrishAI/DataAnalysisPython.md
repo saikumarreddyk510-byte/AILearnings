@@ -1159,6 +1159,40 @@ value   value - mean      ÷ std        result
 
 Data analyst job lo <strong>90% time Pandas tho ne</strong>. Idi manaki Excel lanti table ni Python lo istundi.
 
+### <strong>Data Manipulation and Analysis with Pandas</strong>
+
+Data science leda data-analysis project lo <strong>data manipulation</strong> and <strong>analysis</strong> rendu key tasks. Raw CSV, Excel, database, leda API data ni direct ga decision kosam use cheyyalem — missing values, duplicate rows, wrong data types, inconsistent text, and unnecessary columns untayi. Pandas ee table data ni clean, transform, summarize, and explore cheyyadaniki powerful functions istundi.
+
+Simple workflow:
+
+1. <strong>Load</strong> — <code>pd.read_csv()</code> tho data ni DataFrame lo teesukovadam
+2. <strong>Inspect</strong> — <code>head()</code>, <code>info()</code>, <code>describe()</code> tho data ni ardham chesukovadam
+3. <strong>Clean</strong> — missing values, duplicates, spaces, and wrong types fix cheyyadam
+4. <strong>Transform</strong> — new columns create cheyyadam, dates convert cheyyadam, categories standardize cheyyadam
+5. <strong>Analyze</strong> — filter, sort, <code>groupby()</code>, aggregation, and pivot tables tho patterns kanukkovadam
+6. <strong>Communicate</strong> — charts and clear insights tho result ni explain cheyyadam
+
+<p><span style="color:#2F9E44;"><strong>Main Idea:</strong></span> Pandas ni just Excel replacement laga chudakandi. Idi repeat cheyyagalige, auditable workflow istundi. Same cleaning and analysis steps ni code lo save cheste, next month kotha data vachina malli one-click lo run cheyyachu.</p>
+
+```python
+# Sales CSV ni DataFrame lo load chestundi
+sales_dataframe = pd.read_csv("sales.csv")
+# First five rows ni inspect chestundi
+print(sales_dataframe.head())
+# Columns, data types, and non-null counts ni chupistundi
+sales_dataframe.info()
+# Prati column lo missing values count ni chupistundi
+print(sales_dataframe.isnull().sum())
+# Duplicate rows remove chesi clean DataFrame create chestundi
+clean_sales_dataframe = sales_dataframe.drop_duplicates()
+# City-wise sales total ni calculate chestundi
+city_sales_summary = clean_sales_dataframe.groupby("city")["sales"].sum()
+# Highest sales unna city ni first lo chupistundi
+print(city_sales_summary.sort_values(ascending=False))
+```
+
+<p><span style="color:#E67700;"><strong>Ee example lo flow:</strong></span> First data ni load chestam; next columns, data types, missing values check chestam; duplicates remove chestam; last lo city-wise total sales calculate chesi highest city ni identify chestam. <strong>Code rayadam kanna mundu data ni inspect cheyyadam</strong> ane habit Pandas lo most important.</p>
+
 ### <strong>4.1 Series vs DataFrame</strong>
 
 | | Series | DataFrame |
@@ -1313,8 +1347,12 @@ series[series > 3] # boolean masking kuda!
 
 ### <strong>DataFrame — Full Table</strong>
 
+<strong>DataFrame ante enti? <code>df</code> ante enti?</strong>
+
+<strong>DataFrame</strong> ante rows and columns unna 2D table — Excel sheet leda SQL table laga. Prati column oka feature (for example <code>name</code>, <code>sales</code>), prati row oka record (for example oka customer leda oka order). Pandas code lo DataFrame variable ki <code>df</code> ane short name vaadadam worldwide convention; <code>df</code> ane peru special keyword kaadu, just <strong>dataframe</strong> ki short form.
+
 ```python
-# DataFrame — full table
+# Full table ni df ane conventional variable lo store chestundi
 df = pd.DataFrame({
     "name":   ["Ravi", "Sita", "Anil", "Kiran", "Divya", "Ravi"],
     "city":   ["Hyd", "Hyd", "Bglr", "Chennai", "Bglr", "Hyd"],
@@ -1323,6 +1361,8 @@ df = pd.DataFrame({
     "salary": [50000, 62000, 45000, 90000, 58000, 50000],
 })
 ```
+
+<p><span style="color:#2F9E44;"><strong>Important:</strong></span> <code>df</code> badulu <code>sales_dataframe</code>, <code>students_dataframe</code> lanti descriptive name kuda pettachu. Learning examples lo <code>df</code> short ga untundi; real project lo multiple tables unte meaningful names use cheyyadam better.</p>
 
 <p><span style="color:#2F9E44;"><strong>Relation:</strong></span> DataFrame lo nunchi oka column teesukunte, adi <strong>Series</strong> avutundi. <code>df["age"]</code> → Series. <code>df[["age", "salary"]]</code> → DataFrame (double brackets gamaninchandi).</p>
 
@@ -1432,16 +1472,121 @@ df
 
 ### <strong>4.2 Data Load Cheyyadam</strong>
 
-```python
-df = pd.read_csv("data.csv")                 # CSV file
-df = pd.read_excel("data.xlsx")              # Excel file
-df = pd.read_json("data.json")               # JSON
-df = pd.read_sql("SELECT * FROM users", conn) # Database
+Pandas different sources nunchi data ni direct ga DataFrame lo load cheyyagaladu. Most readers <code>pd.read_...</code> pattern follow avutayi; output anni cases lo DataFrame ne.
 
-# Useful options
-df = pd.read_csv("data.csv", nrows=1000)          # modati 1000 rows matrame
-df = pd.read_csv("data.csv", usecols=["a", "b"])  # kavalsina columns matrame
+| Source | Pandas method | Eppudu vaadali |
+|---|---|---|
+| CSV / TSV | <code>pd.read_csv()</code> | Most common exported data |
+| Excel | <code>pd.read_excel()</code> | Business reports, multiple sheets |
+| JSON | <code>pd.read_json()</code> | API responses, web data |
+| SQL database | <code>pd.read_sql()</code> | Query result ni analysis ki teesukovadaniki |
+| Parquet | <code>pd.read_parquet()</code> | Large analytics data; fast typed format |
+| Pickle | <code>pd.read_pickle()</code> | Trusted Python workflow lo fast DataFrame restore |
+| HTML table | <code>pd.read_html()</code> | Web page lo unna tables |
+| Clipboard | <code>pd.read_clipboard()</code> | Excel table ni copy-paste chesi quick analysis |
+
+```python
+# CSV file ni DataFrame lo load chestundi
+df = pd.read_csv("data.csv")
+# Header leni remote CSV ni URL nunchi load chestundi
+df = pd.read_csv(
+    "https://archive.ics.uci.edu/ml/machine-learning-databases/wine/wine.data",
+    header=None,
+)
+# Tab-separated file ni load chestundi
+df = pd.read_csv("data.tsv", sep="\t")
+# Excel first sheet ni load chestundi
+df = pd.read_excel("sales.xlsx")
+# Excel lo specified sheet ni load chestundi
+df = pd.read_excel("sales.xlsx", sheet_name="January")
+# JSON file leda API endpoint nunchi data ni load chestundi
+df = pd.read_json("data.json")
+# Database query result ni connection dwara DataFrame lo load chestundi
+df = pd.read_sql("SELECT * FROM users", conn)
+# Parquet analytics file ni load chestundi
+df = pd.read_parquet("sales.parquet")
+# Trusted Pickle file nunchi saved DataFrame ni restore chestundi
+df = pd.read_pickle("sales_dataframe.pkl")
+# Web page lo unna first HTML table ni load chestundi
+df = pd.read_html("https://example.com/report")[0]
+# Clipboard lo copy chesina table ni load chestundi
+df = pd.read_clipboard()
 ```
+
+<p><span style="color:#E67700;"><strong>Note:</strong></span> <code>read_excel()</code> ki Excel engine (usually <code>openpyxl</code>), <code>read_parquet()</code> ki Parquet engine (usually <code>pyarrow</code> leda <code>fastparquet</code>), and <code>read_sql()</code> ki valid database connection avasaram. Avi install/configure kakapothe Pandas clear error istundi.</p>
+
+### <strong>CSV Load Chestunnappudu Important Options</strong>
+
+```python
+# Modati 1,000 rows and required columns matrame load chestundi
+df = pd.read_csv("data.csv", nrows=1000, usecols=["date", "city", "sales"])
+# Date column ni direct ga datetime ga parse chestundi
+df = pd.read_csv("data.csv", parse_dates=["date"])
+# Common missing-value markers ni NaN ga treat chestundi
+df = pd.read_csv("data.csv", na_values=["", "NA", "N/A"])
+# Semicolon-separated CSV ni correct delimiter tho load chestundi
+df = pd.read_csv("data.csv", sep=";")
+# Large CSV ni 100,000-row chunks ga read chestundi
+csv_chunks = pd.read_csv("large_data.csv", chunksize=100_000)
+```
+
+<p><span style="color:#C92A2A;"><strong>Common problem:</strong></span> <code>head()</code> lo anni values okate column lo kanipiste delimiter wrong ayi undochu. Comma badulu semicolon aithe <code>sep=";"</code> vaadandi. Telugu/other special characters weird ga kanipiste file encoding telusukoni <code>encoding="utf-8"</code> specify cheyyandi.</p>
+
+<p><span style="color:#E67700;"><strong><code>header=None</code> meaning:</strong></span> Wine dataset laanti file lo first row kuda actual data aithe column headings levu ani Pandas ki cheppali. <code>header=None</code> ivvakapothe Pandas first data row ni column names ga treat chesi lose chestundi. Tarvata readable names kavali ante <code>df.columns = ["class", "alcohol", "malic_acid", ...]</code> ani set cheyyachu.</p>
+
+### <strong>API JSON and Excel Sheets</strong>
+
+```python
+# API endpoint nunchi JSON response ni DataFrame lo load chestundi
+api_dataframe = pd.read_json("https://api.example.com/sales")
+# Workbook lo unna sheet names anni ni dictionary ga load chestundi
+all_sheets = pd.read_excel("sales.xlsx", sheet_name=None)
+# January sheet ni dictionary nunchi access chestundi
+january_dataframe = all_sheets["January"]
+```
+
+### <strong>JSON String Read and Write Cheyyadam</strong>
+
+API nunchi file badulu JSON <strong>string</strong> ravachu. JSON string ni Python object ga parse chesi, Pandas DataFrame ga marchali. Nested list/dictionary unte <code>pd.json_normalize()</code> top-level fields ni clean columns ga convert chestundi.
+
+```python
+# JSON text ni Python dictionary ga parse cheyyadaniki json module ni import chestundi
+import json
+
+# Employee details and nested job profile unna JSON string ni define chestundi
+json_text = '{"employee_name": "James", "email": "james@gmail.com", "job_profile": [{"title": "Team Lead", "title2": "Sr. Developer"}]}'
+# JSON string ni Python dictionary ga convert chestundi
+employee_record = json.loads(json_text)
+# Dictionary ni one-row DataFrame ga normalize chestundi
+employee_dataframe = pd.json_normalize(employee_record)
+# Converted data ni preview chestundi
+employee_dataframe.head()
+```
+
+<p><span style="color:#E67700;"><strong>Nested data note:</strong></span> Pai example lo <code>job_profile</code> list lopala undi. Daanilo unna job records ni separate rows ga kavali ante <code>pd.json_normalize(employee_record, record_path="job_profile", meta=["employee_name", "email"])</code> vaadandi. API JSON structure batti <code>read_json()</code> kanna <code>json_normalize()</code> better option avvachu.</p>
+
+### <strong><code>to_json()</code> — DataFrame ni JSON ga Marchadam</strong>
+
+<code>df.to_json()</code> DataFrame ni JSON string ga return chestundi. JSON API ki pampadaniki, file lo save cheyyadaniki, leda other application ki exchange cheyyadaniki useful.
+
+```python
+# Default columns-oriented JSON string ni return chestundi
+columns_json = employee_dataframe.to_json()
+# Index ni top-level keys ga unna JSON string ni return chestundi
+index_json = employee_dataframe.to_json(orient="index")
+# Prati row ni JSON object ga unna list ni return chestundi
+records_json = employee_dataframe.to_json(orient="records")
+```
+
+| Orientation | JSON shape | Eppudu useful |
+|---|---|---|
+| Default (`columns`) | <code>{"column":{"0":"value"}}</code> | Pandas-oriented data exchange |
+| <code>orient="index"</code> | <code>{"0":{"column":"value"}}</code> | Row index important unte |
+| <code>orient="records"</code> | <code>[{"column":"value"}]</code> | REST APIs ki most common format |
+
+<p><span style="color:#2F9E44;"><strong>API tip:</strong></span> Usually <code>orient="records"</code> use cheyyandi, because each DataFrame row oka JSON object ga untundi. Index business data kaakapothe <code>index=False</code> kuda ivvachu: <code>df.to_json(orient="records", index=False)</code>.</p>
+
+<p><span style="color:#2F9E44;"><strong>Best practice:</strong></span> Source edaina sare load chesina ventane <code>df.head()</code>, <code>df.info()</code>, <code>df.dtypes</code>, and <code>df.isnull().sum()</code> run cheyyandi. Column names, types, and missing values correct ani confirm chesaka matrame cleaning leda analysis start cheyyandi.</p>
 
 ### <strong>4.3 First Look — Data Ela Undo Chudadam</strong>
 
@@ -1454,6 +1599,102 @@ df.shape        # (rows, columns) → (6, 5)
 df.info()       # column names, types, missing values
 df.describe()   # numeric columns ki statistics
 ```
+
+### <strong><code>head()</code> and <code>tail()</code> — First and Last Rows</strong>
+
+<code>head()</code> DataFrame lo <strong>modati rows</strong> ni chupistundi; <code>tail()</code> <strong>chivari rows</strong> ni chupistundi. Rendu methods default ga 5 rows return chestayi. Original DataFrame ni marchavu — just quick preview istayi.
+
+```python
+# Default ga modati 5 rows ni chupistundi
+df.head()
+# Modati 3 rows matrame chupistundi
+df.head(3)
+# Default ga chivari 5 rows ni chupistundi
+df.tail()
+# Chivari 2 rows matrame chupistundi
+df.tail(2)
+```
+
+Example DataFrame:
+
+| index | name | city | sales |
+|---|---|---|---:|
+| 0 | Anu | Hyd | 1200 |
+| 1 | Ravi | Vizag | 950 |
+| 2 | Sara | Hyd | 1500 |
+| 3 | John | Pune | 800 |
+| 4 | Kiran | Hyd | 1100 |
+| 5 | Meera | Vizag | 1300 |
+
+```python
+# First 2 records ni preview chestundi
+df.head(2)
+```
+
+```text
+   name   city  sales
+0   Anu    Hyd   1200
+1  Ravi  Vizag    950
+```
+
+```python
+# Last 2 records ni preview chestundi
+df.tail(2)
+```
+
+```text
+    name   city  sales
+4  Kiran    Hyd   1100
+5  Meera  Vizag   1300
+```
+
+<p><span style="color:#2F9E44;"><strong><code>head()</code> eppudu useful?</strong></span> File load chesaka column names correct aa, values columns lo sarigga align ayyaya, date/text format expected laga unda ani fast ga check cheyyadaniki. CSV lo delimiter wrong unte anni data oka column lo kanipistundi — <code>head()</code> tho immediate ga telustundi.</p>
+
+<p><span style="color:#E67700;"><strong><code>tail()</code> eppudu useful?</strong></span> Last records complete ga unnaya, latest date varaku data vachinda, export chesina file end lo blank leda summary rows unnaya ani verify cheyyadaniki. Time-series data lo <code>tail()</code> latest observations ni check cheyyadaniki chaala useful.</p>
+
+<p><span style="color:#C92A2A;"><strong>Important:</strong></span> <code>head()</code> and <code>tail()</code> data motham represent cheyyavu — avi first/last sample matrame. Middle lo unna issues miss avvachu. Anduke veetini <code>df.sample(5)</code>, <code>df.info()</code>, and <code>df.describe()</code> tho kalipi use cheyyandi.</p>
+
+### <strong><code>df.dtypes</code> — Prati Column Data Type</strong>
+
+<code>df.dtypes</code> DataFrame lo unna <strong>prati column data type</strong> ni Series laga chupistundi. Idi <code>info()</code> kanna short output; only types fast ga check cheyyali ante best.
+
+```python
+# Prati column data type ni chupistundi
+print(df.dtypes)
+```
+
+```text
+name      str
+city      str
+age     float64
+salary  float64
+dtype: object
+```
+
+Ee output meaning:
+
+| Type | Meaning | Example use |
+|---|---|---|
+| <code>int64</code> | Whole numbers | quantity, age without missing values |
+| <code>float64</code> | Decimal numbers, leda missing values unna numeric data | salary, price, rating |
+| <code>str</code> | Text data | name, city, department |
+| <code>bool</code> | True/False | is_active, purchased |
+| <code>datetime64[ns]</code> | Date and time | order_date, created_at |
+
+<p><span style="color:#E67700;"><strong>Age enduku <code>float64</code>?</strong></span> Age normal ga whole number aina, aa column lo missing value (<code>NaN</code>) unte Pandas traditional numeric representation lo integer + <code>NaN</code> ni hold cheyyadaniki <code>float64</code> ga convert chestundi. <code>25</code> badulu <code>25.0</code> kanipinchina reason ide.</p>
+
+<p><span style="color:#C92A2A;"><strong>Enduku check cheyyali?</strong></span> Data type wrong unte operations fail avvachu leda wrong result istayi. Example ki <code>"1200"</code> text (<code>str</code>) aithe sales sum cheyyalem; date text aithe month-wise grouping sarigga cheyyalem. Load chesaka <code>df.dtypes</code> tho types check cheyyadam must.</p>
+
+```python
+# Text ga load aina sales column ni numeric type ki convert chestundi
+df["sales"] = pd.to_numeric(df["sales"], errors="raise")
+# Text date ni Pandas datetime type ki convert chestundi
+df["order_date"] = pd.to_datetime(df["order_date"], errors="raise")
+# Conversion taruvata types ni verify chestundi
+print(df.dtypes)
+```
+
+<p><span style="color:#2F9E44;"><strong>Tip:</strong></span> <code>errors="raise"</code> invalid value unte clear error istundi; silent ga wrong data ni ignore cheyyadu. Data clean ayyaka matrame <code>astype()</code> tho final type conversion cheyyandi.</p>
 
 <strong><code>df.info()</code> real output:</strong>
 
@@ -1714,6 +1955,19 @@ df
 
 <p><span style="color:#2F9E44;"><strong>Ela Pani Chesindi:</strong></span> <code>df["Age"] + 1</code> ante <strong>prati value ki</strong> 1 add — idi NumPy <strong>vectorization</strong> (section 3.8). Loop asalu raayaledu. Aa result ni malli <code>df["Age"]</code> ki assign chesam kabatti column <strong>update</strong> ayindi. Column already unte update, lekapothe kotha column create.</p>
 
+### <strong>Column Rename Cheyyadam</strong>
+
+Column peru unclear ga leda inconsistent ga unte <code>rename()</code> tho marchachu. <code>rename()</code> kotha DataFrame return chestundi, kabatti result ni <code>df</code> ki assign back cheyyali.
+
+```python
+# Date column peru ni clearer Sale Date ga marchi df lo save chestundi
+df = df.rename(columns={"Date": "Sale Date"})
+# Updated column names tho first rows ni preview chestundi
+df.head()
+```
+
+<p><span style="color:#E67700;"><strong>Tip:</strong></span> Rename dictionary lo left side old column name, right side new column name. Oka kante ekkuva columns ni okesari marchachu: <code>df = df.rename(columns={"Date": "Sale Date", "Value": "Amount"})</code>.</p>
+
 ### <strong><span style="color:#C92A2A;">⚠️ Chaala Pedda Trap: <code>drop()</code> Permanent Kaadu</span></strong>
 
 ```python
@@ -1788,12 +2042,21 @@ df = df.reset_index(drop=True)
 # Direct calculation
 df["bonus"] = df["salary"] * 0.10
 
+# Value column lo prati value ni 2 tho multiply chesi New Value column create chestundi
+df["New Value"] = df["Value"].apply(lambda value: value * 2)
+# Result ni first rows lo preview chestundi
+df.head()
+
 # Condition tho — apply + lambda
 df["level"] = df["salary"].apply(lambda s: "High" if s >= 60000 else "Normal")
 
 # Multiple conditions — np.where
 df["tag"] = np.where(df["salary"] > 60000, "Senior", "Junior")
 ```
+
+<p><span style="color:#2F9E44;"><strong><code>apply(lambda ...)</code> meaning:</strong></span> <code>df["Value"]</code> ane Series lo prati value ni <code>lambda</code> function ki pampistundi. Ikkada <code>value * 2</code> result prati row ki calculate ayi <code>"New Value"</code> ane kotha column lo save avutundi.</p>
+
+<p><span style="color:#E67700;"><strong>Simple maths ki better style:</strong></span> Pai image pattern correct, kaani simple multiplication ki Pandas vectorized operation faster and clearer: <code>df["New Value"] = df["Value"] * 2</code>. <code>apply(lambda ...)</code> ni conditions leda custom Python logic unnappudu use cheyyandi.</p>
 
 <strong>Real output:</strong>
 
@@ -1831,8 +2094,17 @@ Name: count, dtype: int64
 
 ### <strong>5.1 Missing Values</strong>
 
+Missing value ante oka cell lo value lekapovadam. CSV/Excel lo blank cell, Python lo <code>None</code>, leda numeric data lo <code>NaN</code> unte Pandas danini missing value ga treat chestundi.
+
+<code>df.isnull()</code> (same as <code>df.isna()</code>) prati cell missing aa kaada ani <strong>True/False table</strong> return chestundi. Missing aithe <code>True</code>; value unte <code>False</code>.
+
 ```python
-df.isnull().sum()        # prati column lo entha missing unnayo
+# Prati cell missing aa ani True/False table ni return chestundi
+df.isnull()
+# Prati column lo enni missing values unnayo count chestundi
+df.isnull().sum()
+# Edaina missing value unna rows ni True ga chupistundi
+df.isnull().any(axis=1)
 ```
 
 Output:
@@ -1844,6 +2116,17 @@ age       1        ← 1 missing
 salary    1        ← 1 missing
 ```
 
+<p><span style="color:#E67700;"><strong><code>sum()</code> ela count chestundi?</strong></span> Python lo <code>True = 1</code>, <code>False = 0</code> laga lekka chestundi. Anduke <code>isnull()</code> ichina True/False table meeda <code>sum()</code> chesthe, prati column lo enni blanks unnayo vastundi.</p>
+
+```python
+# Missing unna complete rows ni chudataniki boolean mask vaadutundi
+rows_with_missing_values = df[df.isnull().any(axis=1)]
+# Aa rows ni print chestundi
+print(rows_with_missing_values)
+```
+
+<p><span style="color:#2F9E44;"><strong><code>axis=1</code> meaning:</strong></span> <code>any(axis=1)</code> prati <strong>row</strong> lo kanisam oka <code>True</code> unda ani check chestundi. Oka cell aina missing unte aa row <code>True</code> avutundi. <code>df[df.isnull().any(axis=1)]</code> ante “missing values unna rows matrame chupinchu.”</p>
+
 <strong>Handle cheyyadaniki 3 options:</strong>
 
 ```python
@@ -1852,13 +2135,21 @@ df = df.dropna()                    # edaina missing unte aa row pouddi
 df = df.dropna(subset=["salary"])   # salary missing unte matrame teeyyi
 
 # Option 2: Value tho fill cheyyadam
+# Anni numeric missing values ki zero meaningful aithe 0 tho fill chestundi
+df = df.fillna(0)
 df["age"] = df["age"].fillna(df["age"].mean())      # average tho
 df["age"] = df["age"].fillna(df["age"].median())    # median tho (outliers unte better)
 df["city"] = df["city"].fillna("Unknown")           # text ki
+# Sales column lo missing values ni mean tho fill chesi kotha column create chestundi
+df["sales_filled"] = df["sales"].fillna(df["sales"].mean())
 
 # Option 3: Column ne teesesadam (80%+ missing unte)
 df = df.drop(columns=["useless_column"])
 ```
+
+<p><span style="color:#C92A2A;"><strong><code>fillna(0)</code> warning:</strong></span> Zero nijanga valid meaning unte matrame use cheyyandi — example, “sales jaragaledu” ante <code>0</code>. Age, salary, rating lanti columns ki blindly zero pedithe analysis distort avutundi. Aa cases lo mean/median leda domain-specific value better.</p>
+
+<p><span style="color:#C92A2A;"><strong>Fill chesaka type change cheyyali ante:</strong></span> Missing values valla <code>Value</code> column <code>float64</code> ayyi undochu. Mean fill chesaka integer kavalante explicit ga kotha column create cheyyandi: <code>df["value_new"] = df["value"].fillna(df["value"].mean()).astype(int)</code>. Mean decimal ayithe <code>astype(int)</code> decimal part ni cut chestundi, kabatti business meaning ki adi correct aa ani first check cheyyandi.</p>
 
 <p><span style="color:#E67700;"><strong>Ye Option Eppudu?</strong></span> Missing 5% kanna takkuva unte <code>dropna()</code> safe. 5–30% unte <code>fillna()</code> better. 50%+ unte aa column asalu useful kaadu — teesesukovadam melu. Outliers unnappudu <strong>mean kanna median better</strong>, endukante oka pedda value mean ni lagesthundi.</p>
 
@@ -1900,6 +2191,24 @@ GroupBy = <strong>Split → Apply → Combine</strong>.
 - <strong>Apply</strong>: prati group meeda calculation (mean, sum)
 - <strong>Combine</strong>: results ni kalipi table ga ivvu
 
+### <strong>Data Aggregation Ante Enti?</strong>
+
+<strong>Aggregation</strong> ante chaala individual rows ni oka useful summary number leda summary table ga marchadam. Example: 1,000 sales rows nunchi total sales, average order value, minimum/maximum sale, leda region-wise sales summary kanukkovadam.
+
+```python
+# Sales column motham total ni calculate chestundi
+df["sales"].sum()
+# Sales column average ni calculate chestundi
+df["sales"].mean()
+# Lowest and highest sales values ni calculate chestundi
+df["sales"].min()
+df["sales"].max()
+# Missing kaani sales values enni unnayo count chestundi
+df["sales"].count()
+```
+
+<p><span style="color:#2F9E44;"><strong>Difference:</strong></span> Paina code motham DataFrame ki <strong>one summary value</strong> istundi. <code>groupby()</code> add chesthe prati category ki separate summary istundi — example, city-wise total sales leda department-wise average salary.</p>
+
 ```python
 df.groupby("city")["salary"].mean()
 ```
@@ -1913,6 +2222,22 @@ Chennai    90000.0
 Hyd        54000.0
 Name: salary, dtype: float64
 ```
+
+### <strong>One Column and Multiple Columns tho Group Cheyyadam</strong>
+
+```python
+# Prati Product ki Value average ni calculate chestundi
+grouped_mean = df.groupby("Product")["Value"].mean()
+# Product-wise mean ni print chestundi
+print(grouped_mean)
+
+# Product and Region combination ki Value total ni calculate chestundi
+grouped_sum = df.groupby(["Product", "Region"])["Value"].sum()
+# Product-Region-wise total ni print chestundi
+print(grouped_sum)
+```
+
+<p><span style="color:#2F9E44;"><strong>Difference:</strong></span> <code>groupby("Product")</code> lo Product1, Product2, Product3 ki oka summary row vastundi. <code>groupby(["Product", "Region"])</code> lo rendu columns combination batti groups avutayi — example, Product1-East and Product1-West separate summaries. Deenini <strong>multi-level grouping</strong> antaru.</p>
 
 <strong>Multiple calculations okesari:</strong>
 
@@ -1933,6 +2258,36 @@ IT       58750.0      4
 ```
 
 Common functions: `mean()`, `sum()`, `count()`, `size()`, `min()`, `max()`, `median()`, `std()`.
+
+### <strong>Multiple Metrics tho Sales Summary</strong>
+
+<code>agg()</code> vaadithe okate group ki multiple calculations chesi, readable column names ivvachu.
+
+```python
+# Region-wise total, average, smallest, largest sales, and record count ni calculate chestundi
+region_sales_summary = df.groupby("region").agg(
+    total_sales=("sales", "sum"),
+    average_sales=("sales", "mean"),
+    minimum_sales=("sales", "min"),
+    maximum_sales=("sales", "max"),
+    order_count=("sales", "size"),
+)
+# Highest total sales unna region ni first lo chupistundi
+print(region_sales_summary.sort_values("total_sales", ascending=False))
+```
+
+<p><span style="color:#E67700;"><strong>Read cheyyadam:</strong></span> <code>("sales", "sum")</code> lo first <code>"sales"</code> source column; second <code>"sum"</code> calculation. Left side <code>total_sales</code> output column name. Ee named aggregation style report lo clean ga untundi.</p>
+
+<strong>Image lo unna short <code>agg()</code> style:</strong>
+
+```python
+# Prati Region ki Value mean, total, and non-missing count ni calculate chestundi
+grouped_agg = df.groupby("Region")["Value"].agg(["mean", "sum", "count"])
+# Aggregated table ni notebook lo display chestundi
+grouped_agg
+```
+
+<p><span style="color:#E67700;"><strong>Rendu <code>agg()</code> styles correct:</strong></span> <code>agg(["mean", "sum", "count"])</code> quick exploration ki convenient. <code>total_sales=("sales", "sum")</code> lanti named aggregation final report ki better, endukante output columns clear names tho untayi.</p>
 
 <p><span style="color:#E67700;"><strong>count vs size:</strong></span> <code>count()</code> missing values ni <strong>lekka pettadu</strong>, <code>size()</code> anni rows ni lekka pedutundi. Missing unnappudu ee rendu different answers istay.</p>
 
@@ -1958,12 +2313,66 @@ Hyd      62000.0  50000.0
 
 ## <span style="color:#5F3DC4;"><strong>7) Merge / Join — Rendu Tables Kalapadam</strong></span>
 
+<strong>Merge</strong> ante common column (key) batti rendu DataFrames ni kalapadam — SQL JOIN laantidi. Ikkada <code>Key</code> common column; aa key match ayina row values oka table lo kalustayi.
+
 ```python
+# First DataFrame lo Key and Value1 columns ni create chestundi
+df1 = pd.DataFrame({"Key": ["A", "B", "C"], "Value1": [1, 2, 3]})
+# Second DataFrame lo Key and Value2 columns ni create chestundi
+df2 = pd.DataFrame({"Key": ["A", "B", "D"], "Value2": [4, 5, 6]})
+```
+
+### <strong>Inner Join — Rendu DataFrames lo Match Ayinavi Matrame</strong>
+
+```python
+# Rendu DataFrames lo common Key unna rows ni matrame kalupthundi
+pd.merge(df1, df2, on="Key", how="inner")
+```
+
+| Key | Value1 | Value2 |
+|---|---:|---:|
+| A | 1 | 4 |
+| B | 2 | 5 |
+
+<p><span style="color:#2F9E44;"><strong>Result:</strong></span> <code>A</code>, <code>B</code> rendu tables lo unnayi kabatti vachayi. <code>C</code> only <code>df1</code> lo, <code>D</code> only <code>df2</code> lo unnayi kabatti inner join lo raavu. <code>how="inner"</code> default, kabatti omit chesina same result.</p>
+
+### <strong>Outer Join — Rendu DataFrames lo Unna Anni Keys</strong>
+
+```python
+# Rendu DataFrames lo unna anni Keys ni kalupthundi
+pd.merge(df1, df2, on="Key", how="outer")
+```
+
+| Key | Value1 | Value2 |
+|---|---:|---:|
+| A | 1.0 | 4.0 |
+| B | 2.0 | 5.0 |
+| C | 3.0 | NaN |
+| D | NaN | 6.0 |
+
+### <strong>Left and Right Join</strong>
+
+```python
+# Left DataFrame df1 lo unna anni keys ni preserve chestundi
+pd.merge(df1, df2, on="Key", how="left")
+# Right DataFrame df2 lo unna anni keys ni preserve chestundi
+pd.merge(df1, df2, on="Key", how="right")
+```
+
+<p><span style="color:#E67700;"><strong>Left join:</strong></span> <code>df1</code> keys <code>A, B, C</code> anni vastayi; <code>C</code> ki <code>df2</code> lo match ledu kabatti <code>Value2 = NaN</code>. <strong>Right join:</strong> <code>df2</code> keys <code>A, B, D</code> anni vastayi; <code>D</code> ki <code>df1</code> lo match ledu kabatti <code>Value1 = NaN</code>.</p>
+
+<p><span style="color:#C92A2A;"><strong><code>NaN</code> enduku?</strong></span> Merge lo key oka side lo matrame unte, inko DataFrame nunchi value dorakadu. Pandas aa missing cell ni <code>NaN</code> ga chupistundi. Integer column lo <code>NaN</code> vachinanduku output <code>1</code> badulu <code>1.0</code> laga float ga kanipinchachu.</p>
+
+### <strong>Real Example — City ki State Add Cheyyadam</strong>
+
+```python
+# City and State mapping DataFrame ni create chestundi
 states = pd.DataFrame({
-    "city":  ["Hyd", "Bglr", "Chennai"],
+    "city": ["Hyd", "Bglr", "Chennai"],
     "state": ["TS", "KA", "TN"],
 })
 
+# Employee DataFrame ki city batti state column ni add chestundi
 pd.merge(df, states, on="city", how="left")
 ```
 
@@ -2101,6 +2510,78 @@ Peru chinnaga chesaru anthe — <strong>same class</strong>. Meeru tappu emi che
 
 ## <span style="color:#1C7ED6;"><strong>9) Matplotlib — Charts Basics</strong></span>
 
+### <strong>Basic Line Plot</strong>
+
+<code>plt.plot(x, y)</code> lo <code>x</code> values horizontal axis lo, <code>y</code> values vertical axis lo plot avutayi. Rendu lists same length undali — prati position oka point, example <code>(1, 1)</code>, <code>(2, 4)</code>, <code>(3, 9)</code>.
+
+```python
+# Matplotlib plotting module ni plt short name tho import chestundi
+import matplotlib.pyplot as plt
+
+# X-axis values ni define chestundi
+x = [1, 2, 3, 4, 5]
+# X values squares ni Y-axis values ga define chestundi
+y = [1, 4, 9, 16, 25]
+# X and Y points ni line tho connect chesi plot create chestundi
+plt.plot(x, y)
+# Horizontal axis ki clear label ni set chestundi
+plt.xlabel("X axis")
+# Vertical axis ki clear label ni set chestundi
+plt.ylabel("Y axis")
+# Chart purpose ni title ga set chestundi
+plt.title("Basic Line Plot")
+# Chart window leda notebook output lo plot ni render chestundi
+plt.show()
+```
+
+<strong>Output plot:</strong>
+
+![Basic line plot output](assets/basic_line_plot.png)
+
+<p><span style="color:#E67700;"><strong><code>Line2D</code> output:</strong></span> Notebook cell lo <code>plt.plot(x, y)</code> last line ga unte <code>[&lt;matplotlib.lines.Line2D ...&gt;]</code> ani object kanipinchachu. Adi error kaadu — Matplotlib create chesina line object. <code>plt.show()</code> ni chivarilo add chesthe chart clear ga display avutundi.</p>
+
+### <strong>Line Color and Style Marchadam</strong>
+
+<code>plt.plot()</code> lo keyword arguments tho line appearance customize cheyyachu.
+
+```python
+# X and Y data ni red dashed line ga plot chestundi
+plt.plot(x, y, color="red", linestyle="--")
+# Styled plot ni display chestundi
+plt.show()
+```
+
+<strong>Output plot:</strong>
+
+![Red dashed line plot output](assets/red_dashed_line_plot.png)
+
+<p><span style="color:#2F9E44;"><strong>Meaning:</strong></span> <code>color="red"</code> line ni red ga chestundi. <code>linestyle="--"</code> dashed line istundi. Common styles: <code>"-"</code> solid (default), <code>"--"</code> dashed, <code>":"</code> dotted, <code>"-."</code> dash-dot. Short style kuda rayachu: <code>plt.plot(x, y, "r--")</code>, kaani full keyword style beginners ki clear ga untundi.</p>
+
+### <strong>Complete Line Customization</strong>
+
+```python
+# Red dashed line, circular markers, thicker line, and larger markers tho plot chestundi
+plt.plot(
+    x,
+    y,
+    color="red",
+    linestyle="--",
+    marker="o",
+    linewidth=3,
+    markersize=9,
+)
+# Light grid lines ni add chesi values read cheyyadam easy chestundi
+plt.grid(True, alpha=0.3)
+# Customized chart ni display chestundi
+plt.show()
+```
+
+<strong>Output plot:</strong>
+
+![Customized red dashed line plot output](assets/customized_red_dashed_line_plot.png)
+
+<p><span style="color:#2F9E44;"><strong>Parameters:</strong></span> <code>marker="o"</code> prati data point ki circle pedutundi. <code>linewidth=3</code> line thickness ni set chestundi (default 1.5 kanna bold). <code>markersize=9</code> circles ni pedda ga chestundi. <code>plt.grid(True, alpha=0.3)</code> light grid lines add chestundi, values estimate cheyyadam easy avutundi; <code>alpha</code> grid transparency ni control chestundi. Important points highlight cheyyali ante markers, presentation chart lo visibility kosam thicker line useful.</p>
+
 ```python
 import matplotlib.pyplot as plt
 
@@ -2120,6 +2601,232 @@ plt.scatter(x, y)       # scatter      → rendu numbers relationship
 plt.hist(data, bins=20) # histogram    → distribution (data ela spread ayyindo)
 plt.pie(values)         # pie chart    → parts of whole
 ```
+
+### <strong>Main Chart Types — Examples and Outputs</strong>
+
+```python
+# Month labels and sales values ni define chestundi
+months = ["Jan", "Feb", "Mar", "Apr", "May"]
+sales = [12, 18, 15, 22, 28]
+
+# Time/order batti sales trend ni line chart ga draw chestundi
+plt.plot(months, sales, marker="o", color="royalblue")
+plt.title("Monthly Sales Trend")
+plt.xlabel("Month")
+plt.ylabel("Sales")
+plt.grid(True, axis="y", alpha=0.3)
+plt.show()
+```
+
+![Line chart output](assets/line_chart.png)
+
+```python
+# Prati month sales ni bar height tho compare chestundi
+plt.bar(months, sales, color="teal")
+plt.title("Monthly Sales Comparison")
+plt.xlabel("Month")
+plt.ylabel("Sales")
+plt.grid(True, axis="y", alpha=0.3)
+plt.show()
+```
+
+![Bar chart output](assets/bar_chart.png)
+
+### <strong>Simple Category Bar Plot</strong>
+
+<code>plt.bar(categories, values)</code> lo prati category ki oka vertical bar vastundi. Bar height aa category value ni represent chestundi, kabatti categories madhya comparison ki idi best chart.
+
+```python
+# Category labels ni define chestundi
+categories = ["A", "B", "C", "D", "E"]
+# Prati category ki corresponding values ni define chestundi
+values = [5, 7, 3, 8, 6]
+# Categories and values ni purple vertical bars ga draw chestundi
+plt.bar(categories, values, color="purple")
+# Chart title and axis labels ni set chestundi
+plt.title("Category Values")
+plt.xlabel("Category")
+plt.ylabel("Value")
+# Value comparison easy avvadaniki horizontal grid ni add chestundi
+plt.grid(True, axis="y", alpha=0.3)
+# Bar chart ni display chestundi
+plt.show()
+```
+
+![Purple category bar chart output](assets/purple_bar_chart.png)
+
+<p><span style="color:#2F9E44;"><strong>Ee data lo insight:</strong></span> Category <code>D</code> highest value <code>8</code>; <code>C</code> lowest value <code>3</code>. Bar chart chuste ee comparison immediate ga kanipistundi.</p>
+
+```python
+# Ad spend and customer count relationship ni points ga draw chestundi
+ad_spend = [3, 5, 4, 7, 9]
+customers = [120, 150, 135, 180, 210]
+plt.scatter(ad_spend, customers, color="darkorange", s=70)
+plt.title("Ad Spend vs Customers")
+plt.xlabel("Ad Spend ($k)")
+plt.ylabel("Customers")
+plt.grid(True, alpha=0.3)
+plt.show()
+```
+
+![Scatter plot output](assets/scatter_plot.png)
+
+### <strong>Basic Scatter Plot with <code>x</code> Markers</strong>
+
+Scatter plot lo line connect avvadu; prati <code>(x, y)</code> pair oka separate point ga vastundi. Rendu numeric variables madhya relationship unda ani chudataniki use chestam.
+
+```python
+# X-axis numeric values ni define chestundi
+x = [1, 2, 3, 4, 5]
+# Y-axis numeric values ni define chestundi
+y = [2, 3, 4, 5, 6]
+# Prati x-y pair ni blue x-shaped marker ga draw chestundi
+plt.scatter(x, y, color="blue", marker="x")
+# Chart title and axis labels ni set chestundi
+plt.title("Basic Scatter Plot")
+plt.xlabel("X axis")
+plt.ylabel("Y axis")
+# Points location read cheyyadaniki grid ni add chestundi
+plt.grid(True, alpha=0.3)
+# Scatter plot ni display chestundi
+plt.show()
+```
+
+![Blue x-marker scatter plot output](assets/blue_x_scatter_plot.png)
+
+<p><span style="color:#2F9E44;"><strong>Ee plot meaning:</strong></span> X periginappudu Y kuda perugutundi, so ee sample lo positive relationship undi. <code>marker="x"</code> points ni x shape lo chupistundi; common alternatives <code>"o"</code> circle, <code>"s"</code> square, <code>"^"</code> triangle.</p>
+
+<p><span style="color:#E67700;"><strong><code>PathCollection</code> output:</strong></span> Notebook lo <code>plt.scatter(...)</code> last expression ga unte <code>&lt;matplotlib.collections.PathCollection ...&gt;</code> ani kanipinchachu. Adi error kaadu — Matplotlib create chesina scatter-points object. <code>plt.show()</code> taruvata graph display avutundi.</p>
+
+```python
+# Individual customer ratings distribution ni bins lo count chestundi
+ratings = [3, 4, 5, 4, 2, 5, 3, 4, 4, 5, 1, 3, 4, 2, 5]
+plt.hist(ratings, bins=5, color="mediumpurple", edgecolor="black")
+plt.title("Customer Rating Distribution")
+plt.xlabel("Rating")
+plt.ylabel("Frequency")
+plt.grid(True, axis="y", alpha=0.3)
+plt.show()
+```
+
+![Histogram output](assets/histogram.png)
+
+### <strong>Histogram — Distribution ni Ardham Chesukovadam</strong>
+
+Histogram oka numeric dataset lo values ela spread ayyayo chupistundi. Data ni <strong>bins</strong> (small value ranges) ga divide chesi, prati bin lo enni data points unnayo bar height ga chupistundi.
+
+```text
+ratings: [1, 2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5]
+
+bin/range     count     graph lo meaning
+1 to <2         1       rating 1 unna records
+2 to <3         2       rating 2 unna records
+3 to <4         3       rating 3 unna records
+4 to <5         4       rating 4 unna records
+5               3       rating 5 unna records
+```
+
+<p><span style="color:#2F9E44;"><strong>Axes meaning:</strong></span> X-axis lo actual numeric values/ranges untayi (ikkada ratings); Y-axis lo <strong>frequency</strong>, ante aa range lo enni observations unnayo, untundi. Tall bar ante aa range lo values ekkuva unnayi.</p>
+
+<p><span style="color:#E67700;"><strong><code>bins=5</code> meaning:</strong></span> Entire value range ni 5 equal intervals ga divide cheyyamani Matplotlib ki cheptundi. Bins takkuva unte graph over-simplified ga untundi; bins ekkuva unte noisy ga untundi. Dataset size and value range batti 10, 20, 30 lanti values try chesi meaningful view select cheyyandi.</p>
+
+<strong>Screenshot Sample and Output:</strong>
+
+```python
+# Repeated numeric values unna sample data ni define chestundi
+data = [1, 2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 5]
+# Data distribution ni 5 orange bins and black borders tho draw chestundi
+plt.hist(data, bins=5, color="orange", edgecolor="black")
+# Histogram title and axis labels ni set chestundi
+plt.title("Sample Data Distribution")
+plt.xlabel("Value")
+plt.ylabel("Frequency")
+# Frequency bars ni clear ga read cheyyadaniki horizontal grid ni add chestundi
+plt.grid(True, axis="y", alpha=0.3)
+# Histogram ni display chestundi
+plt.show()
+```
+
+![Orange histogram output](assets/orange_histogram.png)
+
+<p><span style="color:#2F9E44;"><strong>Ee plot lo:</strong></span> 1 okasari, 2 rendu sarlu, 3 moodu sarlu, 4 nalugu sarlu, 5 aidu sarlu vachayi. Kabatti left nunchi right ki bars gradually perugutayi. <code>edgecolor="black"</code> prati bin boundary ni clear ga chupistundi.</p>
+
+<p><span style="color:#C92A2A;"><strong>Histogram vs bar chart:</strong></span> Histogram <strong>continuous numeric data</strong> (salary, age, marks, ratings) distribution kosam. Bar chart <strong>separate categories</strong> (city, product, department) comparison kosam. Histogram bars normally touch avutayi because bins continuous ranges; bar-chart bars madhya gap untundi.</p>
+
+<p><span style="color:#2F9E44;"><strong>What to look for:</strong></span> Center/high bars → common value range; left/right long tail → skewness; separate peaks → possible different groups; far-away small bars → possible outliers. Histogram chusaka mean, median, and outliers ni further check cheyyandi.</p>
+
+```python
+# Region labels and sales share values ni define chestundi
+regions = ["East", "North", "South", "West"]
+region_sales = [35, 25, 20, 20]
+plt.pie(region_sales, labels=regions, autopct="%1.0f%%", startangle=90)
+plt.title("Regional Sales Share")
+plt.show()
+```
+
+![Pie chart output](assets/pie_chart.png)
+
+<p><span style="color:#2F9E44;"><strong>Chart selection:</strong></span> Trend/time data ki line chart; categories amount compare cheyyadaniki bar chart; rendu numeric values relationship ki scatter plot; oka numeric column distribution ki histogram; total lo shares simple ga chupinchadaniki pie chart. Pie chart lo categories ekkuva unte labels clutter avutayi — appudu bar chart better.</p>
+
+### <strong>Multiple Plots — <code>subplot()</code> Detailed Explanation</strong>
+
+Oka figure lo multiple charts pakka pakkana leda paina-kindha chupinchalante <code>plt.subplot(rows, columns, position)</code> vaadali. Screenshot lo <code>plt.subplot(1, 2, 1)</code> ante <strong>1 row, 2 columns</strong> layout lo <strong>first</strong> chart area select cheyyadam. <code>plt.subplot(1, 2, 2)</code> ante ade layout lo second chart area select cheyyadam.
+
+```python
+# X-axis values ni define chestundi
+x = [1, 2, 3, 4, 5]
+# First chart ki square values ni define chestundi
+y1 = [1, 4, 9, 16, 25]
+# Second chart ki linear values ni define chestundi
+y2 = [1, 2, 3, 4, 5]
+
+# Rendu plots kosam 9-inch width, 5-inch height figure ni create chestundi
+plt.figure(figsize=(9, 5))
+
+# 1 row x 2 columns layout lo first plot position ni select chestundi
+plt.subplot(1, 2, 1)
+# First position lo x vs y1 green line ni draw chestundi
+plt.plot(x, y1, color="green")
+# First plot title ni set chestundi
+plt.title("Plot 1")
+# First plot axes labels ni set chestundi
+plt.xlabel("X axis")
+plt.ylabel("Y1 axis")
+# First plot ki light grid ni add chestundi
+plt.grid(True, alpha=0.3)
+
+# 1 row x 2 columns layout lo second plot position ni select chestundi
+plt.subplot(1, 2, 2)
+# Second position lo x vs y2 green line ni draw chestundi
+plt.plot(x, y2, color="green")
+# Second plot title ni set chestundi
+plt.title("Plot 2")
+# Second plot axes labels ni set chestundi
+plt.xlabel("X axis")
+plt.ylabel("Y2 axis")
+# Second plot ki light grid ni add chestundi
+plt.grid(True, alpha=0.3)
+
+# Labels overlap avvakunda spacing ni automatic ga adjust chestundi
+plt.tight_layout()
+# Rendu plots unna figure ni display chestundi
+plt.show()
+```
+
+<strong>Output plot:</strong>
+
+![Two subplot output](assets/two_subplots.png)
+
+| Code | Meaning |
+|---|---|
+| <code>plt.figure(figsize=(9, 5))</code> | Whole canvas size: width 9, height 5 inches |
+| <code>plt.subplot(1, 2, 1)</code> | 1 row, 2 columns lo first chart |
+| <code>plt.subplot(1, 2, 2)</code> | 1 row, 2 columns lo second chart |
+| <code>plt.tight_layout()</code> | Titles and labels overlap avvakunda spacing adjust chestundi |
+
+<p><span style="color:#C92A2A;"><strong>Screenshot correction:</strong></span> Second plot lo <code>plt.plot(y1, x)</code> ani unte axes reverse avutayi and <code>y2</code> unused aipothundi. Rendu datasets compare cheyyalante correct code <code>plt.plot(x, y2, color="green")</code>.</p>
+
+<p><span style="color:#E67700;"><strong><code>Text(0.5, 1.0, "Plot 1")</code> output:</strong></span> Notebook lo <code>plt.title("Plot 1")</code> last expression ga unte title object representation print avvachu. Adi error kaadu. <code>plt.show()</code> chivarilo pettadam valla graph ne main output ga chustaru.</p>
 
 <strong>Subplots — okate figure lo multiple charts:</strong>
 
@@ -2143,17 +2850,260 @@ plt.show()
 
 ## <span style="color:#087F5B;"><strong>10) Seaborn — Andamaina Statistical Charts</strong></span>
 
-Seaborn = Matplotlib meeda build ayyindi, kaani <strong>takkuva code</strong> and <strong>direct ga DataFrame</strong> teesukuntundi.
+### <strong>Data Visualization With Seaborn</strong>
+
+Seaborn anedi <strong>Matplotlib meeda build ayina Python visualization library</strong>. Attractive and informative <strong>statistical graphics</strong> ni high-level interface tho create cheyyadaniki use avutundi. Matplotlib lo manual ga colors, legends, category groups set cheyyalsina work ni Seaborn chala varaku automatic ga chestundi.
+
+Mukhyanga Pandas DataFrame (`df`) tho Seaborn direct ga work avutundi: <code>data=df</code> ani ichi, column names ni <code>x</code>, <code>y</code>, <code>hue</code> lo pass chesthe saripothundi. Kabatti distributions, category comparisons, correlations, and variable relationships lanti complex visualizations ni few lines of code lo clear ga create cheyyachu.
+
+<p><span style="color:#2F9E44;"><strong>Simple ga:</strong></span> Matplotlib = full control; Seaborn = statistical charts ki sensible defaults + takkuva code. Seaborn plot create chesina tarvata title, labels, grid lanti final customization kosam <code>matplotlib.pyplot</code> ni kalipi vaadochu.</p>
+
+### <strong>Basic Plotting With Seaborn — Built-in <code>tips</code> Dataset</strong>
+
+Seaborn lo <code>sns.load_dataset("tips")</code> ane ready-made practice dataset undi. Idi restaurant bills and tips data ni DataFrame ga istundi: <code>total_bill</code> = bill amount, <code>tip</code> = tip amount, <code>sex</code>/<code>smoker</code>/<code>day</code>/<code>time</code> = categories, <code>size</code> = table lo unna people count. Real CSV lekapoyina plotting practice cheyyadaniki useful.
 
 ```python
+# Seaborn library ni sns ane short name tho import chestundi
 import seaborn as sns
 
-sns.histplot(data=df, x="salary", bins=5, kde=True)     # distribution
-sns.boxplot(data=df, x="dept", y="salary")              # outliers + spread
-sns.countplot(data=df, x="city")                        # category counts
-sns.scatterplot(data=df, x="age", y="salary", hue="dept")   # relationship
-sns.heatmap(df.corr(numeric_only=True), annot=True, cmap="coolwarm")  # correlation
-sns.pairplot(df[["age", "salary"]])                     # anni pairs okesari
+# Restaurant bills and tips unna built-in dataset ni DataFrame ga load chestundi
+tips = sns.load_dataset("tips")
+# First five rows ni display chesi columns and values ni inspect chestundi
+print(tips.head())
+```
+
+<p><span style="color:#E67700;"><strong>Note:</strong></span> <code>load_dataset()</code> practice/learning kosam. Real project lo <code>pd.read_csv()</code>, <code>pd.read_excel()</code>, database, leda API nunchi mee actual DataFrame ni load chesi ade <code>data=...</code> argument ki pass chestaru.</p>
+
+#### <strong>Scatter Plot — Total Bill vs Tip</strong>
+
+```python
+# Matplotlib pyplot ni title, labels, grid, show kosam import chestundi
+import matplotlib.pyplot as plt
+
+# Total bill and tip madhya prati restaurant visit relationship ni plot chestundi
+sns.scatterplot(data=tips, x="total_bill", y="tip")
+# Plot title ni set chestundi
+plt.title("Scatter Plot of Total Bill vs Tip")
+# X-axis label ni clear ga set chestundi
+plt.xlabel("Total bill ($)")
+# Y-axis label ni clear ga set chestundi
+plt.ylabel("Tip ($)")
+# Values ni easy ga chadavadaniki light grid ni add chestundi
+plt.grid(True, alpha=0.3)
+# Complete chart ni screen lo display chestundi
+plt.show()
+```
+
+<strong>Output plot:</strong>
+
+![Seaborn scatter plot of total bill versus tip](assets/seaborn_tips_scatter_plot.png)
+
+Prati dot oka restaurant bill. Right side ki vellinappudu bills ekkuva avutayi; mostly dots kuda painaki velladam valla total bill perigithe tip kuda generally perugutundi ani kanipistundi. Kaani idi <strong>correlation</strong> matrame — bill valla tip compulsory ga perigindi ani causation prove cheyyadu.
+
+#### <strong>Line Plot — Total Bill by Party Size</strong>
+
+```python
+# Same party size rows ni mean total bill ga aggregate chesi line plot chestundi
+sns.lineplot(data=tips, x="size", y="total_bill", estimator="mean", errorbar=None, marker="o")
+# Plot title ni set chestundi
+plt.title("Average Total Bill by Party Size")
+# X-axis label ni set chestundi
+plt.xlabel("Party size")
+# Y-axis label ni set chestundi
+plt.ylabel("Average total bill ($)")
+# Values ni easy ga compare cheyyadaniki light grid ni add chestundi
+plt.grid(True, alpha=0.3)
+# Complete chart ni screen lo display chestundi
+plt.show()
+```
+
+<strong>Output plot:</strong>
+
+![Seaborn line plot of average total bill by party size](assets/seaborn_tips_line_plot.png)
+
+Screenshot lo <code>sns.lineplot(x="size", y="total_bill", data=tips)</code> ani simple ga rayachu. Kaani oka <code>size</code> ki chala rows untayi; Seaborn default ga aa rows ni mean chesi line draw chestundi. Anduke ikkada <code>estimator="mean"</code> explicit ga rasam; <code>errorbar=None</code> confidence interval band ni hide chesi beginner ki main trend clear ga chupistundi.
+
+#### <strong>KDE Plot — Smooth Total-Bill Distribution</strong>
+
+KDE ante <strong>Kernel Density Estimation</strong>. Histogram lo bars untayi; KDE ade numeric data distribution ni smooth curve ga estimate chestundi. Curve peak unna place lo observations ekkuva unnayi ani artham.
+
+```python
+# Total bill values distribution ni smooth curve and filled area ga draw chestundi
+sns.kdeplot(data=tips, x="total_bill", fill=True)
+# Plot title ni set chestundi
+plt.title("KDE Plot of Total Bill")
+# X-axis label ni set chestundi
+plt.xlabel("Total bill ($)")
+# Y-axis lo density ani set chestundi, idi record count kaadu
+plt.ylabel("Density")
+# Curve values ni easy ga chadavadaniki light grid ni add chestundi
+plt.grid(True, alpha=0.3)
+# Complete chart ni screen lo display chestundi
+plt.show()
+```
+
+<strong>Output plot:</strong>
+
+![Seaborn KDE plot of total bill](assets/seaborn_tips_kde_plot.png)
+
+Ee plot lo curve roughly <code>$15-$20</code> daggara peak avutundi, ante aa range lo bills ekkuva unnayi. Right side long tail undadam valla konni high-value bills kuda unnayi ani telustundi. Y-axis <strong>Density</strong>, count kaadu; curve kinda total area always 1 untundi.
+
+<p><span style="color:#E67700;"><strong>Version note:</strong></span> Screenshot lo <code>sns.kdeplot(tips["total_bill"], shade=True)</code> valid older Seaborn syntax. Seaborn 0.13+ lo recommended syntax <code>sns.kdeplot(data=tips, x="total_bill", fill=True)</code>. <code>fill=True</code> anedi old <code>shade=True</code> replacement.</p>
+
+### <strong>Pair Plot — Multiple Numeric Columns Oke Sari</strong>
+
+<code>sns.pairplot()</code> oka numeric column pair ki relationship ni scatter plot ga, diagonal lo prati column distribution ni chupistundi. EDA starting lo multiple variables madhya patterns, clusters, and possible relationships fast ga kanipettadaniki idi chala popular.
+
+```python
+# Bill, tip, party size madhya pairwise relationships ni time colors tho draw chestundi
+pair_grid = sns.pairplot(
+    tips,
+    vars=["total_bill", "tip", "size"],
+    hue="time",
+    corner=True,
+    diag_kind="hist",
+)
+# Figure ki overall title ni add chestundi
+pair_grid.figure.suptitle("Pair Plot: Restaurant Bill, Tip, and Party Size", y=1.02)
+# Pair plot ni screen lo display chestundi
+plt.show()
+```
+
+<strong>Output plot:</strong>
+
+![Seaborn pair plot for total bill, tip, and party size](assets/seaborn_tips_pair_plot.png)
+
+<code>corner=True</code> duplicate half ni hide chesi chart compact ga chestundi. <code>hue="time"</code> lunch and dinner records ki separate colors istundi. Chala columns unte pair plot slow/cluttered avutundi, kabatti 3-5 important numeric columns matrame select cheyyandi.
+
+### <strong>Heatmap — Correlation Matrix ni Colors lo Choodadam</strong>
+
+Heatmap lo each cell rendu numeric columns madhya correlation ni chupistundi. Value <code>+1</code> daggara unte same direction relationship, <code>-1</code> daggara unte opposite direction relationship, <code>0</code> daggara unte linear relationship takkuva.
+
+```python
+# Important numeric columns correlation matrix ni calculate chestundi
+correlation_data = tips[["total_bill", "tip", "size"]].corr()
+# Correlation values ni annotated color-grid ga draw chestundi
+sns.heatmap(
+    correlation_data,
+    annot=True,
+    fmt=".2f",
+    cmap="coolwarm",
+    vmin=-1,
+    vmax=1,
+    square=True,
+)
+# Plot title ni set chestundi
+plt.title("Correlation Heatmap: Tips Dataset")
+# Complete chart ni screen lo display chestundi
+plt.show()
+```
+
+<strong>Output plot:</strong>
+
+![Seaborn correlation heatmap for tips dataset](assets/seaborn_tips_heatmap.png)
+
+<code>annot=True</code> each cell lo exact value rastundi; <code>vmin=-1</code>, <code>vmax=1</code> fixed scale maintain chestayi, kabatti heatmaps ni fair ga compare cheyyachu. Correlation causation kaadu — strong value dorikina business/domain reason verify cheyyali.
+
+### <strong>Most-Used Seaborn EDA Plots</strong>
+
+#### <strong>Histogram — Values Distribution</strong>
+
+```python
+# Total bill distribution ni bars and smooth KDE curve tho draw chestundi
+sns.histplot(data=tips, x="total_bill", bins=15, kde=True)
+# Plot title ni set chestundi
+plt.title("Distribution of Total Bills")
+# X-axis label ni set chestundi
+plt.xlabel("Total bill ($)")
+# Y-axis label ni count ani set chestundi
+plt.ylabel("Number of visits")
+# Horizontal grid ni add chestundi
+plt.grid(True, axis="y", alpha=0.3)
+# Complete chart ni screen lo display chestundi
+plt.show()
+```
+
+<strong>Output plot:</strong>
+
+![Seaborn histogram of total bills](assets/seaborn_tips_histogram.png)
+
+Histogram distribution shape, skewness, and common bill ranges ni chupistundi. <code>bins</code ekkuva unte detail ekkuva, kaani noise kuda ekkuva; <code>kde=True</code smooth trend ni add chestundi.
+
+#### <strong>Box Plot — Spread and Outliers</strong>
+
+```python
+# Prati day total-bill spread and outliers ni box plot lo compare chestundi
+sns.boxplot(data=tips, x="day", y="total_bill", order=["Thur", "Fri", "Sat", "Sun"])
+# Plot title ni set chestundi
+plt.title("Total Bill Spread by Day")
+# X-axis label ni set chestundi
+plt.xlabel("Day")
+# Y-axis label ni set chestundi
+plt.ylabel("Total bill ($)")
+# Horizontal grid ni add chestundi
+plt.grid(True, axis="y", alpha=0.3)
+# Complete chart ni screen lo display chestundi
+plt.show()
+```
+
+<strong>Output plot:</strong>
+
+![Seaborn box plot of total bills by day](assets/seaborn_tips_box_plot.png)
+
+Box middle line = median; box = middle 50% values; whiskers bayata dots = possible outliers. Saturday/Sunday bills spread ni weekday-to-weekday compare cheyyadaniki perfect.
+
+#### <strong>Count Plot — Category Frequency</strong>
+
+```python
+# Prati day enni restaurant visits unnayo bar count ga draw chestundi
+sns.countplot(data=tips, x="day", order=["Thur", "Fri", "Sat", "Sun"])
+# Plot title ni set chestundi
+plt.title("Number of Restaurant Visits by Day")
+# X-axis label ni set chestundi
+plt.xlabel("Day")
+# Y-axis label ni set chestundi
+plt.ylabel("Number of visits")
+# Horizontal grid ni add chestundi
+plt.grid(True, axis="y", alpha=0.3)
+# Complete chart ni screen lo display chestundi
+plt.show()
+```
+
+<strong>Output plot:</strong>
+
+![Seaborn count plot of restaurant visits by day](assets/seaborn_tips_count_plot.png)
+
+<code>countplot()</code> categorical column ki frequency ni automatic ga count chestundi; separate <code>groupby().size()</code avasaram ledu. Amount/sales sum compare cheyyalante count plot kaadu — <code>sns.barplot(..., estimator="sum")</code> leda mundu aggregation vaadali.
+
+### <strong>Matplotlib vs Seaborn — Difference</strong>
+
+| Feature | Matplotlib | Seaborn |
+|---|---|---|
+| Level | Low-level plotting library; full manual control | High-level statistical visualization library built on Matplotlib |
+| Input style | Lists, NumPy arrays, leda values direct ga pass chestaru | Pandas DataFrame + column names direct ga pass chestaru |
+| Default look | Basic; colors, style, legend, labels manual ga improve cheyyali | Attractive themes, palettes, and sensible defaults automatic ga vastayi |
+| Statistical charts | Possible, kaani aggregation/grouping manual work ekkuva | `histplot`, `boxplot`, `violinplot`, `heatmap`, `pairplot` lanti charts ready |
+| Categories | Prati group ni manual ga plot cheyyali | `hue`, `style`, `size` tho category groups easy ga visualise chestaru |
+| Best use | Exact customization, special annotations, custom layouts | Fast EDA and DataFrame-based statistical analysis |
+
+<p><span style="color:#364FC7;"><strong>Best practice:</strong></span> Seaborn tho plot fast ga create cheyyandi; tarvata <code>plt.title()</code>, <code>plt.xlabel()</code>, <code>plt.grid()</code>, <code>plt.savefig()</code> lanti Matplotlib commands tho polish cheyyandi. Rendu competitors kaavu — Seaborn, Matplotlib paina ne run avutundi.</p>
+
+```python
+# Seaborn visualization library ni sns ane short name tho import chestundi
+import seaborn as sns
+
+# Salary distribution and smooth density curve ni draw chestundi
+sns.histplot(data=df, x="salary", bins=5, kde=True)
+# Department-wise salary spread and outliers ni compare chestundi
+sns.boxplot(data=df, x="dept", y="salary")
+# Prati city lo enni records unnayo count chestundi
+sns.countplot(data=df, x="city")
+# Age-salary relationship ni department color groups tho chupistundi
+sns.scatterplot(data=df, x="age", y="salary", hue="dept")
+# Numeric columns correlation values ni colored grid lo chupistundi
+sns.heatmap(df.corr(numeric_only=True), annot=True, cmap="coolwarm")
+# Age and salary madhya pairwise relationship ni okesari chupistundi
+sns.pairplot(df[["age", "salary"]])
 ```
 
 <p><span style="color:#2F9E44;"><strong>Verified:</strong></span> Ee 6 plots anni run chesi check chesam — Seaborn 0.13.2 lo correct ga pani chestunnay.</p>
@@ -2233,6 +3183,40 @@ df.to_csv("cleaned_data.csv", index=False)
 ```
 
 <p><span style="color:#E67700;"><strong>Chinna Tip:</strong></span> <code>to_csv()</code> lo <strong>eppudu</strong> <code>index=False</code> pettandi. Lekapothe prati sari save chesinappudu oka extra "Unnamed: 0" column add avutu potundi.</p>
+
+### <strong>CSV File ga Export Cheyyadam</strong>
+
+<code>to_csv()</code> DataFrame ni CSV file ga write chestundi. Image lo unna <code>df.to_csv("wine.csv")</code> valid, kaani default ga DataFrame index kuda file lo save avutundi. Usually index business data kaadu kabatti <code>index=False</code> use cheyyadam best.
+
+```python
+# DataFrame ni wine.csv ane file ga save chestundi, index kuda include avutundi
+df.to_csv("wine.csv")
+# DataFrame ni clean CSV ga save chestundi, index include cheyyadu
+df.to_csv("wine.csv", index=False)
+# Existing CSV overwrite kakunda file already unte error raise chestundi
+df.to_csv("wine.csv", index=False, mode="x")
+```
+
+<p><span style="color:#2F9E44;"><strong>Verify:</strong></span> Save chesaka <code>saved_dataframe = pd.read_csv("wine.csv")</code> ani malli load chesi <code>saved_dataframe.head()</code> check cheyyandi. Export lo columns, row count, and special characters correct ga unnaya ani confirm cheyyachu.</p>
+
+### <strong>Pickle lo DataFrame Save and Restore Cheyyadam</strong>
+
+Pickle Pandas DataFrame ni Python-specific binary format lo save chestundi. CSV lo data types, index, complex objects maripovachu; Pickle lo avi mostly preserve avutayi, kabatti same trusted Python project lo temporary cache leda intermediate DataFrame save cheyyadaniki fast ga untundi.
+
+```python
+# Excel file ni DataFrame lo load chestundi
+df_excel = pd.read_excel("data.xlsx")
+# DataFrame ni Pickle binary file ga save chestundi
+df_excel.to_pickle("df_excel.pkl")
+# Trusted Pickle file nunchi DataFrame ni malli load chestundi
+restored_excel_dataframe = pd.read_pickle("df_excel.pkl")
+# Restored DataFrame ni verify cheyyadaniki first rows ni chupistundi
+print(restored_excel_dataframe.head())
+```
+
+<p><span style="color:#C92A2A;"><strong>Security rule:</strong></span> <strong>Unknown leda untrusted Pickle files ni eppudu load cheyyakandi.</strong> <code>pd.read_pickle()</code> malicious Python code run cheyagaladu. Meeru create chesina leda trusted source nunchi vachina <code>.pkl</code>/<code>.pickle</code files matrame use cheyyandi. Data sharing kosam CSV, Parquet, leda JSON safer and more portable.</p>
+
+<p><span style="color:#E67700;"><strong>File name tip:</strong></span> Image lo <code>to_pickle("df_excel")</code> extension lekunda pani chestundi. Kaani <code>"df_excel.pkl"</code> ani extension pettadam better — file format immediate ga telustundi.</p>
 
 ---
 
