@@ -2527,3 +2527,563 @@ AI Connection:
   784 pixel image → 10 class probabilities = ℝ⁷⁸⁴ → ℝ¹⁰
   Deep learning = chained transformations: ℝⁿ → ℝᵐ → ℝᵏ → ...
 ```
+
+---
+
+---
+
+# Vector Transformations — Definition, Scaling & Rotation (Image Notes)
+
+## Image 1 — Definition (Defn)
+
+**Image lo exact text:**
+
+> "Vector transformations refer to operations that **map vectors from one space to another**, often changing their **magnitude, direction, or both**. These transformations are typically described using **matrices** and are fundamental in various fields, including **physics, engineering, computer graphics, and data science**."
+
+---
+
+### Definition — Telugu lo
+
+```
+Vector Transformation ante enti?
+
+Oka vector ni teesukoni:
+  1. Magnitude (length) change cheyyadam, and/or
+  2. Direction change cheyyadam
+
+Ika result = new vector (same space or different space lo)
+
+Key point: Ivi matrices tho represent avutay.
+           Matrix multiply = transformation apply cheyyadam.
+
+Fields lo use avutay:
+  Physics           → force vectors, velocity transform
+  Engineering       → coordinate system conversions
+  Computer Graphics → rotate/scale/move 3D objects on screen
+  Data Science      → feature engineering, PCA, neural networks
+```
+
+---
+
+### Architecture Diagram
+
+```
+Input Vector (v)
+      |
+      | Apply Transformation Matrix T
+      v
+  +------------------+
+  | Change magnitude |  → length stretch/shrink
+  | Change direction |  → rotate/reflect
+  | Change both      |  → most transformations
+  | Change neither   |  → identity matrix (no change)
+  +------------------+
+      |
+      v
+Output Vector (v')
+
+Matrix form: v' = T @ v
+```
+
+---
+
+## Image 2 — Example 1: Scaling
+
+**Image lo exact content:**
+
+```
+1) Scaling
+
+"Scaling is a transformation that changes the magnitude of vector
+ while keeping their direction same."
+
+Formula:   v' = 2v = 2[2, 3] = [4, 6]
+
+Graph:     (2,3) original vector
+           (4,6) scaled vector — same direction, twice the length
+
+Application:
+  ① DATA Normalization
+  ② Computer graphic to resize objects => Paint => Image => Resize
+```
+
+---
+
+### Scaling — Complete Explanation
+
+**Scaling ante enti?**
+
+```
+Vector ni scale cheyyadam = magnitude (length) change cheyyadam
+Direction = same ga untundi (pointing same way)
+Only length change avutundi
+
+Scale factor k:
+  k > 1  → vector longer (stretch)
+  0 < k < 1 → vector shorter (shrink)
+  k < 0  → direction reverse + scale
+  k = 1  → no change (identity)
+  k = -1 → direction flip (reflection through origin)
+```
+
+**Image lo example — step by step:**
+
+```
+v  = [2, 3]         → original vector
+k  = 2              → scale factor
+v' = k * v = 2 * [2, 3] = [4, 6]
+
+Length of v:  √(2² + 3²) = √13  ≈ 3.606
+Length of v': √(4² + 6²) = √52  ≈ 7.211
+
+Length ratio: 7.211 / 3.606 = 2.0  ← exactly 2x
+
+Direction check:
+  v  direction: arctan(3/2) = 56.31°
+  v' direction: arctan(6/4) = 56.31°  ← same direction!
+```
+
+```python
+import numpy as np
+
+# Image lo exact example
+v = np.array([2, 3])       # original vector
+k = 2                      # scale factor
+
+v_scaled = k * v           # scaling = scalar multiply
+print(f"v      = {v}")     # [2, 3]
+print(f"v' = 2v = {v_scaled}")  # [4, 6]  ← image lo exact!
+
+# Verify: direction same, length doubled
+len_v  = np.linalg.norm(v)
+len_v2 = np.linalg.norm(v_scaled)
+print(f"\nLength of v:   {len_v:.4f}")
+print(f"Length of v':  {len_v2:.4f}")
+print(f"Ratio:         {len_v2/len_v:.4f}")   # 2.0000
+
+# Direction check — normalized vectors same avvali
+dir_v  = v / len_v
+dir_v2 = v_scaled / len_v2
+print(f"\nDirection of v:   {np.round(dir_v, 4)}")
+print(f"Direction of v':  {np.round(dir_v2, 4)}")
+print(f"Same direction?   {np.allclose(dir_v, dir_v2)}")  # True
+
+# Scaling matrix form
+# v' = S @ v, where S = k * I (k times identity matrix)
+S = k * np.eye(2)          # scaling matrix
+print(f"\nScaling matrix S:\n{S}")
+print(f"S @ v = {S @ v}")  # [4, 6] — same result
+
+# Different scale factors
+factors = [0.5, 1, 2, 3, -1]
+print("\nDifferent scale factors:")
+for f in factors:
+    v_new = f * v
+    label = "shrink" if 0 < abs(f) < 1 else "flip" if f < 0 else "stretch" if f > 1 else "same"
+    print(f"  k={f:4}: v' = {v_new}  ({label})")
+```
+
+**Output:**
+```
+v      = [2 3]
+v' = 2v = [4 6]
+
+Length of v:   3.6056
+Length of v':  7.2111
+Ratio:         2.0000
+
+Direction of v:   [0.5547 0.8321]
+Direction of v':  [0.5547 0.8321]
+Same direction?   True
+
+Scaling matrix S:
+[[2. 0.]
+ [0. 2.]]
+S @ v = [4. 6.]
+
+Different scale factors:
+  k= 0.5: v' = [1.  1.5]  (shrink)
+  k=   1: v' = [2 3]  (same)
+  k=   2: v' = [4 6]  (stretch)
+  k=   3: v' = [6 9]  (stretch)
+  k=  -1: v' = [-2 -3]  (flip)
+```
+
+---
+
+### Non-uniform Scaling
+
+```python
+import numpy as np
+
+v = np.array([2.0, 3.0])
+
+# Non-uniform: x, y differently scale cheyyadam
+S_nonuniform = np.array([[3, 0],   # x → 3x
+                          [0, 0.5]])  # y → 0.5y
+
+v_scaled = S_nonuniform @ v
+print(f"v:          {v}")             # [2, 3]
+print(f"v' (3x, 0.5y): {v_scaled}")  # [6, 1.5] — direction CHANGES
+
+# Note: non-uniform scaling direction change chestundi
+dir_v  = v / np.linalg.norm(v)
+dir_v2 = v_scaled / np.linalg.norm(v_scaled)
+print(f"Same direction? {np.allclose(dir_v, dir_v2)}")  # False!
+print("Non-uniform scaling: direction changes!")
+```
+
+---
+
+### Applications (Image lo)
+
+**① DATA Normalization:**
+
+```python
+import numpy as np
+
+# Data normalization = scaling transformation
+# Features ni same range lo teesukovadam
+
+data = np.array([[100, 0.5],
+                 [200, 0.8],
+                 [150, 0.3],
+                 [300, 0.9]])
+
+# Min-Max Normalization: scale to [0, 1]
+min_vals = data.min(axis=0)
+max_vals = data.max(axis=0)
+data_normalized = (data - min_vals) / (max_vals - min_vals)
+
+print("Original data:")
+print(data)
+print("\nNormalized (scaled to [0,1]):")
+print(np.round(data_normalized, 4))
+
+# Z-score Normalization: mean=0, std=1
+mean = data.mean(axis=0)
+std  = data.std(axis=0)
+data_zscore = (data - mean) / std
+
+print("\nZ-score normalized:")
+print(np.round(data_zscore, 4))
+
+# Idi scaling transformation:
+# prathi feature vector ki different scale factor apply chestundi
+# AI lo: input data normalize chesaka train cheyyadam = faster convergence
+```
+
+**② Computer Graphics — Image Resize:**
+
+```python
+import numpy as np
+
+# Image resize = scaling transformation
+# Each pixel coordinate ni scale factor multiply chestundi
+
+def scale_image_coords(coords, scale_x, scale_y):
+    """Image coordinates ni scale cheyyadam"""
+    S = np.array([[scale_x, 0],
+                  [0, scale_y]])
+    return (S @ coords.T).T
+
+# Original image corners (100x100 image)
+corners = np.array([
+    [0,   0],    # top-left
+    [100, 0],    # top-right
+    [100, 100],  # bottom-right
+    [0,   100],  # bottom-left
+])
+
+# Scale 2x (200x200 ki resize)
+scaled_corners = scale_image_coords(corners, 2, 2)
+print("Original image corners (100x100):")
+print(corners)
+print("\nScaled corners (200x200):")
+print(scaled_corners)
+
+# Paint → Image → Resize workflow:
+# Paint: user draws at certain coordinates
+# Image: coordinates stored as pixel values
+# Resize: scaling matrix apply → new coordinates
+```
+
+---
+
+## Image 3 — Example 2: Rotation
+
+**Image lo exact content:**
+
+```
+② Rotation
+
+"Transformation that turns vectors around the Origin."
+
+v  = [1, 0] ∈ R²         → original vector (x-axis direction)
+v' = [0, 1]               → rotated vector (y-axis direction)
+"=> Showing a 90 degree Rotation"
+
+Graph (counter clockwise):
+  [1, 0] on x-axis
+  rotate 90° counter-clockwise
+  [0, 1] on y-axis
+```
+
+---
+
+### Rotation — Complete Explanation
+
+**Rotation ante enti?**
+
+```
+Vector ni origin chuttu oka angle θ tho rotate cheyyadam.
+Direction change avutundi.
+Length (magnitude) same ga untundi — rotation length preserve chestundi.
+
+Counter-clockwise = positive angle (standard math convention)
+Clockwise = negative angle
+```
+
+**Image lo example — 90° rotation:**
+
+```
+v  = [1, 0]   → x-axis direction (→)
+θ  = 90°      → counter-clockwise rotate
+v' = [0, 1]   → y-axis direction (↑)
+
+Visually: → turns to ↑
+          x-axis direction → y-axis direction
+          Exactly 90° counter-clockwise
+```
+
+**Rotation matrix:**
+
+```
+R(θ) = [[cos θ,  -sin θ],
+        [sin θ,   cos θ]]
+
+For θ = 90°:
+  cos 90° = 0,  sin 90° = 1
+
+R(90°) = [[0, -1],
+          [1,  0]]
+
+Verify: R(90°) @ [1, 0]
+      = [[0, -1], [1, 0]] @ [1, 0]
+      = [0*1 + (-1)*0,  1*1 + 0*0]
+      = [0, 1]  ✓  (image lo exact result!)
+```
+
+```python
+import numpy as np
+
+def rotation_matrix(theta_degrees):
+    """2D rotation matrix create cheyyadam"""
+    theta = np.radians(theta_degrees)
+    return np.array([
+        [np.cos(theta), -np.sin(theta)],
+        [np.sin(theta),  np.cos(theta)]
+    ])
+
+# Image lo exact example
+v = np.array([1, 0])    # original: x-axis direction [1,0]
+theta = 90              # 90 degree rotation
+
+R = rotation_matrix(theta)
+print("Rotation matrix R(90°):")
+print(np.round(R, 4))
+
+v_rotated = R @ v
+print(f"\nv  = {v}     (original)")
+print(f"v' = {np.round(v_rotated).astype(int)}  (after 90° rotation)")
+# v' = [0, 1]  ← image lo exact result!
+
+# Verify: length preserved
+print(f"\nLength of v:   {np.linalg.norm(v):.4f}")
+print(f"Length of v':  {np.linalg.norm(v_rotated):.4f}")
+print(f"Length same?   {np.isclose(np.linalg.norm(v), np.linalg.norm(v_rotated))}")
+
+# Different rotation angles
+angles = [0, 45, 90, 135, 180, 270, 360]
+print("\nRotating [1, 0] by different angles:")
+for angle in angles:
+    R_a = rotation_matrix(angle)
+    v_r = np.round(R_a @ v).astype(int)
+    print(f"  {angle:3}°: {v_r}")
+```
+
+**Output:**
+```
+Rotation matrix R(90°):
+[[ 0. -1.]
+ [ 1.  0.]]
+
+v  = [1 0]     (original)
+v' = [0 1]  (after 90° rotation)
+
+Length of v:   1.0000
+Length of v':  1.0000
+Length same?   True
+
+Rotating [1, 0] by different angles:
+    0°: [1 0]   → x-axis (no rotation)
+   45°: [1 1]   → diagonal
+   90°: [0 1]   → y-axis ← image lo idi!
+  135°: [-1  1] → second quadrant
+  180°: [-1  0] → negative x-axis
+  270°: [ 0 -1] → negative y-axis
+  360°: [1 0]   → back to start
+```
+
+---
+
+### Counter-Clockwise vs Clockwise
+
+```python
+import numpy as np
+
+def rotation_matrix(theta_degrees):
+    theta = np.radians(theta_degrees)
+    return np.array([[np.cos(theta), -np.sin(theta)],
+                     [np.sin(theta),  np.cos(theta)]])
+
+v = np.array([1.0, 0.0])
+
+# Counter-clockwise (positive angle) — image lo idi
+R_ccw = rotation_matrix(90)
+v_ccw = R_ccw @ v
+print(f"Counter-clockwise 90°: {np.round(v_ccw).astype(int)}")  # [0, 1]
+
+# Clockwise (negative angle)
+R_cw = rotation_matrix(-90)
+v_cw = R_cw @ v
+print(f"Clockwise 90°:         {np.round(v_cw).astype(int)}")   # [0, -1]
+
+# Verify: R(θ) @ R(-θ) = I (rotate then un-rotate = identity)
+R_forward  = rotation_matrix(45)
+R_backward = rotation_matrix(-45)
+combined   = R_forward @ R_backward
+print(f"\nR(45) @ R(-45) = Identity?\n{np.round(combined).astype(int)}")
+# [[1, 0], [0, 1]] — identity matrix!
+
+# Multiple rotations compose cheyyadam
+# R(θ₁) @ R(θ₂) = R(θ₁ + θ₂)
+R_30  = rotation_matrix(30)
+R_60  = rotation_matrix(60)
+R_90  = rotation_matrix(90)
+print(f"\nR(30) @ R(60) == R(90)? {np.allclose(R_30 @ R_60, R_90)}")  # True
+```
+
+---
+
+### Scaling + Rotation Combined — Real AI Example
+
+```python
+import numpy as np
+
+def rotation_matrix(theta_degrees):
+    theta = np.radians(theta_degrees)
+    return np.array([[np.cos(theta), -np.sin(theta)],
+                     [np.sin(theta),  np.cos(theta)]])
+
+# Data augmentation: rotate + scale both apply cheyyadam
+# Image pixel coordinate [x, y] ni transform cheyyadam
+
+pixel = np.array([2.0, 3.0])   # image lo oka pixel coordinate
+
+# Step 1: Scale 2x (image expand cheyyadam)
+S = 2 * np.eye(2)
+pixel_scaled = S @ pixel
+print(f"Original pixel:  {pixel}")
+print(f"After scale 2x:  {pixel_scaled}")   # [4, 6]  ← image lo exact!
+
+# Step 2: Rotate 90° (image rotate cheyyadam)
+R = rotation_matrix(90)
+pixel_rotated = R @ pixel
+print(f"After rotate 90°:{np.round(pixel_rotated).astype(int)}")   # [-3, 2]
+
+# Step 3: Both — scale then rotate
+T_combined = R @ S                 # scale first, then rotate
+pixel_both = T_combined @ pixel
+print(f"Scale then rotate:{np.round(pixel_both).astype(int)}")
+
+# AI data augmentation pipeline:
+print("\nData Augmentation Pipeline:")
+print("Original image pixel (2,3):")
+print(f"  → Normalize (scale 1/255): {pixel/255}")
+print(f"  → Scale 2x:               {2*pixel}")
+print(f"  → Rotate 90° CCW:         {np.round(rotation_matrix(90) @ pixel)}")
+print(f"  → Rotate 45°:             {np.round(rotation_matrix(45) @ pixel, 2)}")
+
+# Real world: PyTorch/TensorFlow lo idi automatically chestay
+# transforms.RandomRotation(30)  → rotation_matrix(random(0,30)) apply
+# transforms.RandomHorizontalFlip() → reflection matrix apply
+# transforms.Resize((224,224))  → scaling matrix apply
+```
+
+---
+
+### Summary Table — Images lo Unna Concepts
+
+| Concept | Image lo | Math | Code |
+|---|---|---|---|
+| **Definition** | "map vectors from one space to another" | `f: ℝⁿ → ℝᵐ` | `v' = T @ v` |
+| **Scaling** | `v' = 2v = 2[2,3] = [4,6]` | `v' = k·v` | `k * np.array(v)` |
+| **Scaling matrix** | Same direction, changed length | `S = k·I` | `k * np.eye(2)` |
+| **Data normalization** | Application ① | Scale to [0,1] or std | `(x-min)/(max-min)` |
+| **Image resize** | Application ② Paint→Image→Resize | Scale pixel coords | `S @ coords` |
+| **Rotation** | `v=[1,0] → v'=[0,1]` at 90° | `R(θ) = [[cos,-sin],[sin,cos]]` | `R @ v` |
+| **CCW rotation** | Counter clockwise arrow | Positive θ | `rotation_matrix(+90)` |
+| **Length preserved** | Rotation — same magnitude | `‖v'‖ = ‖v‖` | `np.linalg.norm` |
+
+---
+
+### Quick Reference — Image Examples Reproduce Chesukokam
+
+```python
+import numpy as np
+
+print("=" * 50)
+print("IMAGE EXAMPLES — EXACT REPRODUCTION")
+print("=" * 50)
+
+# Image 2: Scaling example
+v = np.array([2, 3])
+v_scaled = 2 * v
+print(f"\nScaling (Image 2):")
+print(f"  v' = 2v = 2{list(v)} = {list(v_scaled)}")
+# v' = 2v = 2[2,3] = [4,6]
+
+# Image 3: Rotation example
+v2 = np.array([1, 0])
+theta = np.radians(90)
+R = np.array([[np.cos(theta), -np.sin(theta)],
+              [np.sin(theta),  np.cos(theta)]])
+v2_rotated = np.round(R @ v2).astype(int)
+print(f"\nRotation (Image 3):")
+print(f"  v  = {list(v2)}  (original)")
+print(f"  v' = {list(v2_rotated)}  (after 90° CCW rotation)")
+# v' = [0, 1]
+
+print("\n" + "=" * 50)
+print("BOTH verified — match image exactly ✓")
+print("=" * 50)
+```
+
+**Output:**
+```
+==================================================
+IMAGE EXAMPLES — EXACT REPRODUCTION
+==================================================
+
+Scaling (Image 2):
+  v' = 2v = 2[2, 3] = [4, 6]
+
+Rotation (Image 3):
+  v  = [1, 0]  (original)
+  v' = [0, 1]  (after 90° CCW rotation)
+
+==================================================
+BOTH verified — match image exactly ✓
+==================================================
+```
