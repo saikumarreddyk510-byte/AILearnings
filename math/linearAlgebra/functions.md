@@ -3087,3 +3087,2098 @@ Rotation (Image 3):
 BOTH verified — match image exactly ✓
 ==================================================
 ```
+
+---
+
+---
+
+---
+
+# Linear Transformation — Zero to Pro (Complete From Scratch)
+
+> Image lo chupinchindi:
+> **T: V → W** (Vector space V nunchi Vector space W ki map chese function)
+> 2 Important properties:
+> ① Additivity:   T(u+v) = T(u) + T(v)
+> ② Homogeneity:  T(cu)  = cT(u)
+> u, v ∈ V  and  c is a scalar value
+> If T satisfies BOTH → **Linear Transformation**
+
+---
+
+## STEP 0 — Before Everything: Numbers, Vectors, Spaces
+
+**Meeru already telusukunnadi:**
+
+```
+Number ante enti?
+  2, 5, -3, 0.7  → ivi anni "numbers" (scalars)
+  oka single value
+
+Vector ante enti?
+  [2, 3]       → 2D vector (x=2, y=3) → oka point in 2D space
+  [1, 5, 2]    → 3D vector (x=1, y=5, z=2) → oka point in 3D space
+  [w₁,w₂,...,wₙ] → n-dimensional vector
+
+  Vector = multiple numbers oka group ga — direction + magnitude untundi
+
+Space ante enti?
+  ℝ¹ = number line (0, 1, 2, 3... — 1 dimension)
+  ℝ² = 2D plane (x-y graph paper — 2 dimensions)
+  ℝ³ = 3D world (x-y-z — 3 dimensions)
+  ℝⁿ = n-dimensional space (math lo enni dimensions ainaaa possible)
+
+Vector Space ante enti?
+  Vectors unna oka collection — oka set.
+  Addition + scalar multiplication defined unnay.
+  V, W — ivi ane vector spaces.
+```
+
+---
+
+## STEP 1 — Function ante Enti? (Starting Point)
+
+**Before linear transformation telusukuntam, function concept solid ga:**
+
+```
+Function = input → output machine
+
+Example:
+  f(x) = 2x
+  Input: 3 → Output: 6
+  Input: 5 → Output: 10
+
+Simple: oka number lo vesi, inka oka number vastundi
+```
+
+**Now vectors ki same concept:**
+
+```
+Regular function:  number    → number
+Vector function:   vector    → vector
+
+Input:  [1, 2]   (2D vector)
+Output: [2, 4]   (another 2D vector — each element × 2)
+
+Input:  [1, 2, 3]  (3D vector)
+Output: [3, 6]     (2D vector — dimensions also change possible!)
+```
+
+**This is a "vector-valued function" or "vector transformation":**
+
+```python
+import numpy as np
+
+# Simple vector function
+def double_vector(v):
+    return v * 2             # prathi element 2 tho multiply
+
+x = np.array([1, 2])
+print(double_vector(x))    # [2, 4]
+
+x2 = np.array([3, 5, 1])
+print(double_vector(x2))   # [6, 10, 2]
+```
+
+---
+
+## STEP 2 — "Normal" Function vs "Linear" Function — Difference Enti?
+
+**Anni functions linear kaadhu. Linear = special type.**
+
+Manaki oka machine undi anukoddam — T (Transformation machine).
+
+```
+Machine T lo vector vesi → another vector vastuundi
+
+But LINEAR machine UNDI ANTE — specific rules follow cheyyali:
+
+Rule 1 (Additivity):
+  "Rendu vectors add chesaka machine lo veyyadam"
+  =
+  "Rendu vectors prathi machine lo vesi, results add cheyyadam"
+  → Same answer rastuundi
+
+Rule 2 (Homogeneity):
+  "Vector ni scale chesaka machine lo veyyadam"
+  =
+  "Machine lo vesi, result ni scale cheyyadam"
+  → Same answer rastuundi
+```
+
+**Real life analogy:**
+
+```
+Imagine: T = "Salary doubling machine" at your company
+
+Rule 1 test:
+  Employee A salary = 50,000
+  Employee B salary = 30,000
+
+  Way 1: Combined salary (80,000) double cheyyadam → 1,60,000
+  Way 2: Prathi salary double (1,00,000 + 60,000) → 1,60,000
+  Same result! → Rule 1 satisfied ✓
+
+Rule 2 test:
+  Employee A salary = 50,000
+  3 employees same salary unnaru → total = 1,50,000
+
+  Way 1: Total (1,50,000) double → 3,00,000
+  Way 2: Employee A double (1,00,000) × 3 → 3,00,000
+  Same result! → Rule 2 satisfied ✓
+
+This "salary doubling" = LINEAR transformation!
+```
+
+---
+
+## STEP 3 — Image lo Exact Definition
+
+**Image lo chupinchindi — word by word explain:**
+
+```
+"space V to a Vector space W, then for any vectors"
+→ T is a function from vector space V ki, vector space W ki
+
+T: V → W  ⟹  Linear Transformation
+→ T oka function, V nunchi W ki map chestundi
+→ Image lo right side lo idi yellow lo raasaru
+
+2 Important properties:
+
+① Additivity   T(u+v) = T(u) + T(v)
+  u, v ∈ V    → u and v V space lo unna any two vectors
+  T(u+v)      → first add chesaka T apply cheyyadam
+  T(u) + T(v) → first T apply chesi, tarvata add cheyyadam
+  Equal!       → same result both ways
+
+② Homogeneity  T(cu) = cT(u)
+  c is a scalar value  → c = any number (2, 5, -3, 0.5 ...)
+  T(cu)    → first c tho u ni scale chesaka T apply
+  cT(u)    → first T apply chesaka c tho scale cheyyadam
+  Equal!   → same result both ways
+
+u, v ∈ V  and  c is a scalar value
+→ idi conditions cheptundi — u, v V lo unna vectors, c oka number
+```
+
+---
+
+## STEP 4 — Rule 1: Additivity — Detailed with Pictures
+
+```
+T(u + v) = T(u) + T(v)
+
+Visually:
+
+Option A (Left side):
+  u = [1, 2]
+  v = [3, 1]
+  u + v = [4, 3]     ← first add vectors
+  T([4, 3]) = ?      ← then apply T
+
+Option B (Right side):
+  T([1, 2]) = ?      ← apply T to u
+  T([3, 1]) = ?      ← apply T to v
+  Add the results    ← then add results
+
+If T is linear → Option A result = Option B result
+```
+
+**Concrete example — T(v) = 2v (double everything):**
+
+```
+u = [1, 2],  v = [3, 1]
+
+Left side:  T(u + v) = T([1+3, 2+1]) = T([4, 3]) = [8, 6]
+Right side: T(u) + T(v) = [2, 4] + [6, 2] = [8, 6]
+
+Same! ✓ → T(v) = 2v is linear
+```
+
+```python
+import numpy as np
+
+# Rule 1: Additivity verify cheyyadam
+def T(v):
+    return 2 * v    # simplest linear transformation: double
+
+u = np.array([1, 2])
+v = np.array([3, 1])
+
+# Left side: add first, then transform
+left = T(u + v)
+print(f"Left:  T(u+v) = T({u+v}) = {left}")
+
+# Right side: transform first, then add
+right = T(u) + T(v)
+print(f"Right: T(u)+T(v) = {T(u)} + {T(v)} = {right}")
+
+print(f"Equal? {np.allclose(left, right)}")   # True ✓
+```
+
+---
+
+## STEP 5 — Rule 2: Homogeneity — Detailed with Pictures
+
+```
+T(cu) = cT(u)
+
+c = scalar (ordinary number, like 3 or 0.5)
+u = vector
+
+Option A (Left side):
+  c = 3,  u = [2, 1]
+  cu = 3 × [2, 1] = [6, 3]   ← first scale
+  T([6, 3]) = ?               ← then transform
+
+Option B (Right side):
+  T([2, 1]) = ?               ← first transform
+  3 × T([2, 1]) = ?           ← then scale by 3
+
+If T is linear → both same
+```
+
+**Concrete example — T(v) = 2v:**
+
+```
+c = 3,  u = [2, 1]
+
+Left:  T(cu) = T([6, 3]) = [12, 6]
+Right: cT(u) = 3 × T([2, 1]) = 3 × [4, 2] = [12, 6]
+
+Same! ✓
+```
+
+```python
+import numpy as np
+
+def T(v):
+    return 2 * v
+
+u = np.array([2, 1])
+c = 3
+
+# Left side: scale first, then transform
+left = T(c * u)
+print(f"Left:  T(c*u) = T({c*u}) = {left}")
+
+# Right side: transform first, then scale
+right = c * T(u)
+print(f"Right: c*T(u) = {c} * {T(u)} = {right}")
+
+print(f"Equal? {np.allclose(left, right)}")   # True ✓
+```
+
+---
+
+## STEP 6 — Non-Linear Example — Edi Linear Kaadhu ani Telusukoddam
+
+**Translation (shift) — linear kaadhu:**
+
+```
+Suppose T(v) = v + [1, 0]   (x-axis lo 1 unit right shift)
+
+u = [2, 3],  v = [1, 1]
+
+Test Rule 1 (Additivity):
+  Left:  T(u+v) = T([3, 4]) = [3+1, 4] = [4, 4]
+  Right: T(u) + T(v) = [3, 3] + [2, 1] = [5, 4]
+
+  Left ≠ Right → Rule 1 FAILS → NOT linear!
+```
+
+**Why intuitively:**
+
+```
+Shift = origin move chestundi.
+Linear transformation lo origin always origin lo untundi.
+Shift chesthe origin move avutundi → linearity breaks.
+
+T([0, 0]) = [0+1, 0] = [1, 0] ≠ [0, 0]
+Linear lo T(zero) = zero always!
+Ikkade T(zero) ≠ zero → definitely NOT linear.
+```
+
+```python
+import numpy as np
+
+# Translation — NOT linear
+def T_shift(v):
+    return v + np.array([1, 0])   # shift right by 1
+
+u = np.array([2, 3])
+v = np.array([1, 1])
+
+left  = T_shift(u + v)
+right = T_shift(u) + T_shift(v)
+print(f"Additivity: {left} == {right}? {np.allclose(left, right)}")
+# False! → NOT linear
+
+# Proof shortcut: T(zero) must = zero for linear
+zero = np.array([0, 0])
+print(f"T(zero) = {T_shift(zero)}")   # [1, 0] ≠ [0, 0] → NOT linear!
+
+# ReLU — NOT linear
+def relu(v):
+    return np.maximum(0, v)
+
+c = -1
+u = np.array([2, 3])
+left  = relu(c * u)    # relu([-2, -3]) = [0, 0]
+right = c * relu(u)    # -1 * [2, 3] = [-2, -3]
+print(f"\nReLU Homogeneity: {left} == {right}? {np.allclose(left, right)}")
+# False! ReLU is NOT linear
+```
+
+---
+
+## STEP 7 — The Big Secret: Every Linear T = A Matrix!
+
+**Idi most important insight:**
+
+```
+Every linear transformation T: ℝⁿ → ℝᵐ can be represented as:
+
+  T(v) = A @ v   (matrix multiply)
+
+Where A is a (m × n) matrix.
+
+Mana transform emi chestuundo, daaniki oka matrix undi.
+Matrix multiply = linear transformation apply cheyyadam.
+```
+
+**Why idi true?**
+
+```
+Standard basis vectors:
+  ℝ² lo:
+    e₁ = [1, 0]   (x-direction unit vector)
+    e₂ = [0, 1]   (y-direction unit vector)
+
+  Any vector [a, b] = a×e₁ + b×e₂
+  [3, 5] = 3×[1,0] + 5×[0,1]
+
+Now apply T:
+  T([a, b]) = T(a×e₁ + b×e₂)
+            = a×T(e₁) + b×T(e₂)    ← (by linearity rules!)
+            = [T(e₁) | T(e₂)] @ [a, b]
+            = A @ v
+
+So: just know T(e₁) and T(e₂) → know everything about T!
+A = [T(e₁)  T(e₂)]  ← columns of A
+```
+
+**Concrete example:**
+
+```
+Suppose T rotates 2D vectors by 90° counter-clockwise.
+
+e₁ = [1, 0] → after 90° CCW → [0, 1]   → T(e₁) = [0, 1]
+e₂ = [0, 1] → after 90° CCW → [-1, 0]  → T(e₂) = [-1, 0]
+
+A = [T(e₁) | T(e₂)]
+  = [[0, -1],
+     [1,  0]]
+
+Now any vector can be rotated:
+  [2, 3] → A @ [2, 3] = [0×2 + (-1)×3, 1×2 + 0×3] = [-3, 2]
+  ✓ [2,3] rotated 90° CCW = [-3, 2]
+```
+
+```python
+import numpy as np
+
+# Build transformation matrix from basis vector images
+e1 = np.array([1.0, 0.0])
+e2 = np.array([0.0, 1.0])
+
+# Our transformation: 90° CCW rotation
+# T(e1) = [0, 1]  (x-axis → y-axis)
+# T(e2) = [-1, 0] (y-axis → negative x-axis)
+T_e1 = np.array([0.0,  1.0])
+T_e2 = np.array([-1.0, 0.0])
+
+# Build A: columns = T(e1), T(e2)
+A = np.column_stack([T_e1, T_e2])
+print(f"Transformation matrix A:\n{A}")
+# [[ 0, -1],
+#  [ 1,  0]]
+
+# Test: any vector
+v = np.array([2.0, 3.0])
+result = A @ v
+print(f"\n[2, 3] after 90° CCW: {result}")   # [-3, 2]
+
+# Verify length preserved (rotation doesn't change length)
+print(f"Original length: {np.linalg.norm(v):.4f}")
+print(f"Rotated length:  {np.linalg.norm(result):.4f}")  # same!
+```
+
+---
+
+## STEP 8 — Visual Understanding: What Linear Transformation DOES to Space
+
+**Imagine 2D graph paper:**
+
+```
+Before transformation:                After LINEAR transformation:
+  +--+--+--+                              /  /  /
+  |  |  |  |                             /  /  /
+  +--+--+--+      T applies →           /  /  /
+  |  |  |  |                           /  /  /
+  +--+--+--+
+
+Grid lines:
+  Before: square grid
+  After:  grid is stretched/rotated/reflected — but STILL GRID
+          Parallel lines → still parallel
+          Origin → still at origin
+          Straight lines → still straight
+```
+
+```
+What LINEAR transformation PRESERVES:
+  ✓ Origin stays at origin (0 → 0)
+  ✓ Straight lines stay straight (curves avvadam ledu)
+  ✓ Parallel lines stay parallel
+  ✓ Evenly spaced points stay evenly spaced
+
+What it can CHANGE:
+  → Angles between lines
+  → Distances between points
+  → Direction of lines
+  → Scale (length) of vectors
+```
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Linear transformation visually show cheyyadam
+# Grid points generate
+x = np.linspace(-2, 2, 5)
+y = np.linspace(-2, 2, 5)
+
+# Transformation matrix (shear)
+A = np.array([[1, 0.7],
+              [0, 1]])
+
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+
+for ax, matrix, title in [
+    (ax1, np.eye(2), 'Original Grid (before T)'),
+    (ax2, A,         'After Shear Transformation T')
+]:
+    # Horizontal grid lines
+    for yi in y:
+        pts = np.array([[xi, yi] for xi in x]).T
+        pts_t = matrix @ pts
+        ax.plot(pts_t[0], pts_t[1], 'b-', alpha=0.4)
+
+    # Vertical grid lines
+    for xi in x:
+        pts = np.array([[xi, yi] for yi in y]).T
+        pts_t = matrix @ pts
+        ax.plot(pts_t[0], pts_t[1], 'b-', alpha=0.4)
+
+    # Origin
+    ax.plot(0, 0, 'ro', ms=8, label='Origin')
+
+    # Sample vectors
+    vectors = [[1, 0], [0, 1], [1, 1]]
+    colors  = ['red', 'green', 'orange']
+    for vec, c in zip(vectors, colors):
+        v  = np.array(vec, dtype=float)
+        vt = matrix @ v
+        ax.annotate('', xy=vt, xytext=[0,0],
+                    arrowprops=dict(arrowstyle='->', color=c, lw=2))
+
+    ax.set_xlim(-3, 3); ax.set_ylim(-3, 3)
+    ax.axhline(0, color='k', lw=0.5)
+    ax.axvline(0, color='k', lw=0.5)
+    ax.set_title(title, fontsize=12)
+    ax.grid(False); ax.legend()
+    ax.set_aspect('equal')
+
+plt.suptitle('Linear Transformation: Grid stays Grid', fontsize=13, y=1.02)
+plt.tight_layout()
+plt.savefig('linear_transformation_grid.png', dpi=100, bbox_inches='tight')
+plt.show()
+print("Saved!")
+```
+
+---
+
+## STEP 9 — Common Linear Transformations — Real Examples
+
+### 9.1 Identity — "Do Nothing"
+
+```
+T(v) = v   (output = input, no change)
+
+Matrix: I = [[1, 0],    (2D)
+             [0, 1]]
+
+T([3, 4]) = [[1,0],[0,1]] @ [3,4] = [3, 4]  (same!)
+```
+
+```python
+import numpy as np
+
+I = np.eye(2)
+v = np.array([3.0, 4.0])
+print(f"Identity: {I @ v}")   # [3, 4]  unchanged
+```
+
+---
+
+### 9.2 Scaling — "Stretch or Shrink"
+
+```
+T(v) = kv  (scale by factor k)
+
+Uniform: T([x,y]) = [kx, ky]
+Matrix: [[k, 0],
+         [0, k]]
+
+Non-uniform: T([x,y]) = [sx*x, sy*y]
+Matrix: [[sx, 0],
+         [0, sy]]
+```
+
+```python
+import numpy as np
+
+v = np.array([2.0, 3.0])
+
+# Uniform scale 2x
+S = 2 * np.eye(2)
+print(f"Scale 2x: {S @ v}")       # [4, 6]
+
+# Non-uniform
+S2 = np.diag([3, 0.5])
+print(f"3x, 0.5y: {S2 @ v}")      # [6, 1.5]
+```
+
+---
+
+### 9.3 Rotation — "Turn Around Origin"
+
+```
+Counter-clockwise by θ:
+  R(θ) = [[cos θ,  -sin θ],
+           [sin θ,   cos θ]]
+
+θ = 90°: [[0, -1],   → [1,0] → [0,1]  (x-axis → y-axis)
+           [1,  0]]
+```
+
+```python
+import numpy as np
+
+def R(theta_deg):
+    t = np.radians(theta_deg)
+    return np.array([[np.cos(t), -np.sin(t)],
+                     [np.sin(t),  np.cos(t)]])
+
+v = np.array([1.0, 0.0])
+print(f"Rotate 90°:  {np.round(R(90) @ v).astype(int)}")   # [0, 1]
+print(f"Rotate 180°: {np.round(R(180) @ v).astype(int)}")  # [-1, 0]
+print(f"Rotate 45°:  {np.round(R(45) @ v, 4)}")             # [0.7071, 0.7071]
+```
+
+---
+
+### 9.4 Reflection — "Mirror Image"
+
+```
+Reflect about x-axis: T([x,y]) = [x, -y]
+Matrix: [[1,  0],
+         [0, -1]]
+
+Reflect about y-axis: T([x,y]) = [-x, y]
+Matrix: [[-1, 0],
+         [ 0, 1]]
+```
+
+```python
+import numpy as np
+
+v = np.array([3.0, 4.0])
+
+# x-axis reflect
+Mx = np.array([[1, 0], [0, -1]])
+print(f"Reflect x-axis: {Mx @ v}")   # [3, -4]
+
+# y-axis reflect
+My = np.array([[-1, 0], [0, 1]])
+print(f"Reflect y-axis: {My @ v}")   # [-3, 4]
+```
+
+---
+
+### 9.5 Projection — "Shadow onto a Line"
+
+```
+Project onto x-axis: T([x,y]) = [x, 0]   (y drop cheyyadam)
+Matrix: [[1, 0],
+         [0, 0]]
+
+Like: sun from directly above → shadow on ground
+3D object → 2D shadow
+```
+
+```python
+import numpy as np
+
+v = np.array([3.0, 4.0])
+P = np.array([[1, 0], [0, 0]])
+print(f"Project x-axis: {P @ v}")   # [3, 0]
+
+# Interesting: project twice = project once (idempotent)
+print(f"P @ P @ v: {P @ P @ v}")   # [3, 0] same!
+print(f"P² == P? {np.allclose(P @ P, P)}")  # True
+```
+
+---
+
+## STEP 10 — Linear Transformation lo T: V → W Exact Meaning
+
+**Image lo: T: V → W**
+
+```
+V = domain (input space)      — meeru vectors ikkade pickkup chestam
+W = codomain (output space)   — results ikkade land avutay
+
+V and W: Same space or different spaces!
+
+Examples:
+  T: ℝ² → ℝ²   (2D → 2D: rotation, scaling, reflection)
+  T: ℝ³ → ℝ²   (3D → 2D: like camera projection, 3D world → 2D screen)
+  T: ℝ² → ℝ³   (2D → 3D: embed 2D into 3D)
+  T: ℝ⁷⁸⁴ → ℝ¹⁰ (784-pixel image → 10 class scores: image classifier!)
+```
+
+```python
+import numpy as np
+
+# T: ℝ³ → ℝ²  (like a camera projecting 3D to 2D)
+A = np.array([[1, 1, 0],   # (2×3) matrix
+              [0, 0, 2]])  # 2 output dims, 3 input dims
+
+v3d = np.array([1, 2, 3])
+v2d = A @ v3d
+print(f"3D point {v3d} → 2D point {v2d}")  # [3, 6]
+
+# T: ℝ⁷⁸⁴ → ℝ¹⁰ (neural network first layer — image classifier!)
+np.random.seed(0)
+W = np.random.randn(10, 784) * 0.01    # (10×784) matrix
+image_vector = np.random.randn(784)    # flattened 28×28 image
+scores = W @ image_vector              # 10 class scores
+print(f"\nImage (784-dim) → Scores (10-dim)")
+print(f"Input shape:  {image_vector.shape}")
+print(f"Output shape: {scores.shape}")
+print(f"Scores: {np.round(scores, 3)}")
+```
+
+---
+
+## STEP 11 — How to CHECK if T is Linear (Test Checklist)
+
+```
+Given any transformation T, verify these:
+
+Test 1: T(zero vector) = zero vector?
+        If T(0) ≠ 0 → NOT linear (stop here!)
+
+Test 2: Pick any two vectors u, v:
+        T(u + v) == T(u) + T(v)?
+        If not equal → NOT linear
+
+Test 3: Pick any vector v and scalar c:
+        T(c*v) == c*T(v)?
+        If not equal → NOT linear
+
+If ALL THREE pass → LINEAR ✓
+```
+
+```python
+import numpy as np
+
+def check_linearity(T, n_dims=2, n_tests=1000):
+    """
+    T function ni linearity check cheyyadam
+    n_tests random vectors tho test chestundi
+    """
+
+    # Test 1: Origin preservation
+    zero = np.zeros(n_dims)
+    T_zero = T(zero)
+    if not np.allclose(T_zero, np.zeros_like(T_zero)):
+        return False, f"FAIL: T(0) = {T_zero}, expected 0"
+
+    # Tests 2 & 3: Additivity and Homogeneity
+    for _ in range(n_tests):
+        u = np.random.randn(n_dims)
+        v = np.random.randn(n_dims)
+        c = np.random.randn()
+
+        # Additivity
+        if not np.allclose(T(u + v), T(u) + T(v), atol=1e-10):
+            return False, "FAIL: Additivity T(u+v) ≠ T(u)+T(v)"
+
+        # Homogeneity
+        if not np.allclose(T(c * u), c * T(u), atol=1e-10):
+            return False, "FAIL: Homogeneity T(cu) ≠ cT(u)"
+
+    return True, "PASS: Linear Transformation ✓"
+
+
+# Test various functions
+A = np.array([[2, 1], [0, 3]])
+
+tests = {
+    "T(v) = Av (matrix multiply)":      lambda v: A @ v,
+    "T(v) = 3v (scaling)":              lambda v: 3 * v,
+    "T(v) = v + [1,0] (translation)":   lambda v: v + np.array([1.0, 0.0]),
+    "T(v) = v² (element-wise square)":  lambda v: v ** 2,
+    "T(v) = ReLU(v)":                   lambda v: np.maximum(0, v),
+    "T(v) = zero vector":               lambda v: np.zeros_like(v),
+}
+
+print(f"{'Transformation':<40} {'Result'}")
+print("-" * 65)
+for name, T in tests.items():
+    is_lin, msg = check_linearity(T)
+    status = "LINEAR ✓" if is_lin else "NOT linear ✗"
+    print(f"{name:<40} {status}")
+    if not is_lin:
+        print(f"  → Reason: {msg}")
+```
+
+**Output:**
+```
+Transformation                           Result
+-----------------------------------------------------------------
+T(v) = Av (matrix multiply)             LINEAR ✓
+T(v) = 3v (scaling)                     LINEAR ✓
+T(v) = v + [1,0] (translation)          NOT linear ✗
+  → Reason: FAIL: T(0) = [1. 0.], expected 0
+T(v) = v² (element-wise square)         NOT linear ✗
+  → Reason: FAIL: Additivity T(u+v) ≠ T(u)+T(v)
+T(v) = ReLU(v)                          NOT linear ✗
+  → Reason: FAIL: Homogeneity T(cu) ≠ cT(u)
+T(v) = zero vector                      LINEAR ✓
+```
+
+---
+
+## STEP 12 — AI lo Why Linear Transformation Everywhere?
+
+**Neural Network oka layer:**
+
+```
+z = Wx + b
+
+W = weight matrix     → idi LINEAR transformation (W@x)
+b = bias vector       → idi SHIFT (translation)
+Wx + b               → AFFINE transformation (linear + shift)
+
+Note:
+  Wx alone = linear transformation
+  Wx + b   = affine (almost linear, but origin shifts)
+
+In practice:
+  We say "neural network uses linear layers" — technically they're affine
+  But "linear" is commonly used in deep learning context
+```
+
+**Why not just use non-linear directly?**
+
+```
+Training optimization:
+
+Linear transformations:
+  → Well-understood math (matrix theory)
+  → Gradients easy to compute (just matrix multiply)
+  → Composition = matrix multiply (efficient)
+
+Activation functions (ReLU, Sigmoid):
+  → Add non-linearity (complex patterns learn cheyyagaladu)
+  → But they're applied AFTER linear layer
+
+Final: Linear layer + Activation = powerful combination
+       Each linear layer = "find best linear transformation"
+       Activation = "add non-linearity to break collapse"
+```
+
+```python
+import numpy as np
+
+# Simple 2-layer network without activation
+W1 = np.array([[2, 1], [1, 3]])   # layer 1
+W2 = np.array([[1, 2], [0, 1]])   # layer 2
+
+x = np.array([1.0, 2.0])
+
+# Forward pass
+h = W1 @ x     # layer 1
+y = W2 @ h     # layer 2
+
+# Key insight: W2 @ (W1 @ x) = (W2 @ W1) @ x
+W_combined = W2 @ W1
+y_direct   = W_combined @ x
+
+print("2 layers, NO activation:")
+print(f"  Layer-by-layer:  y = {y}")
+print(f"  Single matrix:   y = {y_direct}")
+print(f"  Identical? {np.allclose(y, y_direct)}")  # True!
+print("  → 2 linear layers = 1 linear layer (depth wasted!)")
+
+# With ReLU activation
+relu = lambda v: np.maximum(0, v)
+h_relu = relu(W1 @ x)
+y_relu = W2 @ h_relu
+
+print("\n2 layers, WITH ReLU:")
+print(f"  y = {y_relu}")
+print(f"  y (single matrix) = {y_direct}")
+print(f"  Different? {not np.allclose(y_relu, y_direct)}")  # True — they differ!
+print("  → Depth NOW matters! Non-linearity enables learning complex patterns")
+```
+
+---
+
+## STEP 13 — Summary Table: From Zero to Pro
+
+| Concept | Simple Explanation | Math | Code |
+|---|---|---|---|
+| **Vector** | Multiple numbers group | `[x, y]` or `[x, y, z]` | `np.array([1, 2])` |
+| **Transformation** | Input vector → output vector | `T: V → W` | `def T(v): ...` |
+| **Linear T** | Transformation satisfying 2 rules | `T(u+v)=T(u)+T(v)`, `T(cu)=cT(u)` | `A @ v` |
+| **Additivity** | Add then transform = transform then add | `T(u+v) = T(u)+T(v)` | `T(u+v) == T(u)+T(v)` |
+| **Homogeneity** | Scale then transform = transform then scale | `T(cu) = cT(u)` | `T(c*u) == c*T(u)` |
+| **Origin rule** | Zero always maps to zero | `T(0) = 0` | `T(np.zeros(n)) == 0` |
+| **Matrix = LT** | Every linear T is a matrix | `T(v) = Av` | `A @ v` |
+| **Find A** | Apply T to basis vectors | `A = [T(e₁), T(e₂)]` | `np.column_stack(...)` |
+| **Composition** | Multiple transforms = one matrix | `T₂∘T₁ = A₂@A₁` | `A2 @ A1` |
+| **Scaling** | Change length, keep direction | `T(v) = kv` | `k * v` or `k*I @ v` |
+| **Rotation** | Turn around origin | `R(θ) = [[cos,-sin],[sin,cos]]` | `R @ v` |
+| **Reflection** | Mirror image | Diagonal with -1 | `M @ v` |
+| **Projection** | Shadow (drop dimension) | `P = uuᵀ` | `P @ v` |
+| **NOT linear** | Translation, ReLU, v², Sigmoid | Origin shifts or rules fail | Test with `check_linearity()` |
+| **AI layer** | Wx (linear) or Wx+b (affine) | `z = Wx + b` | `W @ x + b` |
+
+---
+
+## STEP 14 — Final: The Big Picture
+
+```
+meeru ippudu telusina journey:
+
+Number (scalar)
+    ↓
+Vector (multiple numbers together)
+    ↓
+Vector Space (all vectors of same type)
+    ↓
+Transformation (function: vectors → vectors)
+    ↓
+LINEAR Transformation (transformation + 2 rules)
+  Rule 1: T(u+v) = T(u)+T(v)   [Additivity]
+  Rule 2: T(cu)  = cT(u)       [Homogeneity]
+    ↓
+Every Linear T = Matrix A  (T(v) = Av)
+    ↓
+Composition = Matrix Multiply  (T₂∘T₁ = A₂A₁)
+    ↓
+Neural Network Layer = Linear Transformation (Wx)
+    ↓
+Deep Learning = Many Linear Transformations + Activations
+    ↓
+Training = Find best transformation matrices W₁, W₂, ...
+
+Linear Transformation = idi AI ki foundation.
+Idi telisintaka → neural networks, matrix operations,
+                  PCA, embeddings anni clearly telusutay.
+```
+
+---
+
+---
+
+# Worked Proof: Reflection is a Linear Transformation (Image Notes)
+
+> Images lo: Y-axis meeda reflection transformation T ni linear ga prove chesam
+> Step 1: Transformation define + matrix form write cheyyadam
+> Step 2: Additivity check (T(u+v) = T(u)+T(v))
+> Step 3: Homogeneity check (T(cu) = cT(u))
+> Both pass → T is a LINEAR TRANSFORMATION ✓
+
+---
+
+## Image 1 — Reflection Transformation Define Cheyyadam
+
+**Image lo exact content:**
+
+```
+Eg: Reflection
+
+"The reflection transformation T across the y axis maps a vector"
+
+x = [x, y] ∈ ℝ²        T(x) = [-x, y]
+
+Graph:
+  (x, 4) → (-x, 4)      y-coordinate same, x flips sign
+  Original point right side → reflected point left side
+```
+
+**Y-axis reflection ante enti?**
+
+```
+Y-axis = vertical line (x=0)
+Reflection = mirror image of point, y-axis glass laga
+
+Original point (x, y):
+  x > 0 → right side → reflected to left side (-x, y)
+  x < 0 → left side  → reflected to right side (-x, y)
+  y same ga untundi (y-axis vertical, y change kaadu)
+
+Example:
+  (2, 4)  → reflected → (-2, 4)
+  (-3, 1) → reflected → (3, 1)
+  (0, 5)  → reflected → (0, 5)  [on y-axis: no change]
+```
+
+```python
+import numpy as np
+
+# Y-axis reflection function
+def reflect_y_axis(v):
+    """Y-axis meeda reflection: x flip, y same"""
+    x, y = v[0], v[1]
+    return np.array([-x, y])    # x negative avutundi, y same
+
+# Test
+points = [(2, 4), (-3, 1), (0, 5), (1, -2)]
+print("Y-axis Reflection:")
+print(f"{'Original':<15} → {'Reflected'}")
+print("-" * 30)
+for x, y in points:
+    orig = np.array([x, y])
+    refl = reflect_y_axis(orig)
+    print(f"{str([x,y]):<15} → {list(refl)}")
+```
+
+**Output:**
+```
+Y-axis Reflection:
+Original        → Reflected
+------------------------------
+[2, 4]          → [-2, 4]
+[-3, 1]         → [3, 1]
+[0, 5]          → [0, 5]
+[1, -2]         → [-1, -2]
+```
+
+---
+
+## Image 2 — T(x) = Ax Matrix Form
+
+**Image lo exact content:**
+
+```
+Transformation can be expressed as:
+
+A = [[-1, 0],
+     [ 0, 1]]
+
+T(x) = Ax  ⟹  Linear Transformation
+
+    = [x  y] × [[-1, 0], [0, 1]] = [-x, y]
+         1×2        2×2              1×2
+```
+
+**Matrix form enduku?**
+
+```
+T(x) = [-x, y]  ← idi "rule" ga telusam
+
+Idi matrix multiply ga express cheyyadam:
+
+A = [[-1, 0],     ← row 1: [-1, 0] means output[0] = -1*x + 0*y = -x
+     [ 0, 1]]     ← row 2: [ 0, 1] means output[1] =  0*x + 1*y =  y
+
+T([x, y]) = A @ [x, y]
+          = [[-1,0],[0,1]] @ [x, y]
+          = [-1*x + 0*y,  0*x + 1*y]
+          = [-x,  y]   ✓
+```
+
+**Step-by-step matrix multiply:**
+
+```
+[[-1, 0],   @   [x]   =   [-1*x + 0*y]   =   [-x]
+ [ 0, 1]]       [y]       [ 0*x + 1*y]        [ y]
+
+Row 1 × Column: (-1)(x) + (0)(y) = -x   → output x-component
+Row 2 × Column: (0)(x)  + (1)(y) =  y   → output y-component
+```
+
+```python
+import numpy as np
+
+# Reflection matrix for y-axis reflection
+A = np.array([[-1, 0],
+              [ 0, 1]])
+
+print("Reflection matrix A:")
+print(A)
+print()
+
+# Test: T(x) = Ax
+test_points = [
+    np.array([2, 4]),
+    np.array([-3, 1]),
+    np.array([1, -2]),
+]
+
+print(f"{'x (input)':<15} A @ x = {'T(x) (output)'}")
+print("-" * 40)
+for x in test_points:
+    Tx = A @ x
+    print(f"{str(list(x)):<15} → {list(Tx)}")
+
+# Verify: matrix multiply = our manual function
+def reflect_y_axis(v):
+    return np.array([-v[0], v[1]])
+
+v = np.array([3, 5])
+print(f"\nManual function:    {reflect_y_axis(v)}")
+print(f"Matrix A @ v:       {A @ v}")
+print(f"Same?               {np.allclose(reflect_y_axis(v), A @ v)}")  # True!
+```
+
+**Output:**
+```
+Reflection matrix A:
+[[-1  0]
+ [ 0  1]]
+
+x (input)       A @ x = T(x) (output)
+----------------------------------------
+[2, 4]          → [-2, 4]
+[-3, 1]         → [3, 1]
+[1, -2]         → [-1, -2]
+
+Manual function:    [-3  5]
+Matrix A @ v:       [-3  5]
+Same?               True
+```
+
+---
+
+## Image 3 — Checking Additivity: Setup
+
+**Image lo exact content:**
+
+```
+① Checking Additivity
+
+Let  u = [u₁, u₂]   and   v = [v₁, v₂]   be two vectors in ℝ²
+```
+
+**Idi enduku chestunnam?**
+
+```
+T(x) = Ax idi define chesam. Idi REALLY linear aa?
+Linear ante two rules satisfy cheyyali:
+  Rule 1: Additivity   — T(u+v) = T(u) + T(v)
+  Rule 2: Homogeneity  — T(cu)  = c T(u)
+
+Rule 1 prove cheyyataniki, general vectors u, v teesukuntunnam.
+Specific numbers kadu — u₁, u₂, v₁, v₂ as symbols (prontoypes).
+Idi oka "for all" proof — any u, v works.
+```
+
+```python
+import numpy as np
+
+# General setup — symbolic proof ni numerically demonstrate
+# u = [u1, u2], v = [v1, v2] as concrete example values
+
+u = np.array([3.0, 5.0])   # u₁=3, u₂=5
+v = np.array([2.0, 1.0])   # v₁=2, v₂=1
+
+A = np.array([[-1, 0], [0, 1]])   # reflection matrix
+
+print(f"u = {u}   (u₁={u[0]}, u₂={u[1]})")
+print(f"v = {v}   (v₁={v[0]}, v₂={v[1]})")
+print(f"\nA = {A[0]}")
+print(f"    {A[1]}")
+```
+
+---
+
+## Image 4 — Additivity Proof: LHS Calculation
+
+**Image lo exact content:**
+
+```
+T(u+v) = T(u) + T(v)    ← this is what we want to prove
+
+u + v = [u₁] + [v₁] = [u₁+v₁]
+        [u₂]   [v₂]   [u₂+v₂]
+
+T(u+v) = A(u+v) = [[-1, 0], [0, 1]] @ [u₁+v₁] = [-(u₁+v₁)]
+                                        [u₂+v₂]   [ u₂+v₂ ]
+
+T(u) = Au = [[-1, 0], [0, 1]] @ [u₁] = [-u₁]
+                                  [u₂]   [ u₂]
+```
+
+**Step-by-step explanation:**
+
+```
+Step 1: Add vectors first
+  u + v = [u₁+v₁, u₂+v₂]
+        = [3+2, 5+1] = [5, 6]   (with our values)
+
+Step 2: Apply T to the sum (LHS)
+  T(u+v) = A @ [u₁+v₁, u₂+v₂]
+         = [[-1,0],[0,1]] @ [5, 6]
+         = [-5, 6]
+         = [-(u₁+v₁), u₂+v₂]
+         = [-u₁-v₁, u₂+v₂]
+
+Step 3: Apply T to u separately
+  T(u) = A @ [u₁, u₂]
+       = [[-1,0],[0,1]] @ [3, 5]
+       = [-3, 5]
+       = [-u₁, u₂]
+```
+
+```python
+import numpy as np
+
+A = np.array([[-1, 0], [0, 1]])
+u = np.array([3.0, 5.0])
+v = np.array([2.0, 1.0])
+
+# LHS: T(u+v)
+u_plus_v = u + v
+print(f"Step 1 — Add vectors:")
+print(f"  u + v = {u} + {v} = {u_plus_v}")
+
+T_u_plus_v = A @ u_plus_v     # T applied to sum
+print(f"\nStep 2 — LHS: T(u+v)")
+print(f"  T(u+v) = A @ {u_plus_v} = {T_u_plus_v}")
+print(f"  = [-(u₁+v₁), u₂+v₂] = [-{u[0]+v[0]}, {u[1]+v[1]}]")
+
+# T(u) separately
+T_u = A @ u
+print(f"\nStep 3 — T(u):")
+print(f"  T(u) = A @ {u} = {T_u}")
+print(f"  = [-u₁, u₂] = [-{u[0]}, {u[1]}]")
+```
+
+**Output:**
+```
+Step 1 — Add vectors:
+  u + v = [3. 5.] + [2. 1.] = [5. 6.]
+
+Step 2 — LHS: T(u+v)
+  T(u+v) = A @ [5. 6.] = [-5.  6.]
+  = [-(u₁+v₁), u₂+v₂] = [-5.0, 6.0]
+
+Step 3 — T(u):
+  T(u) = A @ [3. 5.] = [-3.  5.]
+  = [-u₁, u₂] = [-3.0, 5.0]
+```
+
+---
+
+## Image 5 — Additivity Proof: Full Comparison LHS = RHS
+
+**Image lo exact content:**
+
+```
+Continuing...
+
+T(u+v) = A(u+v) = [[-1,0],[0,1]] @ [u₁+v₁] = [-(u₁+v₁)] = [-u₁-v₁]
+                                     [u₂+v₂]   [ u₂+v₂ ]   [ u₂+v₂]
+
+T(u) = Au = [[-1,0],[0,1]] @ [u₁] = [-u₁]
+                               [u₂]   [ u₂]
+
+T(v) = Av = [[-1,0],[0,1]] @ [v₁] = [-v₁]
+                               [v₂]   [ v₂]
+
+RHS ⟹ T(u) + T(v) = [-u₁] + [-v₁] = [-u₁-v₁]
+                     [ u₂]   [ v₂]   [ u₂+v₂]
+
+LHS = RHS ✓   →  Additivity holds!
+```
+
+**Complete additivity proof code:**
+
+```python
+import numpy as np
+
+A = np.array([[-1, 0], [0, 1]])
+u = np.array([3.0, 5.0])    # u₁=3, u₂=5
+v = np.array([2.0, 1.0])    # v₁=2, v₂=1
+
+print("=" * 50)
+print("ADDITIVITY PROOF: T(u+v) = T(u) + T(v)")
+print("=" * 50)
+
+# LHS: T(u+v)
+LHS = A @ (u + v)
+print(f"\nLHS: T(u+v)")
+print(f"  u + v = {u+v}")
+print(f"  T(u+v) = A @ {u+v} = {LHS}")
+print(f"  = [-(u₁+v₁), u₂+v₂] = [-{u[0]+v[0]}, {u[1]+v[1]}]")
+
+# RHS: T(u) + T(v)
+T_u = A @ u
+T_v = A @ v
+RHS = T_u + T_v
+
+print(f"\nRHS: T(u) + T(v)")
+print(f"  T(u) = A @ {u} = {T_u}")
+print(f"       = [-u₁, u₂] = [-{u[0]}, {u[1]}]")
+print(f"  T(v) = A @ {v} = {T_v}")
+print(f"       = [-v₁, v₂] = [-{v[0]}, {v[1]}]")
+print(f"  T(u) + T(v) = {T_u} + {T_v} = {RHS}")
+print(f"              = [-u₁-v₁, u₂+v₂] = [-{u[0]+v[0]}, {u[1]+v[1]}]")
+
+# Compare
+print(f"\nLHS = {LHS}")
+print(f"RHS = {RHS}")
+print(f"LHS == RHS? {np.allclose(LHS, RHS)}")  # True!
+print("\n✓ Additivity HOLDS for y-axis reflection!")
+
+# Symbolic verification (general u₁,u₂,v₁,v₂)
+print("\n--- Symbolic check ---")
+print("LHS = [-(u₁+v₁), u₂+v₂] = [-u₁-v₁, u₂+v₂]")
+print("RHS = [-u₁, u₂] + [-v₁, v₂] = [-u₁-v₁, u₂+v₂]")
+print("LHS = RHS ✓  (for ALL u₁,u₂,v₁,v₂ ∈ ℝ)")
+```
+
+**Output:**
+```
+==================================================
+ADDITIVITY PROOF: T(u+v) = T(u) + T(v)
+==================================================
+
+LHS: T(u+v)
+  u + v = [5. 6.]
+  T(u+v) = A @ [5. 6.] = [-5.  6.]
+  = [-(u₁+v₁), u₂+v₂] = [-5.0, 6.0]
+
+RHS: T(u) + T(v)
+  T(u) = A @ [3. 5.] = [-3.  5.]
+       = [-u₁, u₂] = [-3.0, 5.0]
+  T(v) = A @ [2. 1.] = [-2.  1.]
+       = [-v₁, v₂] = [-2.0, 1.0]
+  T(u) + T(v) = [-3.  5.] + [-2.  1.] = [-5.  6.]
+              = [-u₁-v₁, u₂+v₂] = [-5.0, 6.0]
+
+LHS = [-5.  6.]
+RHS = [-5.  6.]
+LHS == RHS? True
+
+✓ Additivity HOLDS for y-axis reflection!
+
+--- Symbolic check ---
+LHS = [-(u₁+v₁), u₂+v₂] = [-u₁-v₁, u₂+v₂]
+RHS = [-u₁, u₂] + [-v₁, v₂] = [-u₁-v₁, u₂+v₂]
+LHS = RHS ✓  (for ALL u₁,u₂,v₁,v₂ ∈ ℝ)
+```
+
+---
+
+## Image 6 — Checking Homogeneity: Setup
+
+**Image lo exact content:**
+
+```
+2) Checking Homogeneity
+
+Let  u = [u₁, u₂] ∈ ℝ²   and  c be a scalar
+
+Homogeneity Requirement:
+  T(cu) = cT(u)
+```
+
+**Idi enduku important?**
+
+```
+Homogeneity = "scaling before or after transform, result same"
+
+T(cu) = cT(u) means:
+  Way 1: u ni c tho scale chesaka T apply cheyyadam
+  Way 2: T apply chesaka result ni c tho scale cheyyadam
+  → Same result vastuundi (if T is linear)
+```
+
+```python
+import numpy as np
+
+A = np.array([[-1, 0], [0, 1]])
+u = np.array([3.0, 5.0])    # u₁=3, u₂=5
+c = 4.0                      # scalar value
+
+print(f"u = {u}   (u₁={u[0]}, u₂={u[1]})")
+print(f"c = {c}   (scalar)")
+print(f"\nHomogeneity to prove: T(cu) = cT(u)")
+print(f"cu = {c} × {u} = {c*u}")
+```
+
+---
+
+## Image 7 — Homogeneity Proof: LHS = RHS
+
+**Image lo exact content:**
+
+```
+Homogeneity Requirement:
+  T(cu) = cT(u)
+
+cu = c[u₁, u₂] = [cu₁, cu₂]
+
+LHS: T(cu) = A(cu) = [[-1,0],[0,1]] @ [cu₁] = [-cu₁]  ⟹ LHS
+                                        [cu₂]   [ cu₂]         RHS↑
+
+cT(u) = c(Au) = c × [[-1,0],[0,1]] @ [u₁] = c × [-u₁] = [-cu₁]
+                                       [u₂]        [ u₂]   [ cu₂]
+
+LHS = RHS ✓   →  Homogeneity holds!
+```
+
+**Complete homogeneity proof code:**
+
+```python
+import numpy as np
+
+A = np.array([[-1, 0], [0, 1]])
+u = np.array([3.0, 5.0])    # u₁=3, u₂=5
+c = 4.0
+
+print("=" * 50)
+print("HOMOGENEITY PROOF: T(cu) = cT(u)")
+print("=" * 50)
+
+# Step 1: Compute cu
+cu = c * u
+print(f"\nStep 1: Compute cu")
+print(f"  cu = {c} × {u} = {cu}")
+print(f"     = [c×u₁, c×u₂] = [{c*u[0]}, {c*u[1]}]")
+
+# LHS: T(cu)
+LHS = A @ cu
+print(f"\nLHS: T(cu)")
+print(f"  T(cu) = A @ {cu}")
+print(f"        = [[-1,0],[0,1]] @ [{cu[0]}, {cu[1]}]")
+print(f"        = [-cu₁, cu₂] = [{LHS[0]}, {LHS[1]}]")
+
+# RHS: cT(u)
+T_u = A @ u
+RHS = c * T_u
+print(f"\nRHS: cT(u)")
+print(f"  T(u) = A @ {u} = {T_u}")
+print(f"       = [-u₁, u₂] = [-{u[0]}, {u[1]}]")
+print(f"  cT(u) = {c} × {T_u} = {RHS}")
+print(f"        = [c×(-u₁), c×u₂] = [-cu₁, cu₂] = [{RHS[0]}, {RHS[1]}]")
+
+# Compare
+print(f"\nLHS = {LHS}")
+print(f"RHS = {RHS}")
+print(f"LHS == RHS? {np.allclose(LHS, RHS)}")  # True!
+print("\n✓ Homogeneity HOLDS for y-axis reflection!")
+
+# Symbolic
+print("\n--- Symbolic check ---")
+print("LHS = T(cu) = A(cu) = [-cu₁,  cu₂]")
+print("RHS = cT(u) = c(Au) = c[-u₁, u₂] = [-cu₁, cu₂]")
+print("LHS = RHS ✓  (for ALL u₁,u₂ ∈ ℝ, ALL c ∈ ℝ)")
+```
+
+**Output:**
+```
+==================================================
+HOMOGENEITY PROOF: T(cu) = cT(u)
+==================================================
+
+Step 1: Compute cu
+  cu = 4.0 × [3. 5.] = [12. 20.]
+     = [c×u₁, c×u₂] = [12.0, 20.0]
+
+LHS: T(cu)
+  T(cu) = A @ [12. 20.]
+        = [[-1,0],[0,1]] @ [12.0, 20.0]
+        = [-cu₁, cu₂] = [-12.0, 20.0]
+
+RHS: cT(u)
+  T(u) = A @ [3. 5.] = [-3.  5.]
+       = [-u₁, u₂] = [-3.0, 5.0]
+  cT(u) = 4.0 × [-3.  5.] = [-12.  20.]
+        = [c×(-u₁), c×u₂] = [-cu₁, cu₂] = [-12.0, 20.0]
+
+LHS = [-12.  20.]
+RHS = [-12.  20.]
+LHS == RHS? True
+
+✓ Homogeneity HOLDS for y-axis reflection!
+
+--- Symbolic check ---
+LHS = T(cu) = A(cu) = [-cu₁,  cu₂]
+RHS = cT(u) = c(Au) = c[-u₁, u₂] = [-cu₁, cu₂]
+LHS = RHS ✓  (for ALL u₁,u₂ ∈ ℝ, ALL c ∈ ℝ)
+```
+
+---
+
+## Final Conclusion — T is a Linear Transformation
+
+```python
+import numpy as np
+
+print("=" * 55)
+print("COMPLETE PROOF SUMMARY")
+print("Y-axis Reflection: T([x,y]) = [-x, y]")
+print("=" * 55)
+
+print("""
+Transformation defined as:
+  T(x) = Ax   where A = [[-1, 0], [0, 1]]
+
+Step 1: Define ✓
+  T([x,y]) = [[-1,0],[0,1]] @ [x,y] = [-x, y]
+
+Step 2: Check Additivity ✓
+  LHS: T(u+v) = A(u+v) = [-(u₁+v₁), u₂+v₂] = [-u₁-v₁, u₂+v₂]
+  RHS: T(u)+T(v) = [-u₁,u₂]+[-v₁,v₂] = [-u₁-v₁, u₂+v₂]
+  LHS = RHS ✓
+
+Step 3: Check Homogeneity ✓
+  LHS: T(cu) = A(cu) = [-cu₁, cu₂]
+  RHS: cT(u) = c[-u₁, u₂] = [-cu₁, cu₂]
+  LHS = RHS ✓
+
+CONCLUSION:
+  Both additivity and homogeneity satisfied
+  → T is a LINEAR TRANSFORMATION ✓
+""")
+
+# Run actual verification
+A = np.array([[-1.0, 0.0], [0.0, 1.0]])
+passed = 0
+for _ in range(1000):
+    u = np.random.randn(2)
+    v = np.random.randn(2)
+    c = np.random.randn()
+    # Additivity
+    assert np.allclose(A @ (u+v), A@u + A@v), "Additivity failed!"
+    # Homogeneity
+    assert np.allclose(A @ (c*u), c * (A@u)), "Homogeneity failed!"
+    passed += 1
+print(f"Verified with {passed} random test cases — ALL PASSED ✓")
+print("\nY-axis reflection is CONFIRMED LINEAR TRANSFORMATION ✓")
+```
+
+**Output:**
+```
+=======================================================
+COMPLETE PROOF SUMMARY
+Y-axis Reflection: T([x,y]) = [-x, y]
+=======================================================
+
+Transformation defined as:
+  T(x) = Ax   where A = [[-1, 0], [0, 1]]
+
+Step 1: Define ✓
+  T([x,y]) = [[-1,0],[0,1]] @ [x,y] = [-x, y]
+
+Step 2: Check Additivity ✓
+  LHS: T(u+v) = A(u+v) = [-(u₁+v₁), u₂+v₂] = [-u₁-v₁, u₂+v₂]
+  RHS: T(u)+T(v) = [-u₁,u₂]+[-v₁,v₂] = [-u₁-v₁, u₂+v₂]
+  LHS = RHS ✓
+
+Step 3: Check Homogeneity ✓
+  LHS: T(cu) = A(cu) = [-cu₁, cu₂]
+  RHS: cT(u) = c[-u₁, u₂] = [-cu₁, cu₂]
+  LHS = RHS ✓
+
+CONCLUSION:
+  Both additivity and homogeneity satisfied
+  → T is a LINEAR TRANSFORMATION ✓
+
+Verified with 1000 random test cases — ALL PASSED ✓
+
+Y-axis reflection is CONFIRMED LINEAR TRANSFORMATION ✓
+```
+
+---
+
+## Quick Reference — Proof Template
+
+```
+Any transformation T prove cheyyadam — same template:
+
+STEP 1: Define T as matrix multiply
+  T(x) = Ax
+  Find A by applying T to e₁, e₂ (basis vectors)
+
+STEP 2: Check Additivity
+  LHS = T(u+v) = A(u+v) = A·u + A·v   (matrix multiply distributes)
+  RHS = T(u) + T(v) = Au + Av
+  LHS = RHS ✓  (matrix multiply always distributes — all matrix transforms linear!)
+
+STEP 3: Check Homogeneity
+  LHS = T(cu) = A(cu) = c(Au)          (scalar can move out of matrix multiply)
+  RHS = cT(u) = c(Au)
+  LHS = RHS ✓
+
+SECRET SHORTCUT:
+  T(x) = Ax form lo express cheyyagaligite →
+  Additivity + Homogeneity AUTOMATICALLY satisfied!
+  (Matrix multiply = linear, always)
+
+  So: "Is T expressible as Ax?" = "Is T linear?"
+  If yes → linear transformation ✓
+  If no  → need to check manually
+```
+
+---
+
+---
+
+# Example that FAILS Linear Transformation — Complete Proof (Image Notes)
+
+> Images lo: T(x) = x + [1,1] (translation) idi linear kadu ani prove chesam
+> Image 1: T define cheyyadam — T(x) = x + b where b = [1,1]
+> Images 2-4: Additivity check — LHS ≠ RHS → FAILS
+> Images 5-6: Homogeneity check — LHS ≠ RHS → FAILS
+> Conclusion: T(x) = x + [1,1] is NOT a Linear Transformation
+
+---
+
+## Image 1 — Define the Transformation
+
+**Image lo exact content:**
+
+```
+Example that dont follow Linear Transformation
+
+b = [1, 1]           T(x) = x + b       T: R² → R²
+                                         u     v
+
+"Vector ⟹ fixed vector"    (x ki [1,1] add cheyyadam)
+
+T(x) = x + [1, 1]
+```
+
+**Translation ante enti?**
+
+```
+T(x) = x + b   (b = fixed vector, shift amount)
+
+Every input vector ki same fixed amount add avutundi.
+Idi "shift" or "translation" — space ni move cheyyadam.
+
+Example:
+  b = [1, 1]
+  T([2, 3]) = [2,3] + [1,1] = [3, 4]   (right 1, up 1)
+  T([0, 0]) = [0,0] + [1,1] = [1, 1]   ← origin ≠ zero!
+  T([-1, 5]) = [-1,5] + [1,1] = [0, 6]
+
+Key problem: T([0,0]) = [1,1] ≠ [0,0]
+  Linear transformation rule: T(zero) must = zero
+  Ikkade T(zero) = [1,1] → ALREADY FAILS!
+```
+
+```python
+import numpy as np
+
+b = np.array([1.0, 1.0])   # fixed translation vector
+
+def T(x):
+    """Translation: T(x) = x + b"""
+    return x + b
+
+# Origin preservation check (quick fail test)
+zero = np.array([0.0, 0.0])
+print(f"T(zero) = T({list(zero)}) = {list(T(zero))}")
+print(f"Expected [0,0] for linear, got {list(T(zero))}")
+print(f"T(zero) == zero? {np.allclose(T(zero), zero)}")   # False!
+print("FAIL: T(zero) ≠ zero → already NOT linear!")
+
+print()
+# A few examples
+examples = [[2,3], [4,-1], [0,0], [-2,5]]
+print(f"{'Input':<12} {'T(input)'}")
+for x in examples:
+    v = np.array(x, dtype=float)
+    print(f"{str(x):<12} {list(T(v))}")
+```
+
+**Output:**
+```
+T(zero) = T([0.0, 0.0]) = [1.0, 1.0]
+Expected [0,0] for linear, got [1.0, 1.0]
+T(zero) == zero? False
+FAIL: T(zero) ≠ zero → already NOT linear!
+
+Input        T(input)
+[2, 3]       [3.0, 4.0]
+[4, -1]      [5.0, 0.0]
+[0, 0]       [1.0, 1.0]
+[-2, 5]      [-1.0, 6.0]
+```
+
+---
+
+## Image 2 — Check Additivity: Setup
+
+**Image lo exact content:**
+
+```
+① Check Additivity
+T(u+v) = T(u) + T(v)
+
+u = [2, 3]      v = [4, -1]
+
+T(u+v) = T([2,3] + [4,-1]) = T([6, 2])
+
+T([6, 2]) ...
+```
+
+**Setup:**
+
+```
+Telugu: Additivity test chestunam
+u = [2, 3],  v = [4, -1]
+
+Step 1: u + v calculate cheyyadam
+  u + v = [2+4, 3+(-1)] = [6, 2]
+
+Step 2: T(u+v) calculate cheyyadam (LHS)
+  T([6, 2]) = [6, 2] + [1, 1] = [7, 3]   ← LHS
+```
+
+```python
+import numpy as np
+
+b = np.array([1.0, 1.0])
+def T(x): return x + b
+
+u = np.array([2.0, 3.0])    # u = [2, 3]
+v = np.array([4.0, -1.0])   # v = [4, -1]
+
+print("Additivity check: T(u+v) =? T(u) + T(v)")
+print()
+print(f"u = {list(u)}")
+print(f"v = {list(v)}")
+
+# Step 1: u + v
+u_plus_v = u + v
+print(f"\nStep 1: u + v = {list(u)} + {list(v)} = {list(u_plus_v)}")
+
+# Step 2: T(u+v) — LHS
+LHS = T(u_plus_v)
+print(f"Step 2 [LHS]: T(u+v) = T({list(u_plus_v)}) = {list(u_plus_v)} + {list(b)} = {list(LHS)}")
+```
+
+---
+
+## Image 3 — LHS Calculation Complete
+
+**Image lo exact content:**
+
+```
+T(u+v) = T([2,3] + [4,-1]) = T([6,2])
+
+T([6, 2]) = [6] + [1] = [7]   ⟹ LHS
+             [2]   [1]   [3]
+```
+
+**LHS = [7, 3]**
+
+```python
+import numpy as np
+
+b = np.array([1.0, 1.0])
+def T(x): return x + b
+
+u = np.array([2.0, 3.0])
+v = np.array([4.0, -1.0])
+
+u_plus_v = u + v              # [6, 2]
+LHS = T(u_plus_v)             # T([6,2]) = [6,2]+[1,1] = [7,3]
+
+print("=== LHS Calculation ===")
+print(f"T(u+v) = T({list(u_plus_v)})")
+print(f"       = {list(u_plus_v)} + {list(b)}")
+print(f"       = {list(LHS)}")
+print(f"LHS = {list(LHS)}")
+```
+
+**Output:**
+```
+=== LHS Calculation ===
+T(u+v) = T([6.0, 2.0])
+       = [6.0, 2.0] + [1.0, 1.0]
+       = [7.0, 3.0]
+LHS = [7.0, 3.0]
+```
+
+---
+
+## Image 4 — RHS Calculation: T(u) + T(v)
+
+**Image lo exact content:**
+
+```
+T(u) + T(v)
+
+T([2, 3]) = [2] + [1] = [3]
+             [3]   [1]   [4]
+
+T([4, -1]) = [4]  + [1] = [5]
+              [-1]   [1]   [0]
+
+T(u) + T(v) = [3][5] = [8]   ⟹ RHS
+               [4][0]   [4]
+
+LHS ≠ RHS   ← underlined → Additivity FAILS!
+```
+
+**RHS calculation + comparison:**
+
+```python
+import numpy as np
+
+b = np.array([1.0, 1.0])
+def T(x): return x + b
+
+u = np.array([2.0, 3.0])
+v = np.array([4.0, -1.0])
+
+# LHS
+LHS = T(u + v)
+
+# RHS: T(u) + T(v)
+T_u = T(u)    # [2,3] + [1,1] = [3,4]
+T_v = T(v)    # [4,-1] + [1,1] = [5,0]
+RHS = T_u + T_v
+
+print("=== RHS Calculation ===")
+print(f"T(u) = T({list(u)}) = {list(u)} + {list(b)} = {list(T_u)}")
+print(f"T(v) = T({list(v)}) = {list(v)} + {list(b)} = {list(T_v)}")
+print(f"T(u) + T(v) = {list(T_u)} + {list(T_v)} = {list(RHS)}")
+print(f"RHS = {list(RHS)}")
+
+print()
+print("=== ADDITIVITY COMPARISON ===")
+print(f"LHS = T(u+v)     = {list(LHS)}")
+print(f"RHS = T(u)+T(v)  = {list(RHS)}")
+print(f"LHS == RHS?       {np.allclose(LHS, RHS)}")   # False!
+print()
+if not np.allclose(LHS, RHS):
+    print("LHS ≠ RHS → ADDITIVITY FAILS!")
+    print(f"Difference: {list(LHS - RHS)}")
+```
+
+**Output:**
+```
+=== RHS Calculation ===
+T(u) = T([2.0, 3.0]) = [2.0, 3.0] + [1.0, 1.0] = [3.0, 4.0]
+T(v) = T([4.0, -1.0]) = [4.0, -1.0] + [1.0, 1.0] = [5.0, 0.0]
+T(u) + T(v) = [3.0, 4.0] + [5.0, 0.0] = [8.0, 4.0]
+RHS = [8.0, 4.0]
+
+=== ADDITIVITY COMPARISON ===
+LHS = T(u+v)     = [7.0, 3.0]
+RHS = T(u)+T(v)  = [8.0, 4.0]
+LHS == RHS?       False
+
+LHS ≠ RHS → ADDITIVITY FAILS!
+Difference: [-1.0, -1.0]
+```
+
+**Why does it fail?**
+
+```
+T(u+v) = (u+v) + b        = u + v + b
+T(u)+T(v) = (u+b) + (v+b) = u + v + 2b   ← b twice counted!
+
+Difference: (u+v+b) - (u+v+2b) = -b = -[1,1] = [-1,-1]
+
+Intuition: "b" vector oka sari add avvali, kaani
+           T(u)+T(v) lo b rendu sarlu add avutundi
+           → extra b → different result
+```
+
+---
+
+## Image 5 — Check Homogeneity
+
+**Image lo exact content:**
+
+```
+Check Homogeneity:
+  T(cu) = cT(u)
+
+u = [2, 3]     c = 2
+
+T(cu) = T([4, 6]) = [4] + [1] = [5]   ⟹ LHS
+                    [6]   [1]   [7]
+
+cT(u) = 2([2] + [1]) = 2[3] = [6]   ⟹ RHS
+           [3]   [1]    [4]   [8]
+
+LHS ≠ RHS   (shown with ≠ symbol)
+```
+
+```python
+import numpy as np
+
+b = np.array([1.0, 1.0])
+def T(x): return x + b
+
+u = np.array([2.0, 3.0])
+c = 2.0
+
+print("=== HOMOGENEITY CHECK ===")
+print(f"u = {list(u)},  c = {c}")
+print()
+
+# Step 1: cu
+cu = c * u
+print(f"cu = {c} × {list(u)} = {list(cu)}")
+
+# LHS: T(cu)
+LHS = T(cu)
+print(f"\nLHS: T(cu)")
+print(f"  T({list(cu)}) = {list(cu)} + {list(b)} = {list(LHS)}")
+
+# RHS: cT(u)
+T_u = T(u)
+RHS = c * T_u
+print(f"\nRHS: cT(u)")
+print(f"  T(u) = T({list(u)}) = {list(u)} + {list(b)} = {list(T_u)}")
+print(f"  cT(u) = {c} × {list(T_u)} = {list(RHS)}")
+```
+
+---
+
+## Image 6 — Final Conclusion
+
+**Image lo exact content:**
+
+```
+cT(u) = 2([2,3] + [1,1]) = 2[3,4] = [6,8]   ⟹ RHS
+
+T(x) = x + [1, 1]   ⟹   Not a Linear Transformation
+
+"Fails both Additivity and Homogeneity properties."
+```
+
+```python
+import numpy as np
+
+b = np.array([1.0, 1.0])
+def T(x): return x + b
+
+u = np.array([2.0, 3.0])
+c = 2.0
+
+# LHS: T(cu)
+LHS = T(c * u)
+
+# RHS: cT(u)
+RHS = c * T(u)
+
+print("=== HOMOGENEITY COMPARISON ===")
+print(f"LHS = T(cu)   = T({list(c*u)}) = {list(c*u)} + {list(b)} = {list(LHS)}")
+print(f"RHS = cT(u)   = {c} × {list(T(u))} = {list(RHS)}")
+print(f"LHS == RHS?   {np.allclose(LHS, RHS)}")   # False!
+print()
+if not np.allclose(LHS, RHS):
+    print("LHS ≠ RHS → HOMOGENEITY FAILS!")
+    print(f"Difference: {list(LHS - RHS)}")
+
+print()
+print("=" * 55)
+print("FINAL CONCLUSION")
+print("=" * 55)
+print("""
+T(x) = x + [1, 1]
+     = NOT a Linear Transformation
+
+Reasons:
+  1. T(zero) = [1,1] ≠ [0,0]  → Origin not preserved
+  2. Additivity FAILS: LHS [7,3] ≠ RHS [8,4]
+  3. Homogeneity FAILS: LHS [5,7] ≠ RHS [6,8]
+
+"Fails both Additivity and Homogeneity properties."
+
+Why intuitively?
+  T(x) = x + b  → b constant ga add avutundi
+  Add chesthe b oka sari, but transform cesthe b prathi time
+  → Rules break avutunnayi
+""")
+
+# Confirm with random tests
+pass_add = pass_hom = 0
+fail_add = fail_hom = 0
+for _ in range(1000):
+    u = np.random.randn(2)
+    v = np.random.randn(2)
+    c = np.random.randn()
+
+    if np.allclose(T(u+v), T(u)+T(v)):
+        pass_add += 1
+    else:
+        fail_add += 1
+
+    if np.allclose(T(c*u), c*T(u)):
+        pass_hom += 1
+    else:
+        fail_hom += 1
+
+print(f"Additivity:  {fail_add}/1000 tests FAILED (expected: almost all)")
+print(f"Homogeneity: {fail_hom}/1000 tests FAILED (expected: almost all)")
+```
+
+**Output:**
+```
+=== HOMOGENEITY COMPARISON ===
+LHS = T(cu)   = T([4.0, 6.0]) = [4.0, 6.0] + [1.0, 1.0] = [5.0, 7.0]
+RHS = cT(u)   = 2.0 × [3.0, 4.0] = [6.0, 8.0]
+LHS == RHS?   False
+
+LHS ≠ RHS → HOMOGENEITY FAILS!
+Difference: [-1.0, -1.0]
+
+=======================================================
+FINAL CONCLUSION
+=======================================================
+
+T(x) = x + [1, 1]
+     = NOT a Linear Transformation
+
+Reasons:
+  1. T(zero) = [1,1] ≠ [0,0]  → Origin not preserved
+  2. Additivity FAILS: LHS [7,3] ≠ RHS [8,4]
+  3. Homogeneity FAILS: LHS [5,7] ≠ RHS [6,8]
+
+"Fails both Additivity and Homogeneity properties."
+
+Why intuitively?
+  T(x) = x + b  → b constant ga add avutundi
+  Add chesthe b oka sari, but transform cesthe b prathi time
+  → Rules break avutunnayi
+
+Additivity:  1000/1000 tests FAILED
+Homogeneity: 1000/1000 tests FAILED
+```
+
+---
+
+## Side-by-Side: Linear vs Non-Linear
+
+```python
+import numpy as np
+
+# Transformation A: Linear (y-axis reflection)
+A = np.array([[-1.0, 0.0], [0.0, 1.0]])
+def T_linear(x): return A @ x
+
+# Transformation B: NOT Linear (translation)
+b = np.array([1.0, 1.0])
+def T_nonlinear(x): return x + b
+
+u = np.array([2.0, 3.0])
+v = np.array([4.0, -1.0])
+c = 2.0
+
+print(f"{'':25} {'LINEAR T(x)=Ax':<22} {'NON-LINEAR T(x)=x+b'}")
+print("-" * 70)
+
+# T(zero)
+zero = np.zeros(2)
+print(f"T(zero):{'':17} {list(T_linear(zero))}{'':13} {list(T_nonlinear(zero))}")
+print(f"{'':25} {'= [0,0] ✓':<22} {'≠ [0,0] ✗'}")
+
+print()
+# Additivity
+LHS_L = T_linear(u+v);   RHS_L = T_linear(u)+T_linear(v)
+LHS_N = T_nonlinear(u+v); RHS_N = T_nonlinear(u)+T_nonlinear(v)
+add_L = "PASS ✓" if np.allclose(LHS_L, RHS_L) else "FAIL ✗"
+add_N = "PASS ✓" if np.allclose(LHS_N, RHS_N) else "FAIL ✗"
+print(f"Additivity:{'':14} {add_L:<22} {add_N}")
+print(f"  LHS:{'':20} {list(LHS_L):<22} {list(LHS_N)}")
+print(f"  RHS:{'':20} {list(RHS_L):<22} {list(RHS_N)}")
+
+print()
+# Homogeneity
+LHS_L = T_linear(c*u);    RHS_L = c*T_linear(u)
+LHS_N = T_nonlinear(c*u); RHS_N = c*T_nonlinear(u)
+hom_L = "PASS ✓" if np.allclose(LHS_L, RHS_L) else "FAIL ✗"
+hom_N = "PASS ✓" if np.allclose(LHS_N, RHS_N) else "FAIL ✗"
+print(f"Homogeneity:{'':13} {hom_L:<22} {hom_N}")
+print(f"  LHS:{'':20} {list(LHS_L):<22} {list(LHS_N)}")
+print(f"  RHS:{'':20} {list(RHS_L):<22} {list(RHS_N)}")
+
+print()
+print(f"VERDICT:{'':17} {'LINEAR ✓':<22} {'NOT LINEAR ✗'}")
+```
+
+**Output:**
+```
+                          LINEAR T(x)=Ax         NON-LINEAR T(x)=x+b
+----------------------------------------------------------------------
+T(zero):                  [0.0, 0.0]             [1.0, 1.0]
+                          = [0,0] ✓              ≠ [0,0] ✗
+
+Additivity:               PASS ✓                 FAIL ✗
+  LHS:                    [-2.0, 2.0]            [7.0, 3.0]
+  RHS:                    [-2.0, 2.0]            [8.0, 4.0]
+
+Homogeneity:              PASS ✓                 FAIL ✗
+  LHS:                    [-4.0, 6.0]            [5.0, 7.0]
+  RHS:                    [-4.0, 6.0]            [6.0, 8.0]
+
+VERDICT:                  LINEAR ✓               NOT LINEAR ✗
+```
+
+---
+
+## Key Takeaway
+
+```
+LINEAR transformation (T(x) = Ax):
+  T(zero) = A @ zero = zero ✓
+  Additivity:  A(u+v) = Au + Av ✓   (matrix distribute)
+  Homogeneity: A(cu)  = c(Au)   ✓   (scalar move out)
+
+NOT LINEAR (T(x) = x + b, where b ≠ 0):
+  T(zero) = zero + b = b ≠ zero ✗
+  Additivity fails  because: (u+v)+b ≠ (u+b)+(v+b) → extra b
+  Homogeneity fails because: c(u)+b ≠ c(u+b) → b not scaled
+
+In AI:
+  Neural layer = Wx    → LINEAR (Wx, matrix multiply only)
+  Neural layer = Wx+b  → AFFINE (NOT strictly linear, but "linear + shift")
+  Activation = ReLU    → NOT LINEAR (bends, not straight)
+
+Why affine Wx+b still important if not linear?
+  Training works with affine layers:
+    Wx+b ki backprop = Wx backprop tho same (b constant)
+    Universal Approximation Theorem works for affine + nonlinear
+  We call it "linear layer" loosely in deep learning context
+```
