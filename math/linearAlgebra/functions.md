@@ -1294,3 +1294,794 @@ Idi telustunte:
 
 AI = Functions, all the way down.
 ```
+
+---
+
+---
+
+# Vector Transformations — Complete Guide
+
+> Oka vector transformation ante: oka vector space lo unna vectors ni
+> inkoka vector space ki (or same space ki) **systematic ga move** cheyyadam.
+> Idi graphics, robotics, physics, and most importantly **AI/ML** ki foundation.
+
+## Architecture Diagram
+
+```
+Original Vector Space
+    [x, y] or [x, y, z]
+          |
+          | Apply Transformation Matrix T
+          v
+  +-------------------+
+  | Scaling           |  → vector ni stretch/shrink cheyyadam
+  | Rotation          |  → vector ni rotate cheyyadam
+  | Reflection        |  → vector ni mirror cheyyadam
+  | Shearing          |  → vector ni slant cheyyadam
+  | Projection        |  → higher dim → lower dim
+  | Translation(Affine)| → vector ni shift cheyyadam
+  +-------------------+
+          |
+          v
+Transformed Vector Space
+    [x', y'] or [x', y', z']
+
+AI Connection:
+  Prathi neural network layer = oka vector transformation
+  Training = best transformation parameters find cheyyadam
+```
+
+## Deep Architecture Notes
+
+- **Step 1:** Vector = oka point or direction in space — `[x, y]` 2D, `[x, y, z]` 3D
+- **Step 2:** Transformation = aa vector ni systematically move cheyyadam — matrix multiply tho
+- **Step 3:** Linear transformations 2 rules follow chestay — additivity + homogeneity
+- **Step 4:** Affine transformation = linear + translation (AI lo `Wx + b` idi)
+- **Step 5:** Transformations compose avutay — T₂(T₁(v)) = (T₂·T₁)v
+- **Step 6:** AI lo prathi layer = oka learned vector transformation
+
+---
+
+## 1. Vector Transformation Ante Enti?
+
+**Simple ga:**
+Vector transformation = oka vector `v` ni teesukoni, new vector `v'` return chese rule.
+
+```
+T: ℝⁿ → ℝᵐ
+Input:  n-dimensional vector
+Output: m-dimensional vector
+
+Example:
+T([1, 2]) = [2, 4]   (each element double cheyyadam = scaling)
+T([1, 0]) = [0, 1]   (x-axis → y-axis = 90° rotation)
+```
+
+**Matrix form:**
+```
+Prathi linear transformation = oka matrix tho represent cheyyochu
+
+T(v) = Mv
+
+M = transformation matrix
+v = input vector
+Mv = matrix-vector multiply = transformed vector
+```
+
+**Verify cheyyadam — code:**
+```python
+import numpy as np
+
+v = np.array([1, 2])           # original vector
+
+# Transformation matrix M
+M = np.array([
+    [2, 0],
+    [0, 2]
+])
+
+# Apply transformation
+v_transformed = M @ v          # matrix-vector multiply
+print("Original:   ", v)               # [1, 2]
+print("Transformed:", v_transformed)   # [2, 4] — scaled by 2
+```
+
+---
+
+## 2. Linear Transformation — 2 Rules
+
+**Functions file lo:** Linear transformation 2 rules follow chestundi.
+
+```
+Rule 1: Additivity
+  T(u + v) = T(u) + T(v)
+  "Rendu vectors add chesaka transform" = "Prathi transform chesi add cheyyadam"
+
+Rule 2: Homogeneity (Scalar multiplication)
+  T(cv) = c·T(v)
+  "Vector scale chesaka transform" = "Transform chesaka scale cheyyadam"
+```
+
+**Python lo verify:**
+```python
+import numpy as np
+
+# Transformation matrix
+M = np.array([[2, 1],
+              [0, 3]])
+
+u = np.array([1, 2])
+v = np.array([3, 1])
+c = 4.0
+
+# Rule 1: Additivity — T(u + v) == T(u) + T(v)
+left_side  = M @ (u + v)
+right_side = (M @ u) + (M @ v)
+print("Additivity holds:", np.allclose(left_side, right_side))  # True
+
+# Rule 2: Homogeneity — T(cv) == c * T(v)
+left_side  = M @ (c * v)
+right_side = c * (M @ v)
+print("Homogeneity holds:", np.allclose(left_side, right_side)) # True
+
+# Non-linear transformation fails these rules
+def non_linear_T(v):
+    return v + np.array([1, 1])    # translation — NOT linear
+
+# Translation fails additivity
+u_t = non_linear_T(u + v)
+uv_t = non_linear_T(u) + non_linear_T(v)
+print("Translation additivity:", np.allclose(u_t, uv_t))  # False!
+```
+
+---
+
+## 3. Scaling Transformation — Stretch / Shrink
+
+**Idi enti?**
+Vector ni oka axis along lengthen (stretch) or shorten (shrink) cheyyadam.
+
+```
+Scaling matrix:
+S = [[sx,  0],
+     [ 0, sy]]
+
+sx = x-direction scale factor
+sy = y-direction scale factor
+```
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+def plot_vectors(vectors, labels, colors, title):
+    fig, ax = plt.subplots(1, 1, figsize=(6, 6))
+    origin = np.zeros(2)
+    for v, label, color in zip(vectors, labels, colors):
+        ax.annotate('', xy=v, xytext=origin,
+                    arrowprops=dict(arrowstyle='->', color=color, lw=2))
+        ax.text(v[0]+0.05, v[1]+0.05, label, fontsize=12, color=color)
+    ax.set_xlim(-4, 4); ax.set_ylim(-4, 4)
+    ax.axhline(0, color='gray', lw=0.5)
+    ax.axvline(0, color='gray', lw=0.5)
+    ax.grid(True, alpha=0.3)
+    ax.set_title(title)
+    plt.tight_layout()
+    plt.savefig(f"transformation_{title.replace(' ','_')}.png", dpi=80)
+    plt.close()
+
+v = np.array([1.0, 1.0])    # original vector
+
+# Uniform scaling — anni directions equally scale
+S_uniform = np.array([[2, 0],
+                       [0, 2]])
+v_scaled = S_uniform @ v
+print(f"Original:        {v}")
+print(f"Scaled (2x):     {v_scaled}")          # [2, 2]
+
+# Non-uniform scaling — x, y differently scale
+S_nonuniform = np.array([[3, 0],
+                          [0, 0.5]])
+v_nonuniform = S_nonuniform @ v
+print(f"Scaled (3x, 0.5y): {v_nonuniform}")    # [3, 0.5]
+
+# Shrink cheyyadam (scale < 1)
+S_shrink = np.array([[0.5, 0],
+                      [0,   0.5]])
+v_shrunk = S_shrink @ v
+print(f"Shrunk (0.5x):   {v_shrunk}")          # [0.5, 0.5]
+
+# --- AI Connection ---
+# Neural network lo:
+# Weight matrix W lo diagonal elements = scaling factors
+# W = [[w1, 0],  --> x component w1 times scale cheyyadam
+#      [0, w2]]  --> y component w2 times scale cheyyadam
+# Training = best scale factors (weights) learn cheyyadam
+```
+
+---
+
+## 4. Rotation Transformation — Angle Tho Rotate
+
+**Idi enti?**
+Vector ni origin chuttu oka angle θ tho rotate cheyyadam.
+Direction change avutundi, length same untundi.
+
+```
+Rotation matrix (counter-clockwise by θ):
+R(θ) = [[cos θ,  -sin θ],
+        [sin θ,   cos θ]]
+
+θ = 90°:  R = [[0, -1], [1, 0]]
+θ = 180°: R = [[-1, 0], [0, -1]]
+θ = 45°:  R = [[0.707, -0.707], [0.707, 0.707]]
+```
+
+```python
+import numpy as np
+
+def rotation_matrix_2d(theta_degrees):
+    """2D rotation matrix create cheyyadam"""
+    theta = np.radians(theta_degrees)    # degrees → radians convert
+    return np.array([
+        [np.cos(theta), -np.sin(theta)],
+        [np.sin(theta),  np.cos(theta)]
+    ])
+
+v = np.array([1.0, 0.0])    # x-axis direction vector
+
+# 90 degrees rotate
+R_90 = rotation_matrix_2d(90)
+v_rot90 = R_90 @ v
+print(f"Original:       {v}")            # [1, 0]
+print(f"Rotated 90°:    {v_rot90}")      # [0, 1]  -- y-axis direction avutundi
+
+# 45 degrees rotate
+R_45 = rotation_matrix_2d(45)
+v_rot45 = R_45 @ v
+print(f"Rotated 45°:    {np.round(v_rot45, 4)}")  # [0.7071, 0.7071]
+
+# 180 degrees rotate
+R_180 = rotation_matrix_2d(180)
+v_rot180 = R_180 @ v
+print(f"Rotated 180°:   {np.round(v_rot180, 4)}")  # [-1, 0]
+
+# Key property: length preserved (rotation = rigid body transform)
+print(f"\nOriginal length:   {np.linalg.norm(v):.4f}")
+print(f"After 90° length:  {np.linalg.norm(v_rot90):.4f}")
+print(f"After 45° length:  {np.linalg.norm(v_rot45):.4f}")
+# All lengths = 1.0 -- rotation preserves length
+
+# 3D Rotation matrices
+def rotation_x_3d(theta_degrees):
+    """3D lo x-axis chuttu rotate"""
+    t = np.radians(theta_degrees)
+    return np.array([
+        [1,        0,         0],
+        [0, np.cos(t), -np.sin(t)],
+        [0, np.sin(t),  np.cos(t)]
+    ])
+
+def rotation_y_3d(theta_degrees):
+    """3D lo y-axis chuttu rotate"""
+    t = np.radians(theta_degrees)
+    return np.array([
+        [ np.cos(t), 0, np.sin(t)],
+        [0,          1,         0],
+        [-np.sin(t), 0, np.cos(t)]
+    ])
+
+v3 = np.array([1.0, 0.0, 0.0])
+Rx = rotation_x_3d(90)
+print(f"\n3D Rotated (x-axis, 90°): {np.round(Rx @ v3, 4)}")
+
+# --- AI Connection ---
+# Attention mechanisms lo query-key rotations
+# Positional encodings use rotation matrices
+# RoPE (Rotary Position Embedding) — LLMs lo use avutundi
+# Image augmentation lo random rotations — training data diversify
+```
+
+---
+
+## 5. Reflection Transformation — Mirror Image
+
+**Idi enti?**
+Vector ni oka axis or line tho mirror image cheyyadam.
+Oka dimension sign flip avutundi.
+
+```
+Reflection matrices:
+  x-axis meeda reflect:    M = [[1,  0], [0, -1]]   (y flip)
+  y-axis meeda reflect:    M = [[-1, 0], [0,  1]]   (x flip)
+  y=x line meeda reflect:  M = [[0,  1], [1,  0]]   (swap)
+  origin meeda reflect:    M = [[-1, 0], [0, -1]]   (both flip)
+```
+
+```python
+import numpy as np
+
+v = np.array([2.0, 3.0])
+
+# x-axis meeda reflect
+M_x = np.array([[1,  0],
+                 [0, -1]])
+v_ref_x = M_x @ v
+print(f"Original:           {v}")          # [2, 3]
+print(f"Reflect (x-axis):   {v_ref_x}")    # [2, -3]
+
+# y-axis meeda reflect
+M_y = np.array([[-1, 0],
+                 [0,  1]])
+v_ref_y = M_y @ v
+print(f"Reflect (y-axis):   {v_ref_y}")    # [-2, 3]
+
+# y=x line meeda reflect (x,y swap chestundi)
+M_yx = np.array([[0, 1],
+                  [1, 0]])
+v_ref_yx = M_yx @ v
+print(f"Reflect (y=x):      {v_ref_yx}")   # [3, 2] -- swapped!
+
+# Origin meeda reflect (both negative)
+M_orig = np.array([[-1, 0],
+                    [0, -1]])
+v_ref_orig = M_orig @ v
+print(f"Reflect (origin):   {v_ref_orig}") # [-2, -3]
+
+# Verify: length preserved
+print(f"\nOriginal length: {np.linalg.norm(v):.4f}")
+print(f"Reflected length:{np.linalg.norm(v_ref_x):.4f}")  # same
+
+# --- AI Connection ---
+# Image data augmentation lo horizontal flip (left-right reflect)
+# GAN training lo: generator images reflect cheyyadam for diversity
+# Symmetry detection in CNNs
+# Reflection = determinant -1 matrix (orientation reverses)
+```
+
+---
+
+## 6. Shearing Transformation — Slant / Skew
+
+**Idi enti?**
+Oka direction lo vector ni "push" cheyyadam — opposite sides different amount shift avutay.
+Rectangle → Parallelogram shape avutundi.
+
+```
+Shear matrices:
+  x-direction shear:  M = [[1, k], [0, 1]]   (x += k*y)
+  y-direction shear:  M = [[1, 0], [k, 1]]   (y += k*x)
+```
+
+```python
+import numpy as np
+
+v = np.array([1.0, 1.0])
+
+# x-direction shear — y same untundi, x += k*y
+k = 2.0
+S_x = np.array([[1, k],
+                 [0, 1]])
+v_sheared_x = S_x @ v
+print(f"Original:         {v}")              # [1, 1]
+print(f"X-shear (k={k}):  {v_sheared_x}")   # [3, 1] -- x = 1 + 2*1 = 3
+
+# y-direction shear — x same untundi, y += k*x
+S_y = np.array([[1, 0],
+                 [k, 1]])
+v_sheared_y = S_y @ v
+print(f"Y-shear (k={k}):  {v_sheared_y}")   # [1, 3]
+
+# Grid transformation visualize cheyyadam
+points = np.array([[0, 0], [1, 0], [1, 1], [0, 1]]).T  # unit square corners
+S = np.array([[1, 0.5], [0, 1]])                         # shear matrix
+sheared_points = S @ points
+print("\nOriginal corners:\n", points.T)
+print("Sheared corners:\n",  sheared_points.T)
+# Square → Parallelogram shape avutundi
+
+# Shear oka key property:
+# Area preserve chestundi (determinant = 1)
+print(f"\nDeterminant of shear matrix: {np.linalg.det(S):.4f}")  # 1.0
+
+# --- AI Connection ---
+# Perspective transform in computer vision (homography)
+# Text recognition lo oblique text handle cheyyadam
+# Data augmentation lo random shear (sklearn, albumentations)
+# Affine transformation lo oka component
+```
+
+---
+
+## 7. Projection Transformation — Dimension Reduce
+
+**Idi enti?**
+Higher-dimensional vector ni lower-dimensional space ki "project" (shadow) cheyyadam.
+3D → 2D (shadow on floor), 2D → 1D (shadow on line).
+
+```
+Projection onto x-axis:    P = [[1, 0], [0, 0]]   (y component drop)
+Projection onto y-axis:    P = [[0, 0], [0, 1]]   (x component drop)
+Projection onto unit vector u: P = uuᵀ             (outer product)
+```
+
+```python
+import numpy as np
+
+v = np.array([3.0, 4.0])
+
+# x-axis meeda project cheyyadam
+P_x = np.array([[1, 0],
+                 [0, 0]])
+v_proj_x = P_x @ v
+print(f"Original:               {v}")           # [3, 4]
+print(f"Projected onto x-axis:  {v_proj_x}")    # [3, 0] -- y drop
+
+# y-axis meeda project
+P_y = np.array([[0, 0],
+                 [0, 1]])
+v_proj_y = P_y @ v
+print(f"Projected onto y-axis:  {v_proj_y}")    # [0, 4] -- x drop
+
+# Arbitrary unit vector u meeda project
+u = np.array([1, 1]) / np.sqrt(2)   # normalize cheyyadam
+P_u = np.outer(u, u)                 # uuᵀ = projection matrix
+v_proj_u = P_u @ v
+print(f"\nUnit vector u:          {u}")
+print(f"Projection matrix P:\n{P_u}")
+print(f"Projected onto u:       {v_proj_u}")    # [3.5, 3.5]
+
+# Projection formula: proj_u(v) = (v·u / |u|²) * u
+dot = np.dot(v, u)
+proj_scalar = dot / np.dot(u, u)
+proj_vector = proj_scalar * u
+print(f"Scalar projection:      {proj_scalar:.4f}")
+print(f"Vector projection:      {proj_vector}")
+
+# Projection property: project chesi malli project chesthe same result
+v_proj_twice = P_u @ (P_u @ v)
+print(f"\nProject twice = once:  {np.allclose(v_proj_u, v_proj_twice)}")  # True
+# P² = P -- idempotent property
+
+# --- AI Connection ---
+# PCA (Principal Component Analysis):
+#   Data ni most important directions meeda project cheyyadam
+#   High-dimensional data → low-dimensional representation
+# Attention mechanism lo keys-values projection
+# Dimensionality reduction in autoencoders
+```
+
+---
+
+## 8. Affine Transformation — Linear + Translation
+
+**Idi enti?**
+Linear transformation + translation (shift) combination.
+`T(v) = Mv + b` — M = linear part, b = translation vector.
+
+Neural network layer exact iga idi!
+
+```
+Affine transformation:
+  T(v) = Mv + b
+
+  M = matrix (linear transformation)
+  b = bias vector (translation)
+
+  Idi linear transformation kadu (origin shift avutundi)
+  Kaani deep learning lo most common operation
+```
+
+```python
+import numpy as np
+
+v = np.array([1.0, 2.0])
+
+# Rotation + Translation (Affine)
+theta = np.radians(45)
+M = np.array([[np.cos(theta), -np.sin(theta)],
+              [np.sin(theta),  np.cos(theta)]])
+b = np.array([3.0, 1.0])     # translation vector
+
+# Affine transform: T(v) = Mv + b
+v_affine = M @ v + b
+print(f"Original:   {v}")
+print(f"Affine T:   {np.round(v_affine, 4)}")
+
+# Homogeneous coordinates tho affine = linear ga represent cheyyadam
+# 2D point [x, y] → 3D homogeneous [x, y, 1]
+# Affine matrix becomes 3x3:
+def affine_matrix_3x3(M, b):
+    """2D affine transformation 3x3 homogeneous matrix"""
+    T = np.eye(3)
+    T[:2, :2] = M
+    T[:2, 2]  = b
+    return T
+
+T_3x3 = affine_matrix_3x3(M, b)
+print(f"\nHomogeneous affine matrix:\n{np.round(T_3x3, 4)}")
+
+v_hom = np.append(v, 1.0)        # [x, y] → [x, y, 1]
+v_out = T_3x3 @ v_hom
+print(f"Homogeneous transform: {np.round(v_out[:2], 4)}")  # Same result!
+
+# Multiple affine transforms compose cheyyadam
+T1 = affine_matrix_3x3(
+    np.array([[2, 0], [0, 2]]),   # scale 2x
+    np.array([1, 0])              # shift right 1
+)
+T2 = affine_matrix_3x3(
+    rotation_matrix_2d(30),       # rotate 30°
+    np.array([0, 2])              # shift up 2
+)
+
+def rotation_matrix_2d(theta_degrees):
+    theta = np.radians(theta_degrees)
+    return np.array([[np.cos(theta), -np.sin(theta)],
+                     [np.sin(theta),  np.cos(theta)]])
+
+T1 = affine_matrix_3x3(np.array([[2,0],[0,2]]), np.array([1,0]))
+T2 = affine_matrix_3x3(rotation_matrix_2d(30), np.array([0,2]))
+
+# Compose: T2 apply chesaka T1
+T_combined = T2 @ T1                  # matrix multiply = composition
+v_hom = np.append(v, 1.0)
+v_final = T_combined @ v_hom
+print(f"\nCombined transform: {np.round(v_final[:2], 4)}")
+
+# --- AI Connection ---
+# Neural network layer:
+#   z = Wx + b   ← idi affine transformation!
+#   W = M (linear transformation matrix)
+#   b = b (translation/bias vector)
+# Image preprocessing: crop, resize, flip = affine transforms
+# Computer vision: homography estimation = affine generalization
+```
+
+---
+
+## 9. Composition of Transformations — Chaining
+
+**Idi enti?**
+Multiple transformations oka oka ga apply cheyyadam — but single matrix ga combine cheyyochu.
+
+```
+T_total = T₃ · T₂ · T₁
+
+v' = T_total · v = T₃(T₂(T₁(v)))
+
+Note: Right to left apply avutundi (T₁ first, T₃ last)
+```
+
+```python
+import numpy as np
+
+def scale(sx, sy):
+    return np.array([[sx, 0], [0, sy]])
+
+def rotate(degrees):
+    t = np.radians(degrees)
+    return np.array([[np.cos(t), -np.sin(t)],
+                     [np.sin(t),  np.cos(t)]])
+
+def reflect_x():
+    return np.array([[1, 0], [0, -1]])
+
+v = np.array([1.0, 0.0])
+
+# Step by step apply cheyyadam
+v1 = scale(2, 2)    @ v       # scale 2x
+v2 = rotate(45)     @ v1      # then rotate 45°
+v3 = reflect_x()    @ v2      # then reflect x-axis
+print(f"After scale:    {np.round(v1, 4)}")
+print(f"After rotate:   {np.round(v2, 4)}")
+print(f"After reflect:  {np.round(v3, 4)}")
+
+# Combine all into one matrix
+T_combined = reflect_x() @ rotate(45) @ scale(2, 2)
+v_combined = T_combined @ v
+print(f"\nAll at once:    {np.round(v_combined, 4)}")
+print(f"Same result?    {np.allclose(v3, v_combined)}")  # True!
+
+# Order matters! Scale then rotate ≠ rotate then scale (generally)
+T_order1 = rotate(45) @ scale(2, 1)   # scale first, then rotate
+T_order2 = scale(2, 1) @ rotate(45)   # rotate first, then scale
+v_test = np.array([1.0, 0.0])
+print(f"\nScale→Rotate: {np.round(T_order1 @ v_test, 4)}")
+print(f"Rotate→Scale: {np.round(T_order2 @ v_test, 4)}")
+print(f"Same?         {np.allclose(T_order1, T_order2)}")  # False!
+
+# --- AI Connection ---
+# Neural network forward pass = composition of transformations
+# Layer 1 → Layer 2 → Layer 3 = T₃ ∘ T₂ ∘ T₁
+# Backprop = reverse order derivative (chain rule)
+# Matrix multiplication chaining = efficient computation
+```
+
+---
+
+## 10. Eigenvalue Decomposition — Special Directions
+
+**Idi enti?**
+Oka matrix ki "special vectors" unnay — transformation apply chessinaa direction change avvadam —
+only scale avutundi. Ivi **eigenvectors**, scale factor = **eigenvalue**.
+
+```
+M·v = λ·v
+
+v = eigenvector (direction change avvadam ledu)
+λ = eigenvalue  (scale factor — stretch/shrink amount)
+```
+
+```python
+import numpy as np
+
+M = np.array([[3, 1],
+              [0, 2]])
+
+# Eigenvectors + eigenvalues calculate cheyyadam
+eigenvalues, eigenvectors = np.linalg.eig(M)
+print("Eigenvalues:", eigenvalues)           # [3, 2]
+print("Eigenvectors:\n", eigenvectors)       # columns are eigenvectors
+
+# Verify: M @ v = λ @ v
+for i in range(len(eigenvalues)):
+    lam = eigenvalues[i]
+    v   = eigenvectors[:, i]
+    Mv  = M @ v
+    lv  = lam * v
+    print(f"\nλ={lam:.2f}, v={np.round(v, 4)}")
+    print(f"M@v  = {np.round(Mv, 4)}")
+    print(f"λ*v  = {np.round(lv, 4)}")
+    print(f"Same? {np.allclose(Mv, lv)}")    # True
+
+# Symmetric matrix: eigenvectors perpendicular (orthogonal)
+S = np.array([[4, 2],
+              [2, 3]])
+evals, evecs = np.linalg.eig(S)
+print(f"\nDot product of eigenvectors: {np.dot(evecs[:,0], evecs[:,1]):.6f}")
+# Approximately 0 — orthogonal!
+
+# --- AI Connection ---
+# PCA: data covariance matrix eigenvectors = principal components
+#   Largest eigenvalue direction = most variance direction
+# Attention matrices spectral analysis
+# Weight matrix ill-conditioning detect cheyyadam
+# Vanishing/exploding gradients: eigenvalues of weight matrices matter!
+#   |λ| < 1 → gradients vanish
+#   |λ| > 1 → gradients explode
+```
+
+---
+
+## 11. All Transformations — AI lo Real Usage
+
+```python
+import numpy as np
+
+print("=" * 55)
+print("VECTOR TRANSFORMATIONS — AI lo Usage Summary")
+print("=" * 55)
+
+v = np.array([1.0, 2.0])
+print(f"\nOriginal vector: {v}")
+print()
+
+# 1. Scaling — Weight matrix diagonal = scaling
+S = np.array([[2, 0], [0, 3]])
+print(f"1. Scaling (2x, 3y):          {S @ v}")
+print(f"   AI use: Weight matrix, feature normalization")
+
+# 2. Rotation — Attention, positional encoding
+t = np.radians(45)
+R = np.array([[np.cos(t), -np.sin(t)],
+              [np.sin(t),  np.cos(t)]])
+print(f"\n2. Rotation (45°):            {np.round(R @ v, 4)}")
+print(f"   AI use: RoPE embeddings, image augmentation")
+
+# 3. Reflection — Data augmentation
+M_ref = np.array([[-1, 0], [0, 1]])
+print(f"\n3. Reflection (y-axis):       {M_ref @ v}")
+print(f"   AI use: Image flip augmentation, GAN diversity")
+
+# 4. Shearing — Affine augmentation
+Sh = np.array([[1, 0.5], [0, 1]])
+print(f"\n4. Shearing (k=0.5):          {Sh @ v}")
+print(f"   AI use: Text/image augmentation, perspective")
+
+# 5. Projection — Dimensionality reduction
+P = np.array([[1, 0], [0, 0]])
+print(f"\n5. Projection (onto x-axis):  {P @ v}")
+print(f"   AI use: PCA, attention projection, autoencoders")
+
+# 6. Affine (Wx + b) — Neural network layer!
+W = np.array([[0.5, 0.3], [0.2, 0.8]])
+b = np.array([0.1, -0.1])
+print(f"\n6. Affine (Wx + b):           {np.round(W @ v + b, 4)}")
+print(f"   AI use: EVERY neural network layer!")
+
+# 7. Composition — Forward pass
+T_composed = M_ref @ S    # scale then reflect
+print(f"\n7. Composed (scale→reflect): {T_composed @ v}")
+print(f"   AI use: Deep network forward pass")
+
+print()
+print("=" * 55)
+print("KEY INSIGHT:")
+print("Neural network layer = Affine transformation + Activation")
+print("Training = Finding best transformation parameters")
+print("Deep learning = Many transformations composed")
+print("=" * 55)
+```
+
+**Output:**
+```
+=======================================================
+VECTOR TRANSFORMATIONS — AI lo Usage Summary
+=======================================================
+
+Original vector: [1. 2.]
+
+1. Scaling (2x, 3y):          [2. 6.]
+   AI use: Weight matrix, feature normalization
+
+2. Rotation (45°):            [-0.7071  2.1213]
+   AI use: RoPE embeddings, image augmentation
+
+3. Reflection (y-axis):       [-1.  2.]
+   AI use: Image flip augmentation, GAN diversity
+
+4. Shearing (k=0.5):          [2.  2.]
+   AI use: Text/image augmentation, perspective
+
+5. Projection (onto x-axis):  [1.  0.]
+   AI use: PCA, attention projection, autoencoders
+
+6. Affine (Wx + b):           [1.1  1.7]
+   AI use: EVERY neural network layer!
+
+7. Composed (scale→reflect):  [-2.  6.]
+   AI use: Deep network forward pass
+```
+
+---
+
+## 12. Summary Table
+
+| Transformation | Matrix Form | Length? | Angle? | AI Connection |
+|---|---|---|---|---|
+| **Scaling** | `diag(sx, sy)` | Changes | Preserved (uniform only) | Weight matrices, normalization |
+| **Rotation** | `[[cos,-sin],[sin,cos]]` | Preserved | Preserved | RoPE, image augmentation |
+| **Reflection** | Diagonal with -1 | Preserved | Flipped | Image flip, data augmentation |
+| **Shearing** | Off-diagonal nonzero | Changes | Changes | Perspective, text slant |
+| **Projection** | `uuᵀ` | Decreases | May change | PCA, attention, autoencoders |
+| **Affine** | `Mx + b` | Changes | Changes | Every neural layer `Wx + b` |
+| **Composition** | `T₃·T₂·T₁` | Depends | Depends | Deep network forward pass |
+
+---
+
+## 13. Final Summary — Vector Transformation ante Enti?
+
+```
+Vector Transformation = oka vector ni teesukoni, mathematically move cheyyadam
+
+Types:
+  Scaling      → stretch/shrink    → Wx (diagonal W)
+  Rotation     → rotate around origin → orthogonal matrix
+  Reflection   → mirror image      → determinant = -1
+  Shearing     → slant/skew        → off-diagonal elements
+  Projection   → shadow/collapse   → rank-reducing transform
+  Affine       → linear + shift    → Wx + b (neural layer!)
+  Composition  → chain transforms  → deep network layers
+
+Why matters in AI:
+  Prathi neural layer = oka affine transformation + nonlinearity
+  Training = best transformation parameters learn cheyyadam
+  Forward pass = chained transformations apply cheyyadam
+  Backprop = reverse chained derivatives (chain rule)
+
+Ultimate insight:
+  "AI model = oka giant, learned vector transformation"
+  "Input space → Output space ki map chestundi"
+  "Training = best transformation find cheyyadam"
+```
