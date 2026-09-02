@@ -1,0 +1,5 @@
+Python is a powerful programming language.
+File operations are essential for data processing.
+This example demonstrates how to count lines, words, and characters.
+Let us learn and practice!
+Have fun coding!

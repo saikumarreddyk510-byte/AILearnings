@@ -1,0 +1,4 @@
+Python is great for file operations.
+Python is widely used in data science.
+File handling with Python is easy and powerful.
+Learn Python, master programming!

@@ -1,0 +1,5 @@
+Hello, Python!
+File operations cheppa!
+Data disk lo save ayindi!
+New line appended!
+Another append!
