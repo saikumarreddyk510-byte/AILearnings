@@ -12,8 +12,13 @@ app = Flask(__name__)  # Flask application object create chestunnam; ide manam W
 
 @app.route("/")  # Root URL ("/") ki ee function ni map chestunnam.
 def welcome():  # Root route ki matching view function define chestunnam.
-    return "Welcome to this Flask course"  # Simple text response return chestunnam.
+    return "Welcome to this best Flask course.This should be an amazing course"  # Simple text response return chestunnam.
+
+
+@app.route("/index")  # "/index" URL ki inko route add chestunnam.
+def index():  # Index route ki matching view function define chestunnam.
+    return "Welcome to the index page"  # Index page ki simple text response return chestunnam.
 
 
 if __name__ == "__main__":  # Ee file ni direct ga run chesinapudu matrame lopala code run avvadaniki guard.
-    app.run()  # Flask built-in development server ni start chestunnam (default: http://127.0.0.1:5000).
+    app.run(debug=True)  # debug=True tho development server ni start chestunnam - auto-reload and detailed error pages kosam.
