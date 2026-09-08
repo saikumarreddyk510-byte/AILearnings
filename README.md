@@ -4,6 +4,61 @@
 
 ---
 
+## Sequential Learning Plan (File by File)
+
+Follow this exact order — each phase builds on concepts from the previous one: Python → math → classical ML → deep learning theory → serving models (Flask/Streamlit) → LLM orchestration (LangChain) → retrieval (RAG) → multi-agent systems (CrewAI) → stateful graphs (LangGraph) → three increasingly complex production apps.
+
+**Phase 0 — Orientation**
+1. `README.md` 2. `CLAUDE.md` 3. `docs/roadmap.md` 4. `docs/roadmap_flow.md`
+
+**Phase 1 — Python Fundamentals** (`KrishAI/1-python Basics/`)
+5. `basics.ipynb` 6. `functions.ipynb` 7. `exceptionhandiling.ipynb` 8. `fileOperations.ipynb` 9. `Modules&Packages.ipynb`
+
+**Phase 2 — OOP, Tooling, Pydantic, Data Basics** (`KrishAI/`)
+10. `oops.ipynb` (OOP + iterators/generators/closures/decorators) 11. `explainations.md` (Anaconda/VS Code/UV) 12. `pydantic.ipynb` 13. `explainations.md` (Pydantic half) 14. `DataAnalysisPython.md` 15. `SQL&SQLite.ipynb`
+
+**Phase 3 — Math for AI** (`math/linearAlgebra/`)
+16. `LinearAlgebra.md` 17. `Matrices.md` 18. `functions.md`
+
+**Phase 4 — Feature Engineering & EDA** (`KrishAI/`)
+19. `featureEngineering.ipynb` 20. `ExploratoryDataAnalysis&FeatureEngineering.ipynb`
+
+**Phase 5 — Machine Learning** (`ML/`)
+21. `explaination.md` 22. `dataPreprocessing/data_preprocessing_tools.ipynb` 23. `dataPreprocessing/Student_Placement_KNN.ipynb` 24. `Logitic_Regression_Practical.ipynb`
+
+**Phase 6 — Deep Learning**
+25. `DeepLearning/Explainations.md`
+
+**Phase 7 — Web Frameworks (serving ML/AI)** (`KrishAI/`)
+26. `flaskFramework.ipynb` 27. `app.py` 28. `streamlitWebFramework.ipynb`
+
+**Phase 8 — LangChain** (`LangChain/`)
+29. `.env.example` 30. `explainations.md` 31. `PromptTemplate.py` 32. `OutputParser.py` 33. `LECL.py` 34. `memory.py` 35. `groq_langchain.py` 36. `llama_langchain.py`
+
+**Phase 9 — RAG** (`RAG/`)
+37-41. `loaders/`: textLoader → pdfLoader → webLoader → helper → claude_helper
+42-47. `chunking/`: characterTextSplitter → RecursiveCharacterTextSplitter → TokenTextSplitter → HTMLHeaderTextSplitter → RecursiveJsonSplitter → SemanticChunking
+
+**Phase 10 — Multi-Agent (CrewAI)**
+48-49. `CREWAI-PROJECT/`: README → `crewai_blog_project.ipynb`
+
+**Phase 11 — Stateful Agents (LangGraph)**
+50-53. `LangGraph-Trip-Planner/`: README → `src/` → `main.py` → `tests/`
+
+**Phase 12 — Production RAG App**
+54-56. `Project-ai_career_coach_rag/`: README → `src/` → `app.py`
+
+**Phase 13 — Agent Pipeline Project**
+57-58. `STARTUP-IDEA-VALIDATOR/`: README → `Code-Explain.ipynb`
+
+**Phase 14 — Full-Stack Production App (jobpilot)**
+59-64. `jobpilot/`: README → `ARCHITECTURE.md` → `flow-explained-telugu.md` → `src/` → `prisma/` → `tests/`
+
+**Phase 15 — Optional Bonus**
+65. `aacargo-clone/` (frontend clone practice, not core AI path)
+
+---
+
 ## Repository Structure
 
 ```
