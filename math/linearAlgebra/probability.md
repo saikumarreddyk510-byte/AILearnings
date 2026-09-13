@@ -244,17 +244,99 @@ P(A | B) = P(A and B) / P(B)
 
 ### Detailed Example: Playing Cards
 
-52 cards deck lo, "card is a King given that card is a Face card" probability calculate cheddam.
+52 cards deck lo, "card is a King given that card is a Face card" probability calculate cheddam. Ee example ni chala **slow ga, step by step** ga break chesi chuddam, endukante ee "given that" concept (conditional probability) lo confusion ekkuva vastundi.
+
+#### Step 0: Full Deck Setup (Sample Space Refresh)
+
+52 cards deck lo, **4 suits** (Hearts, Diamonds, Clubs, Spades) untayi, prathi suit ki **13 ranks** (Ace, 2, 3, ..., 10, Jack, Queen, King) untayi.
 
 ```text
-Face cards (Jack, Queen, King) = 12 cards
-Kings among face cards = 4
+Total cards = 4 suits x 13 ranks = 52
+```
 
-P(King | Face card) = P(King and Face card) / P(Face card)
-                     = (4/52) / (12/52)
-                     = 4/12
+**Face cards** ante, "picture unna cards" - **Jack, Queen, King** matrame (Ace ni face card ani count cheyyaru). Prathi suit ki 3 face cards (J, Q, K) untayi kabatti:
+
+```text
+Face cards = 4 suits x 3 ranks (J, Q, K) = 12 cards
+```
+
+**Kings** ante, prathi suit ki oka King untundi (King of Hearts, King of Diamonds, King of Clubs, King of Spades):
+
+```text
+Kings = 4 suits x 1 rank (K) = 4 cards
+```
+
+#### Step 1: Question ni Clear ga Ardham Chesukondi
+
+Question: "Card oka **Face card** ani mundu manaki telusu (given). Ee condition tho, aa card **King** ayye chance entha?"
+
+Ikkada important point - manam already oka clue teesukunnamu: "card face card". Ee clue teesukunna tarvatha, migatha 40 cards (non-face cards) ni manam ika consider cheyyamu - vaatini poorthiga bayataki teesestamu.
+
+#### Step 2: "Restricted Sample Space" Concept - Ide Key Idea
+
+Normal ga (no condition unte), sample space = anni 52 cards. Kani ippudu manaki "face card" ani condition icharu kabatti, **kotha, chinna sample space** create avutundi:
+
+```text
+Original Sample Space = 52 cards (anni cards)
+Restricted Sample Space (given "Face card") = 12 cards matrame (Jack, Queen, King x 4 suits)
+```
+
+**Simple ga cheppalante:** Manam ippudu aa 40 non-face cards (Ace, 2-10 anni suits lo) ni completely ignore chestunnam - avi ippudu "exist avvatledu" ani treat chestunnam. Manaki matter ayye anni matrame ee 12 face cards.
+
+#### Step 3: Ee Restricted 12 Cards Table (Visual Breakdown)
+
+```text
+                Hearts   Diamonds   Clubs   Spades
+Jack (J)          J-H       J-D       J-C     J-S
+Queen (Q)         Q-H       Q-D       Q-C     Q-S
+King (K)          K-H       K-D       K-C     K-S      <- manaki kavalsina "King" event ikkada
+```
+
+Ee table lo total **12 cards** unnayi (3 ranks x 4 suits). Ee 12 lo, **King row lo unna 4 cards matrame** (`K-H, K-D, K-C, K-S`) manaki "success" (event A = King).
+
+#### Step 4: Simple Counting tho Direct Answer
+
+Ippudu question chala simple ga maripotundi: "Ee 12 face cards lo, entha King unnayi?"
+
+```text
+P(King | Face card) = (Kings among face cards) / (Total face cards)
+                     = 4 / 12
+                     = 0.333  (33.3%)
+```
+
+**Idi matrame chalu** - direct ga restricted sample space (12 cards) lo count cheste, formula automatic ga vastundi.
+
+#### Step 5: Formula tho Verify Cheddam (Enduku Idi Same Answer Istundi)
+
+Official formula use chesi kuda ide answer vastundo chuddam:
+
+```text
+P(A | B) = P(A and B) / P(B)
+
+P(King and Face card) = P(King) = 4/52     (King eppudaina face card ye, so "King and Face card" = "King")
+P(Face card) = 12/52
+
+P(King | Face card) = (4/52) / (12/52)
+                     = 4/12                 <- 52 numerator and denominator lo undi, cancel avtundi
                      = 0.333
 ```
+
+**Enduku `52` cancel avutundi?** Endukante rendintiki (numerator, denominator) same total deck (52) nundi vachhayi - so divide chesetappudu, `52` common factor ga cancel avutundi, migilindi kevalam **"12 lo entha 4"** ane simple ratio.
+
+#### Step 6: Why Did the Probability JUMP UP So Much? (Most Important Insight)
+
+```text
+P(King) [no condition]        = 4/52  = 0.0769  (7.69%)
+P(King | Face card) [restricted] = 4/12 = 0.333   (33.3%)
+```
+
+Probability **0.0769 nundi 0.333 ki** (approx **4.3x ekkuva**) perigindi! Enduku?
+
+- Original 52 cards lo, King ki "competition" (Ace, 2, 3, ..., 10 - anni non-face cards) chala ekkuva undi - so King share chinna ga undi (4 out of 52).
+- Face card condition icchaka, aa "40 competitors" (non-face cards) anni bayataki vellipoyaru. Ippudu King ki competition, matrame migatha 8 face cards (Jack x4, Queen x4) - so King share ekkuva ayindi (4 out of 12).
+- **Simple meaning:** Manam sample space ni **narrow (chinna)** chesinappudu, aa narrow space lo unna event (King) ki relative share **peragavachu** (ekkuva avvavachu) - endukante "diluting" chese extra cards ni teesesamu.
+
+**Kid-friendly analogy:** Oka class lo 52 students unnaru, andulo 4 mandi "sports captains". Full class lo, "random ga oka student pick chesthe, aa student captain ayye chance" chinnaga untundi (4/52). Kani "ee 12 mandi (sports team members) lone oka student pick cheyandi" ani cheppagane, ippudu 12 mandi lone 4 mandi captains kabatti, chance peragi (4/12) avutundi - endukante "migatha non-team 40 mandi" ni ika consider cheyyamu.
 
 Note ga chudandi: `P(King) = 4/52 = 0.0769` (overall probability), kani `P(King | Face card) = 0.333` (chala ekkuva) - endukante manam already "face card" ani telisi start chestunnam, so possibilities narrow ayyayi (52 nundi 12 ki).
 
