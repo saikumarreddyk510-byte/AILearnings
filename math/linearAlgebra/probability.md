@@ -411,11 +411,34 @@ print(P_spam_given_free)   # 0.8
 
 ---
 
-## 8) Probability Distributions - Discrete (Pattern of Possible Outcomes)
+## 8) Types of Probability Distributions (Overview)
+
+**Definition:** Random variable type batti (discrete or continuous), probability distributions rendu pedda categories lo untayi. Ikkada, ee file lo cover chese anni distributions ki oka quick map:
+
+| Category | Distribution | Best For (Real-World Use) |
+|---|---|---|
+| Discrete | Bernoulli | Single yes/no trial (Section 9.1) |
+| Discrete | Binomial | Repeated yes/no trials, count of successes (Section 9.2) |
+| Discrete | Poisson | Rare events over a fixed time/space (Section 9.3) |
+| Continuous | Uniform | Equal chance across a range (Section 10.1) |
+| Continuous | Normal (Gaussian) | Natural measurements, bell curve (Section 10.2) |
+| Continuous | Standard Normal / Z-score | Comparing values on a common scale (Section 10.3) |
+| Continuous | Exponential | Time between random events (Section 10.4) |
+| Continuous | Log-Normal | Skewed, always-positive data like income (Section 10.5) |
+| Continuous | Power Law | A few large values, many small values (Section 10.6) |
+| Continuous | Pareto | 80/20 rule type situations (Section 10.7) |
+
+**Simple meaning:** "Discrete" distributions answer "how many times" questions (counts, whole numbers). "Continuous" distributions answer "how much / what value" questions (measurements, decimals allowed). AI models constantly choose which distribution assumption best fits their data, before designing the right model or loss function.
+
+**Kid-friendly analogy:** Discrete distributions - "enni chocolates dorikayi" ani count cheyyadam (0, 1, 2, 3...). Continuous distributions - "enta sepu wait chesav" ani measure cheyyadam (2.3 minutes, 5.7 minutes... eppudaina decimal value possible).
+
+---
+
+## 9) Probability Distributions - Discrete (Pattern of Possible Outcomes)
 
 **Definition:** Probability Distribution ante, oka random variable teesukune anni possible values and prathi value ki entha probability undo chupe pattern/table/formula.
 
-### 8.1) Bernoulli Distribution (Single Yes/No Trial)
+### 9.1) Bernoulli Distribution (Single Yes/No Trial)
 
 **Definition:** Kevalam rendu outcomes matrame unna oka single trial - Success (1) or Failure (0).
 
@@ -430,7 +453,7 @@ P(X=0) = 1 - p   (failure probability)
 
 **AI Example - Very Important:** Binary classification model output (spam/not-spam, disease/no-disease) fundamentally Bernoulli distribution follow avutundi - model oka probability `p` istundi (Example: `p=0.8` "spam"), and final decision ee Bernoulli trial base chesi untundi. **Dropout regularization** technique lo kuda, prathi neuron ni "keep" (1) or "drop" (0) cheyyadam Bernoulli distribution tho decide chestaru (Example: `p=0.5` dropout rate ante, prathi neuron ki 50% chance drop avvadaniki).
 
-### 8.2) Binomial Distribution (Multiple Independent Bernoulli Trials)
+### 9.2) Binomial Distribution (Multiple Independent Bernoulli Trials)
 
 **Definition:** Bernoulli trial ni multiple times (n sarlu) repeat chesthe, total enni successes vastayi ane distribution.
 
@@ -455,7 +478,7 @@ print(round(P, 4))   # 0.2051
 
 **AI Example:** A/B testing lo (Example: kotha website button design better aa test cheyyadam), "100 users lo 60 mandi kotha button click chesaru" ane result significant aa kaadha ani check cheyyadaniki Binomial distribution use chestaru. Model ensemble lo "5 models lo majority (3+) correct ga predict chesaru aa" ane probability kuda Binomial tho calculate cheyyavachu.
 
-### 8.3) Poisson Distribution (Rare Events Over Time/Space)
+### 9.3) Poisson Distribution (Rare Events Over Time/Space)
 
 **Definition:** Fixed time/space lo, oka event enni sarlu jarugutundo (rare, random events) model cheyyadaniki.
 
@@ -482,9 +505,9 @@ print(round(P, 4))   # 0.1042
 
 ---
 
-## 9) Probability Distributions - Continuous (Range of Values)
+## 10) Probability Distributions - Continuous (Range of Values)
 
-### 9.1) Uniform Distribution (Anni Values Equal Chance)
+### 10.1) Uniform Distribution (Anni Values Equal Chance)
 
 **Definition:** Oka range (Example: `a` to `b`) madhya, anni values ki equal probability unde distribution.
 
@@ -492,7 +515,7 @@ print(round(P, 4))   # 0.1042
 
 **AI Example:** Neural network weight initialization lo, initial weights ni oka small range (Example: `-0.5` to `0.5`) madhya uniformly random ga set chestaru, so training start ayye mundu anni weights equal chance tho different values teesukuntayi (later Xavier/He initialization laanti smarter methods vachayi, kani basic idea Uniform distribution nundi start ayyindi).
 
-### 9.2) Normal (Gaussian) Distribution - Chala Important! (Bell Curve)
+### 10.2) Normal (Gaussian) Distribution - Chala Important! (Bell Curve)
 
 **Definition:** Chala natural phenomena (height, weight, exam marks, measurement errors) ee bell-shaped curve follow avutayi - mean (average) daggara values ekkuva, extremes daggara takkuva.
 
@@ -534,7 +557,37 @@ print(round(pdf, 4))   # 0.242
 4. **Anomaly Detection:** Data normal distribution follow ayithe, `±3 sigma` bayata unna points ni "outliers/anomalies" ani flag chestaru (Example: credit card fraud detection).
 5. **Generative Models (VAE, Diffusion Models):** Ee models random noise ni Normal distribution nundi generate chesi, aa noise nundi realistic images/data create chestayi.
 
-### 9.3) Exponential Distribution (Time Between Events)
+### 10.3) Standard Normal Distribution and Z-Score
+
+**Definition:** Standard Normal Distribution ante, oka special Normal distribution, ade mean = 0 and standard deviation = 1 tho untundi. Prathi Normal distribution ni, Z-score formula tho, ee Standard Normal distribution ki convert cheyyachu (idi "standardization" antaru).
+
+**Formula (Z-score):**
+
+```text
+Z = (X - mu) / sigma
+
+X = observed value
+mu = mean of the distribution
+sigma = standard deviation of the distribution
+```
+
+**Meaning:** Z-score ante, oka value, mean nundi enta standard deviations dooram lo undo cheppe number.
+
+**Example:** Class lo students marks average `mu=70`, standard deviation `sigma=10`. Oka student marks `85` vachhayi. Z-score entha?
+
+```python
+x, mu, sigma = 85, 70, 10
+z = (x - mu) / sigma
+print(z)   # 1.5
+```
+
+**Result:** `Z = 1.5` - aa student marks, average kanna 1.5 standard deviations ekkuva. Z-score positive ayithe average kanna ekkuva, negative ayithe average kanna takkuva ani ardham.
+
+**Why convert to Z-score?** Different distributions (Example: marks 0-100 range, height 100-200cm range) ni oke common scale (Z-score) ki teesukoste, easy ga compare cheyyachu - "ee student marks, aa person height kanna, relative ga ekkuva unnaya" ani cheppagalugutamu.
+
+**AI Example:** **Feature Scaling / Standardization** (already Linear Algebra file lo chusina "Standardization" concept) exact ga ee Z-score formula ne - ML models ki input features anni different scales lo unte (Example: age 0-100, salary 0-1000000), model training slow/unstable avutundi. Prathi feature ni Z-score formula tho standardize chesthe (mean=0, std=1 ki marchi), model fast ga and stable ga train avutundi. **Outlier detection** lo kuda, `|Z| > 3` unna points ni "unusual/outlier" ani flag chestaru.
+
+### 10.4) Exponential Distribution (Time Between Events)
 
 **Definition:** Rendu random events madhya entha time/gap untundo model cheyyadaniki.
 
@@ -544,7 +597,67 @@ print(round(pdf, 4))   # 0.242
 
 ---
 
-## 10) PDF and CDF (Continuous Distributions ni Describe Cheyyadaniki)
+### 10.5) Log-Normal Distribution
+
+**Definition:** Oka random variable `X` Log-Normal distribution follow avutundi ante, `X` ki natural log (`ln X`) teesukunte, aa result Normal distribution follow avutundi. Simple ga cheppalante - Log-Normal ante, "log teesukunte Normal ayye distribution".
+
+**Why useful?** Chala real-world quantities eppudu negative avvavu (age, income, stock prices, city populations) and right-skewed ga untayi (chala values takkuva range lo, konni values chala ekkuva - "long tail"). Normal distribution ee cases ki fit avvadu (endukante Normal, negative values ni kuda allow chestundi), kani Log-Normal fit avutundi.
+
+**Example:** Oka company lo employees salaries, chala mandi average range lo untaru, kani konni (CEO, top executives) chala ekkuva untayi - ee "long tail" pattern, Log-Normal distribution ki classic example.
+
+```python
+import math, random
+random.seed(42)
+mu_ln, sigma_ln = 0, 0.5   # parameters of the underlying normal distribution
+mean_lognormal = math.exp(mu_ln + (sigma_ln**2)/2)
+samples = [math.exp(random.gauss(mu_ln, sigma_ln)) for _ in range(5)]
+print(round(mean_lognormal, 4))          # 1.1331
+print([round(s, 3) for s in samples])    # example draws, always positive
+```
+
+**AI Example:** **NLP (word frequency modeling)** - word occurrence counts in text often follow log-normal-like patterns. **Financial ML models** - stock prices and transaction amounts are often modeled with Log-Normal (prices never negative, and small daily percent changes compound multiplicatively). **User behavior modeling** - "time spent on app per session" is often right-skewed and modeled with Log-Normal.
+
+### 10.6) Power Law Distribution
+
+**Definition:** Power Law distribution lo, "chala takkuva items ki chala ekkuva value, and chala ekkuva items ki chala takkuva value" ane pattern untundi. Formula ga cheppalante, probability, value ki inversely proportional to a power:
+
+```text
+P(X = x) proportional to x^(-alpha)      (alpha = positive constant, controls the "steepness")
+```
+
+**Example - Real World:** Websites popularity - chala takkuva websites (Google, YouTube, Facebook) ki chala ekkuva traffic, and millions of chinna websites ki chala takkuva traffic. City populations - chala takkuva cities (Mumbai, Delhi) chala jana population, chala ekkuva chinna towns takkuva population.
+
+**AI Example:** **NLP - Zipf's Law:** Idi oka special case of Power Law - "oka language lo most common word, 2nd most common word kanna daadapu 2x ekkuva vastundi, 2nd most common, 3rd kanna 2x ekkuva..." ane pattern (Example: "the", "a", "is" laanti words chala sarlu vastayi, rare words chala takkuva sarlu). **Recommendation systems** - "chala takkuva popular items ki chala ekkuva clicks/purchases" (blockbuster movies, bestseller books) - "long tail" problem ani antaru, recommendation algorithms ee ni handle cheyyalsi untundi. **Network/Graph analysis** (Example: social media follower counts) - chala takkuva "influencers" ki millions of followers, chala mandi normal users ki takkuva followers - ide Power Law pattern, Graph Neural Networks ki important.
+
+### 10.7) Pareto Distribution
+
+**Definition:** Pareto distribution, Power Law family lone oka specific member - "80/20 Rule" (Pareto Principle) tho famous - "80% results, kevalam 20% causes/inputs valla vastayi".
+
+**Formula (Survival function - P(X > x)):**
+
+```text
+P(X > x) = (x_m / x)^alpha    for x >= x_m
+
+x_m = minimum possible value
+alpha = shape parameter (controls how skewed the distribution is)
+```
+
+**Example - 80/20 Rule:** Business lo common observation - "80% company revenue, kevalam 20% customers valla vastundi" or "80% bugs, kevalam 20% code files valla vastayi".
+
+```python
+def pareto_survival(x, xm, alpha):
+    return (xm / x) ** alpha
+
+# alpha around 1.16 approximately gives the classic 80/20 split
+result = pareto_survival(5, 1, 1.16)
+print(round(result, 4))   # 0.1546 -> only about 15.46% of items reach value 5 or more
+```
+
+**AI Example:** **Feature Importance Analysis** - real ML models lo, chala sarlu "20% features, 80% predictive power istayi" ani kanipistundi - feature selection lo Pareto principle guide chestundi, important features matrame keep chesi, rest ni remove cheyyadam (dimensionality reduction ki practical shortcut). **Resource Allocation in MLOps** - "80% model errors, 20% edge cases valla vastayi" ani identify chesi, aa 20% ki focus pettadam. **Class Imbalance Problems** - real-world datasets (fraud detection, rare disease diagnosis) lo, chala sarlu "80-90% normal cases, 10-20% (or less) rare/positive cases" ane Pareto-like split kanipistundi, ide "imbalanced dataset" problem ki root cause.
+
+---
+
+## 11) PDF and CDF (Continuous Distributions ni Describe Cheyyadaniki)
 
 **PMF (Probability Mass Function)** - Discrete variables kosam, exact value ki probability istundi. `P(X=5)` laaga.
 
@@ -562,9 +675,9 @@ CDF(x) = P(X <= x)
 
 ---
 
-## 11) Expected Value, Variance, Standard Deviation (Distribution ni Summarize Cheyyadam)
+## 12) Expected Value, Variance, Standard Deviation (Distribution ni Summarize Cheyyadam)
 
-### 11.1) Expected Value (Mean) - "Average Result Entha Untundi"
+### 12.1) Expected Value (Mean) - "Average Result Entha Untundi"
 
 **Formula (discrete):**
 
@@ -585,7 +698,7 @@ print(E_X)   # 3.5
 
 **AI Example:** Reinforcement Learning (RL) lo, agent prathi action teesukunnapudu entha expected reward vastundo calculate chesi, best action ni select chestundi - "Expected Value maximize cheyyadam" ide RL core goal.
 
-### 11.2) Variance and Standard Deviation - "Values Entha Spread Ayyayi"
+### 12.2) Variance and Standard Deviation - "Values Entha Spread Ayyayi"
 
 **Formula:**
 
@@ -614,9 +727,9 @@ print(Var_X)   # 2.9167
 
 ---
 
-## 12) Joint, Marginal, and Conditional Probability (Multiple Variables Kalipi)
+## 13) Joint, Marginal, and Conditional Probability (Multiple Variables Kalipi)
 
-### 12.1) Joint Probability - Rendu Events Okesari Jarigite
+### 13.1) Joint Probability - Rendu Events Okesari Jarigite
 
 **Definition:** `P(A and B)` - rendu events okesari jarige probability.
 
@@ -630,13 +743,13 @@ print(Var_X)   # 2.9167
 
 `P(Rain and Umbrella taken) = 0.15` - idi Joint Probability.
 
-### 12.2) Marginal Probability - Oka Variable Matrame (Others ni "Sum Out" Chesi)
+### 13.2) Marginal Probability - Oka Variable Matrame (Others ni "Sum Out" Chesi)
 
 **Definition:** Joint table nundi, oka row/column ni add chesi (marginalize chesi), single variable probability teesukovadam.
 
 `P(Rain) = 0.15 + 0.05 = 0.20` (table lo "Rain" row total) - idi Marginal Probability.
 
-### 12.3) Conditional Probability (Already Section 5 lo Chusam)
+### 13.3) Conditional Probability (Already Section 5 lo Chusam)
 
 `P(Umbrella taken | Rain) = P(Rain and Umbrella) / P(Rain) = 0.15 / 0.20 = 0.75`
 
@@ -644,7 +757,7 @@ print(Var_X)   # 2.9167
 
 ---
 
-## 13) Law of Large Numbers (Ekkuva Data Unte Better Estimates)
+## 14) Law of Large Numbers (Ekkuva Data Unte Better Estimates)
 
 **Definition:** Oka experiment ni chala sarlu repeat chesthe, observed average, true expected value ki daggara ga vastundi.
 
@@ -654,7 +767,7 @@ print(Var_X)   # 2.9167
 
 ---
 
-## 14) Central Limit Theorem (CLT) - Statistics ki Foundation
+## 15) Central Limit Theorem (CLT) - Statistics ki Foundation
 
 **Definition:** Original data distribution edaina sare (Normal, Uniform, Skewed - edaina), chala samples teesukuni vaati averages ni plot cheste, aa averages distribution eppudu Normal (bell-shaped) ga vastundi - sample size saripada peddaga unte (usually 30+).
 
@@ -664,7 +777,54 @@ print(Var_X)   # 2.9167
 
 ---
 
-## 15) Likelihood vs Probability (ML Training ki Core Difference)
+## 16) Estimates (Point Estimates, Interval Estimates, Confidence Intervals)
+
+**Why important:** Real world lo, manaki full population (Example: prapancham motham lo unna people height) access undadu - kevalam oka sample (chinna subset) matrame untundi. "Estimation" ante, ee sample nundi, full population gurinchi best guess cheyyadam.
+
+### 16.1) Point Estimate
+
+**Definition:** Population parameter (Example: true mean) ki, oka single number tho guess cheyyadam.
+
+**Example:** 100 students marks sample nundi average calculate cheste `75` vachindi. "Entire school average marks 75 undachu" ani cheppadam - idi Point Estimate (single number guess).
+
+**Problem:** Point estimate exact ga correct ani guarantee ledu - sample marina prathisari konchem different average vastundi.
+
+### 16.2) Interval Estimate and Confidence Interval
+
+**Definition:** Point estimate ki badulu, "true value ee range madhya undachu" ani cheppadam - Confidence Interval (CI) ane range tho.
+
+**Formula (large sample, using Z):**
+
+```text
+Confidence Interval = sample_mean +/- (Z_critical * Standard_Error)
+
+Standard_Error = sample_std_deviation / sqrt(sample_size)
+Z_critical = 1.96 for 95% confidence (most common choice)
+```
+
+**Example:** Sample nundi average `100`, standard deviation `15`, sample size `n=25`. 95% Confidence Interval entha?
+
+```python
+import math
+sample_mean, sample_std, n = 100, 15, 25
+z_critical = 1.96
+standard_error = sample_std / math.sqrt(n)
+margin_of_error = z_critical * standard_error
+ci_lower = sample_mean - margin_of_error
+ci_upper = sample_mean + margin_of_error
+print(round(standard_error, 4))                 # 3.0
+print(round(ci_lower, 2), round(ci_upper, 2))   # 94.12 105.88
+```
+
+**Result:** "Manam 95% confident true population average, `94.12` and `105.88` madhya undi" ani cheppagalugutamu - idi single number (point estimate) kanna much more honest and useful statement, endukante uncertainty ni kuda cheptundi.
+
+**Kid-friendly analogy:** Point estimate ante, "repu exactly 3:00 PM ki bus vastundi" ani cheppadam (chala confident ga, kani tappu ayye chance ekkuva). Confidence Interval ante, "bus 2:50 PM to 3:10 PM madhya vastundi" ani cheppadam (konchem flexible range, kani correct ayye chance ekkuva).
+
+**AI Example:** **Model Evaluation** - ML model accuracy ni single number (Example: "92% accuracy") ga cheppadam kanna, confidence interval tho ("92% +/- 2%") cheppadam better - endukante test set size batti, ee accuracy number konchem vary avvachu. **A/B Testing** - "kotha feature valla users engagement 5% perigindi" ani cheppetappudu, confidence interval tho ee result statistically significant aa kaadha (chance valla vachhinda) ani decide chestaru. **Bayesian Deep Learning / Uncertainty Quantification** - modern AI models, kevalam oka prediction ivvakunda, "ee prediction ki entha confidence undi" ani kuda ivvadaniki try chestayi (Example: self-driving cars "pedestrian unnadu" ani cheppetappudu, entha sure ga cheppagalugutunnayo kuda cheppali) - idi estimation theory ki direct extension.
+
+---
+
+## 17) Likelihood vs Probability (ML Training ki Core Difference)
 
 Ee rendu chaala similar ga vinipinchina, different concepts:
 
@@ -689,9 +849,9 @@ print(mle_p_hat)   # 0.8
 
 ---
 
-## 16) Entropy and Information Theory (Uncertainty ni Measure Cheyyadam)
+## 18) Entropy and Information Theory (Uncertainty ni Measure Cheyyadam)
 
-### 16.1) Entropy - "Ekkuva Uncertainty Unte Ekkuva Entropy"
+### 18.1) Entropy - "Ekkuva Uncertainty Unte Ekkuva Entropy"
 
 **Definition:** Entropy ante, oka probability distribution lo entha uncertainty/randomness undo measure chese number.
 
@@ -727,7 +887,7 @@ print(round(entropy2, 4))   # 0.469
 
 **AI Example:** **Decision Trees** (Random Forest, XGBoost base algorithm) lo, prathi split ni "Information Gain" (entropy reduction) base chesi select chestaru - aa split, data ni most organized/pure (least entropy) groups ga divide chesedaanini select chestaru.
 
-### 16.2) Cross-Entropy - Classification Loss Function (Chala Important!)
+### 18.2) Cross-Entropy - Classification Loss Function (Chala Important!)
 
 **Definition:** Cross-entropy, true labels and model predicted probabilities madhya entha difference/error undo measure chestundi - classification models train cheyyadaniki ide most common loss function.
 
@@ -751,7 +911,7 @@ print(round(cross_entropy, 4))   # 0.3567
 
 **AI Example:** Anni classification neural networks (image classification, text classification, spam detection) train ayyetappudu, cross-entropy loss ni minimize cheyyadaniki weights ni update chestayi (backpropagation + gradient descent tho) - idi Deep Learning notes lo manam chusina "error reduction loop" ki exact loss function.
 
-### 16.3) KL Divergence - Rendu Distributions ni Compare Cheyyadam
+### 18.3) KL Divergence - Rendu Distributions ni Compare Cheyyadam
 
 **Definition:** KL Divergence (Kullback-Leibler), rendu probability distributions entha different ga unnayo measure chestundi.
 
@@ -759,9 +919,9 @@ print(round(cross_entropy, 4))   # 0.3567
 
 ---
 
-## 17) Sigmoid and Softmax - Probability ni Model Output ga Marchadam
+## 19) Sigmoid and Softmax - Probability ni Model Output ga Marchadam
 
-### 17.1) Sigmoid Function (Binary Classification ki Probability)
+### 19.1) Sigmoid Function (Binary Classification ki Probability)
 
 **Formula:**
 
@@ -782,7 +942,7 @@ print(round(sigmoid, 4))   # 0.8808
 
 **AI Example:** Binary classification (spam/not-spam, disease/no-disease) neural networks, final layer lo **sigmoid** use chesi, output ni "probability of positive class" ga treat chestayi (Example: `0.8808` ante "88.08% chance spam").
 
-### 17.2) Softmax Function (Multi-Class Probability Distribution)
+### 19.2) Softmax Function (Multi-Class Probability Distribution)
 
 **Formula:**
 
@@ -809,7 +969,7 @@ print(round(sum(softmax), 4))            # 1.0
 
 ---
 
-## 18) Markov Chains and Markov Property (Sequence Modeling ki Foundation)
+## 20) Markov Chains and Markov Property (Sequence Modeling ki Foundation)
 
 **Definition:** Markov Property ante, next state, kevalam current state meeda matrame depend avutundi - past history (ela ikkadiki vachamo) ki sambandham ledu.
 
@@ -831,7 +991,7 @@ P(Rainy tomorrow | Rainy today) = 0.6
 
 ---
 
-## 19) Where Probability is Used Across AI - Complete Summary Table
+## 21) Where Probability is Used Across AI - Complete Summary Table
 
 | AI Area | Probability Concept Used | Real Example |
 |---|---|---|
@@ -850,10 +1010,15 @@ P(Rainy tomorrow | Rainy today) = 0.6
 | Bayesian Networks | Joint/marginal/conditional probability | Medical diagnosis systems |
 | Model Calibration | KL Divergence, CDF | Checking if confidence scores are realistic |
 | Batch Training | Central Limit Theorem | Stable gradient estimates per batch |
+| Feature Scaling / Outlier Detection | Standard Normal Distribution, Z-score | Standardizing features, flagging anomalies |
+| Financial / NLP Modeling | Log-Normal Distribution | Stock prices, word frequency, session time |
+| Recommendation / Graph Systems | Power Law Distribution, Zipf's Law | Long-tail popularity, social network followers |
+| Feature Selection / Imbalanced Data | Pareto Distribution (80/20 Rule) | Top features driving most predictive power |
+| Model Evaluation | Point/Interval Estimates, Confidence Intervals | Reporting accuracy with uncertainty ranges |
 
 ---
 
-## 20) Quick Revision (One-Line Summary of Each Topic)
+## 22) Quick Revision (One-Line Summary of Each Topic)
 
 - **Probability:** Event jarige chance, `0` to `1` madhya number.
 - **Sample Space/Event:** Anni possible outcomes / manaki kavalsina specific outcomes group.
@@ -872,10 +1037,15 @@ P(Rainy tomorrow | Rainy today) = 0.6
 - **Cross-Entropy:** Classification models ki main loss function.
 - **Sigmoid/Softmax:** Model outputs ni probabilities ga marchadam.
 - **Markov Chains:** Next state, matrame current state meeda depend avutundi.
+- **Types of Distributions:** Discrete (counts) vs Continuous (measurements).
+- **Z-score:** Value ni, mean nundi enta standard deviations dooram undo cheppe number.
+- **Log-Normal:** Log teesukunte Normal ayye distribution - income, prices, session time.
+- **Power Law / Pareto:** Chala takkuva items ki chala ekkuva value (80/20 rule).
+- **Estimates:** Point Estimate (single number guess) vs Confidence Interval (range with uncertainty).
 
 ---
 
-## 21) One More Kid Analogy (Super Simple, Everything Together)
+## 23) One More Kid Analogy (Super Simple, Everything Together)
 
 Oka ice cream shop anukondi:
 
@@ -889,6 +1059,6 @@ Oka ice cream shop anukondi:
 
 ---
 
-## 22) Final Point
+## 24) Final Point
 
 Probability, AI/ML ki "uncertainty tho telivi ga vyavaharinchadaniki" icche mathematical language. Prathi ML model - simple Naive Bayes nundi ChatGPT laanti massive LLMs varaku - lopala ekkado probability calculations (Bayes' theorem, likelihood, entropy, softmax) run avutune untayi. Ee file lo nerchukunna concepts (Bayes, distributions, expected value, entropy) ni, mundu mugam Machine Learning and Deep Learning notes chadivetappudu, "ah, idi ikkada vaadaru!" ani connect chesukogalugutavu.
