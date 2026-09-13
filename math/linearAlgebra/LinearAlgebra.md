@@ -1,20 +1,4 @@
-# Linear Algebra - Simple Telugu English Notes
 
-Linear Algebra ante numbers ni single ga kakunda group ga chusi, vatini rules tho operate cheyyadam.
-Idi ML, DL, NLP, Computer Vision lo chala important.
-
-## Enduku Linear Algebra Important?
-
-1. Data ni represent cheyyadaniki (tables, vectors, matrices)
-2. Relations ni ardham chesukodaniki (features madhya relation)
-3. Fast ga calculations cheyyadaniki (matrix operations)
-4. Models train cheyyadaniki (weights updates, transformations)
-
-Kid analogy:
-- Oka toy box undi ani anuko.
-- Single toy = scalar
-- Toy line lo arrange chesthe = vector
-- Toys ni rows and columns lo shelf lo arrange chesthe = matrix
 
 ## 1) Scalars, Vectors, Matrices
 
