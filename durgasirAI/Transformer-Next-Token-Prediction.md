@@ -1088,6 +1088,27 @@ GPT alochana:
 
 #### AI lo attention ante?
 
+![Attention Mechanism — computer important words ni focus chesi, migathavi ignore chestundi](images/attention-mechanism-definition.png)
+
+Pai image lo definition:
+
+> **"Helps a computer decide which words are important, focus more on them, and ignore the rest."**
+
+Simple ga Tenglish lo — **attention** anedi computer ki **"ee sentence lo ye words important?"**
+ani decide cheyyadaniki help chestundi. Important words meeda **ekkuva focus** pedutundi,
+migatha words ni **ignore** chestundi (leda chala takkuva importance istundi).
+
+Picture lo **head nundi vellina arrows** chudandi — manishi kallu konni vishayala meeda
+matrame focus chesinattu, model kuda konni words meeda matrame focus chestundi.
+Aa "entha focus" ane number ne kinda table lo unna **attention weight**.
+
+| Image lo part | Model lo meaning |
+|---|---|
+| Head / kallu (eye) | Ippudu process avuthunna word (Query) |
+| Arrows | Aa word migatha words ni "chustundi" |
+| Peddha focus | Ekkuva attention weight (ex: `it` → `cat` = 0.70) |
+| "Ignore the rest" | Chala takkuva weight (ex: `on` = 0.01) — completely zero kaadu, kaani almost ignore |
+
 **Attention** = model sentence lo unna **anni words ni oke saari** chusi, oka word
 meaning decide cheyyadaniki **prathi word enta important** ani decide chese method.
 
@@ -1107,6 +1128,55 @@ meaning decide cheyyadaniki **prathi word enta important** ani decide chese meth
 
 Anni weights kalipithe **1.0 (100%)** avutundi. `cat` ki ekkuva weight vachindi
 kabatti, `it` meaning ekkuva bhaagam `cat` nundi build avutundi.
+
+#### Inko example — Sita, she, Ravi, book
+
+![Attention importance — Sita & she High, Ravi & book Low](images/attention-sita-she-importance.png)
+
+Ee sentence anukondi (slide lo full sentence kanipinchaledu — ardham kosam oka example):
+
+```text
+"Sita gave Ravi a book because she was going to Hyderabad."
+```
+
+Model **`she`** ane word ni process chesthunnappudu adugutundi —
+*"ee `she` evaru? naaku ye words important?"*
+
+| Word | Importance | Enduku? |
+|---|---|---|
+| **Sita** | **High** | `she` ante **Sita** ne — female name, `she` ki direct ga connect avutundi |
+| **she** | **High** | Ippudu process avuthunna word e idi — tanani tanu kuda chustundi (self-attention) |
+| Ravi | Low | Male name — `she` ki match avvadu |
+| book | Low | Oka vasthuvu (object) — `she` evaro cheppadu |
+
+Image lo **magnifying glass (bhootaddam)** chudandi — model `Sita`, `she` meeda
+**zoom** chesi focus chestundi, `Ravi`, `book` ni dadapu ignore chestundi.
+
+> **Gurthu pettukondi:** "High / Low" ani slide lo simple ga chupincharu. Nijam ga model
+> **numbers** istundi (ex: Sita = 0.65, she = 0.25, Ravi = 0.06, book = 0.04) — anni kalipithe **1.0**.
+> Paina `it → cat` example lo chusindi kuda exactly idhe idea.
+
+#### Attention 4 steps lo — Read → Check → Focus → Answer
+
+![Attention 4 steps — Read, Check, Focus, Answer](images/attention-4-steps-read-check-focus-answer.png)
+
+```text
+[1. Read]  →  [2. Check]  →  [3. Focus]  →  [4. Answer]
+ full          prathi word     important      focus chesina
+ sentence      entha           words ki       words tho
+ chadavali     important?      ekkuva focus   answer ivvali
+```
+
+| Step | Slide lo | Tenglish lo meaning | Sita example lo | Model lopala (technical) |
+|---|---|---|---|---|
+| **1. Read** | Read the full sentence | Mundu **motham sentence** chadavali — okko word vidiga kaadu | "Sita gave Ravi a book because she…" anni words chadivindi | Anni tokens → embeddings (numbers) |
+| **2. Check** | Check how important each word is | Prathi word ki **"idi entha important?"** ani score ivvali | `she` ki: Sita = High, Ravi = Low, book = Low | **Query × Key** → scores |
+| **3. Focus** | Give more focus to important words | High score unna words ki **ekkuva weight**, migathavi dadapu ignore | Sita meeda ekkuva focus | **Softmax** → attention weights (motham = 1.0) |
+| **4. Answer** | Use focused words to give an answer | Focus chesina words info ni kalipi **final meaning / answer** | `she` = **Sita** ani ardham | Weights × **Value** → kotha meaning vector → next token |
+
+> **Oka line lo:** Attention = *chaduvu → evaru important o check chey → vaalla meeda focus pettu → daani base chesukoni answer ivvu.*
+> Manam exam lo question chadivi, **keywords** underline chesi, vaati base meeda answer rasinattu — model kuda alaage.
+> Step 2, 3, 4 lo unna **Query / Key / Value** ni kinda section lo deep ga chuddam.
 
 #### Lopala ela pani chestundi? — Query, Key, Value
 
@@ -1486,6 +1556,1868 @@ English input  →  [ENCODER]  ──cross-attention──→  [DECODER]  →  F
 > **Oka line lo:** GPT lo attention input + output rendu tokens meeda run avutundi,
 > endukante avi anni oke sequence. Prathi token venaka unna anni tokens ni chustundi,
 > and output tokens next step ki input ayipotayi.
+
+---
+
+### 4.5 Ee maths antha ekkada run avutundi? — GPU & TPU
+
+Paina chusina prathi step — embedding, attention (Q·Kᵀ), softmax, output layer —
+anni chivariki **numbers ni multiply chesi add cheyyadame** (matrix multiplication).
+Oka chinna prompt ki kuda **billions of multiplications** jarugutayi.
+Ee pani ni fast ga chese hardware ye **GPU** and **TPU**.
+
+#### Mundu konni technical words — simple meanings
+
+| Word | Simple meaning |
+|---|---|
+| **CPU** | Computer lo main processor. Konni (8–64) **powerful cores** — okko pani ni chala smart ga chestundi |
+| **GPU** | Graphics Processing Unit. **Velalla (thousands) chinna cores** — simple pani ni oke saari kotlu saarlu chestundi |
+| **TPU** | Tensor Processing Unit. **Google** AI kosame design chesina chip — matrix maths matrame chestundi |
+| **Core** | Chip lopala oka chinna "worker" — oka calculation chese unit |
+| **Parallel processing** | Chala panulu **oke time lo** cheyyadam (okati tarvata okati kaadu) |
+| **Matrix multiplication** | Rendu numbers tables ni multiply cheyyadam — neural network lo ekkuva pani idhe |
+| **Tensor** | Numbers unna multi-dimensional box (list → table → cube …) |
+| **VRAM / HBM** | GPU/TPU meeda unde **fast memory** — model weights ikkade load avutayi |
+| **CUDA** | NVIDIA GPU ni program cheyyadaniki software platform. PyTorch lopala idhe use avutundi |
+| **Training** | Model ni nerpinchadam — weeks/months, velalla chips |
+| **Inference** | Nerchukunna model tho answer generate cheyyadam (mana ChatGPT use) |
+
+#### Enduku CPU saripodu? — Simple example
+
+Oka exam lo **10 lakh simple addition questions** unnayi anukondi.
+
+```text
+CPU  = 8 mandi maths professors    → prathi okkaru chala fast, kaani 8 mandi matrame
+GPU  = 10,000 mandi school pillalu → prathi okkaru slow, kaani 10,000 mandi oke saari
+TPU  = addition kosame tayaru chesina factory assembly line → inka fast, kaani addition matrame
+```
+
+Questions anni **simple and independent** (okati inkokati meeda depend avvadu) —
+andhuke **10,000 pillalu professors kanna chala mundu** pani complete chestaru.
+Neural network maths kuda exactly ilaage untundi: **simple multiply-add, kotlu saarlu, parallel ga.**
+
+#### Transformer lo GPU/TPU ekkada use avutundi?
+
+```text
+[Text → Tokens]  → CPU (tokenizer — chinna pani, CPU chalu)
+    ↓
+[Embedding lookup]           ┐
+[Q, K, V = X × W]            │
+[Attention = softmax(QKᵀ)V]  │  ← ivi anni GPU / TPU meeda
+[Feed-forward layers]        │     (heavy matrix multiplication)
+[Output layer + softmax]     ┘
+    ↓
+[Token select + decode] → malli CPU (chinna pani)
+```
+
+- **Attention:** prathi token, migatha anni tokens tho score calculate chestundi — 1,000 tokens unte ~10 lakh scores. Ivi anni **independent** — GPU oke saari chestundi.
+- **Prefill (Section 4.4):** prompt lo anni tokens oke saari process avutayi → GPU cores anni busy — **compute** important.
+- **Decoding:** okko token generate avutundi, prathi saari motham model weights memory nundi chadavali → **memory speed (bandwidth)** important. Andhuke **KV cache** GPU memory lo pettukuntaru.
+
+#### Training lo vs Inference lo
+
+| | **Training** | **Inference** |
+|---|---|---|
+| Em jarugutundi | Forward pass + backward pass (weights update) | Forward pass matrame |
+| Entha hardware | Velalla GPUs/TPUs, weeks–months | Konni GPUs, milliseconds–seconds per answer |
+| Ekkuva kavalsindi | Raw compute + chips madhya fast network | Memory + low latency |
+
+#### GPU vs TPU — side by side
+
+| | **GPU** (NVIDIA A100, H100 …) | **TPU** (Google TPU v4, v5 …) |
+|---|---|---|
+| Evaru tayaru chestaru | NVIDIA (AMD kuda) | Google matrame |
+| Modata enduku | Games graphics kosam — tarvata AI ki baga suit ayyindi | Modati nunchi **AI kosame** |
+| Lopala design | Velalla general cores + **Tensor Cores** (matrix kosam special units) | **Systolic array** — numbers oka grid lo pass avutu multiply-add avutayi |
+| Flexibility | Chala ekkuva — AI, gaming, science, video edit anni | Takkuva — matrix/tensor maths ki matrame best |
+| Ela vadataru | Konachu (buy) leda AWS / Azure / GCP lo rent | **Google Cloud** lo rent (Colab lo free ga try cheyyochu) |
+| Software | **PyTorch + CUDA** (most popular) | **JAX / TensorFlow** + XLA compiler (PyTorch/XLA kuda undi) |
+| Ekkada vadataru | Industry lo ekkuva mandi (Meta Llama, chala startups) | Google (Gemini, PaLM) |
+
+> **Simple ga:** GPU = Swiss army knife (anni pani chestundi, AI lo kuda chala baga).
+> TPU = AI kosame tayaru chesina special tool (matrix maths lo chala efficient, kaani Google Cloud lo matrame).
+
+#### Memory enduku antha important?
+
+Model weights motham GPU memory lo undali. Chinna calculation:
+
+```text
+70 Billion parameters × 2 bytes (fp16 lo okko number) = 140 GB
+Okka H100 GPU memory                                   = 80 GB
+→ Okka GPU lo pattadu! Kanisam 2 GPUs kavali (+ KV cache ki inka space)
+```
+
+Andhuke pedda models ni **chala GPUs/TPUs meeda split** chestaru (model parallelism).
+Training ki aite **velalla chips** weeks/months continuous ga run avutayi — andhuke AI training ki crores kharchu avutundi.
+
+#### Code lo GPU ela use chestaru? (PyTorch)
+
+Section 6 lo unna code ni GPU meeda run cheyyali ante — **model ni, data ni GPU ki pampali**, antey.
+
+```python
+# ---------------- Architecture Diagram ----------------
+# [Check GPU available aa?]
+#    ↓
+# [Model weights → GPU memory]
+#    ↓
+# [Input token IDs → GPU memory]
+#    ↓
+# [Forward pass GPU meeda]  → matrix maths anni GPU cores lo parallel ga
+#    ↓
+# [Result → CPU ki tirigi]  → text ga decode cheyyadaniki
+#
+# ---------------- Deep Architecture Notes ----------------
+# Step 1: torch.cuda.is_available() tho NVIDIA GPU undo ledo check chestam
+# Step 2: model.to(device) — weights anni GPU VRAM loki copy avutayi
+# Step 3: inputs kuda same device ki pampali — leda error vastundi (CPU tensor + GPU tensor kalavavu)
+# Step 4: forward pass GPU meeda jarugutundi — CPU kanna chala fast
+# Step 5: .cpu() tho result ni malli CPU ki teesukoni decode chestam
+
+import torch                                                    # PyTorch library — tensors, GPU support
+from transformers import AutoModelForCausalLM                   # pre-trained GPT-style model load cheyyadaniki
+from transformers import AutoTokenizer                          # text ↔ token IDs marchadaniki
+
+device = "cuda" if torch.cuda.is_available() else "cpu"         # GPU unte "cuda", lekapothe CPU ki fallback
+print("Running on:", device)                                    # ekkada run avutundo chupistundi
+
+tokenizer = AutoTokenizer.from_pretrained("gpt2")               # gpt2 tokenizer load — idi CPU meede pani chestundi
+model = AutoModelForCausalLM.from_pretrained("gpt2")            # model weights mundu CPU RAM loki load avutayi
+model = model.to(device)                                        # weights anni GPU memory (VRAM) loki copy
+
+inputs = tokenizer("Hi How can I", return_tensors="pt")         # text → token IDs tensor (CPU lo undi)
+inputs = inputs.to(device)                                      # token IDs ni kuda GPU ki — model unna chote data undali
+
+with torch.no_grad():                                           # training kaadu — gradients avasaram ledu, memory save
+    outputs = model(**inputs)                                   # forward pass — heavy matrix maths anni GPU lo
+
+next_token_id = outputs.logits[0, -1, :].argmax().cpu()         # highest score token ni teesi CPU ki tirigi teesukuntam
+print(tokenizer.decode(next_token_id))                          # token ID → text ga print
+```
+
+> **TPU meeda aite:** Google Colab lo *Runtime → Change runtime type → TPU* select chesi,
+> sadharanam ga **JAX** leda **TensorFlow** tho rastaru. Idea same — model, data ni accelerator meedaki pampi
+> akkada matrix maths run cheyyadam.
+
+#### Gurthu pettukovalsina points
+
+1. Transformer lo pani antha **matrix multiplication** — simple maths, kaani kotlu saarlu.
+2. **CPU** = konni smart cores, **GPU** = velalla simple cores → parallel maths lo GPU chala fast.
+3. **TPU** = Google AI kosame chesina chip — matrix maths lo inka efficient, kaani Google Cloud lo matrame.
+4. **Memory (VRAM)** kuda compute antha important — model weights + KV cache anni GPU lo pattali.
+5. Code lo: `model.to("cuda")` + `inputs.to("cuda")` — rendu oke device lo undali.
+6. Tokenizer (tiktoken) **CPU** meede run avutundi — heavy pani antha model lopala, GPU meeda.
+
+---
+
+### 4.6 Core Concepts of Transformers — Full Architecture Diagram
+
+![Architecture of Transformer — Encoder layer (left), Decoder layer (right)](images/transformer-architecture-encoder-decoder.png)
+
+Idi **2017 lo "Attention Is All You Need"** paper lo vachina **original Transformer** diagram.
+Ee okka picture nundi ne GPT, BERT, Claude, Gemini — anni puttayi.
+Diagram ni **kinda nundi paiki** chadavali (data kinda nundi paiki flow avutundi).
+
+Rendu peddha parts unnayi:
+
+| Part | Side | Pani |
+|---|---|---|
+| **Encoder layer** | Left (edama) box | Input sentence ni **chadivi ardham chesukuntundi** |
+| **Decoder layer** | Right (kudi) box | Ardham chesukunna daani base meeda **output ni okko token rastundi** |
+
+Example kosam **translation** anukondi:
+
+```text
+Input  (Encoder ki):  "I love India"
+Output (Decoder nundi): "Nenu India ni premistanu"   ← okko token, okko saari
+```
+
+#### Mundu konni technical words — simple meanings
+
+| Word | Simple meaning |
+|---|---|
+| **Embedding** | Token ID ni **meaning unna numbers list (vector)** ga marchadam |
+| **Positional Encoding** | Prathi word **ye position lo undo** cheppe numbers — embedding ki add chestaru (⊕ symbol) |
+| **Multi-Head Attention** | Attention ni **okkasari kaadu, chala "heads" tho parallel ga** cheyyadam — prathi head veru angle lo chustundi |
+| **Masked Attention** | **Future words ni chudakunda** block chesina attention (Section 4.4 lo chusam) |
+| **Add & Norm** | **Add** = input ni output ki malli kalapadam (residual / shortcut), **Norm** = numbers ni balanced range lo pettadam (layer normalization) |
+| **Feed Forward** | Prathi word ni **vidiga** process chese chinna neural network — attention tarvata "alochinchadam" |
+| **Linear** | Final vector ni **vocabulary size** scores (logits) ga marche layer |
+| **Softmax** | Scores ni **probabilities** ga marchutundi (motham = 1.0) |
+
+#### Left side — Encoder (input ni ardham chesukovadam)
+
+```text
+Inputs ("I love India")
+   ↓
+[Input Embedding]        → prathi token ki oka vector
+   ↓
+ ⊕ Positional Encoding   → "ee word ye position lo undi" info add
+   ↓
+┌──────── Encoder layer (Nx times repeat) ────────┐
+│ [Multi-Head Attention]  → prathi word, migatha   │
+│                           anni words ni chustundi │
+│ [Add & Norm]                                      │
+│ [Feed Forward]          → prathi word ni deep ga  │
+│                           process                 │
+│ [Add & Norm]                                      │
+└───────────────────────────────────────────────────┘
+   ↓
+Encoder output  → Decoder ki velthundi (madhyalo unna arrow)
+```
+
+1. **Input Embedding:** "I", "love", "India" → prathi token oka numbers vector ga marutundi.
+2. **Positional Encoding (⊕):** Transformer anni words ni **oke saari** chustundi — kabatti order teliyadu. Andhuke position info ni embedding ki **add** chestaru. Leda "I love India" and "India love I" rendu same ga kanipistayi.
+3. **Multi-Head Attention:** Prathi word, migatha anni words ni chusi context theeskuntundi. Diagram lo **3 arrows** lopaliki velthunnayi — avi **Query, Key, Value** (Section 4.1.1). "Multi-head" ante — oka head grammar chustundi, inkoti meaning chustundi, inkoti relations chustundi… ila chala heads parallel ga.
+4. **Add & Norm:** Attention output + original input kalipi (**residual connection** — info poakunda shortcut), tarvata normalize. Deep network lo training stable ga undadaniki idi chala important.
+5. **Feed Forward:** Prathi word vector ni vidiga oka chinna neural network lo pampi inka refine chestaru.
+6. **Add & Norm** malli.
+7. Ee motham block ni **Nx saarlu** (original paper lo 6 saarlu) okadaani meeda okati pedataru.
+
+#### Positional Encoding — deep ga (Durga Sir class)
+
+![Positional encoding — Dog bites a man vs man bites a dog](images/positional-encoding-dog-bites-man.png)
+
+**Class lo ichhina definition:**
+
+> **Positional encoding:** Tell the model the position of each word in the sentence to understand the context.
+
+Simple ga — sentence lo **prathi word ye position lo undo** model ki cheppadam.
+Appude model ki **context (meaning)** correct ga ardham avutundi.
+
+**Enduku kavali? (Why it is required?)**
+
+> **Transformer does not read the sentence from left to right like humans.**
+
+Manam sentence ni **edama nundi kudi ki** (left → right) okko word chaduvutam —
+kabatti order mana ki automatic ga telusu. Kaani Transformer **anni words ni oke saari**
+(parallel ga) chustundi. Andhuke daaniki **"ye word mundu, ye word tarvata"** ani teliyadu.
+
+**Class example:**
+
+```text
+Sentence 1:  "Dog bites a man"   → kukka manishi ni kaarichindi  (normal news 🐕)
+Sentence 2:  "man bites a dog"   → manishi kukka ni kaarichadu   (shocking news 😲)
+```
+
+- Rendu sentences lo **exactly same words** unnayi: `Dog`, `bites`, `a`, `man`.
+- Kaani **order maarindi** → **meaning motham maaripoyindi** (evaru kaarcharu? evariki kaatu padindi?).
+- Positional encoding **lekapothe**, Transformer ki ee rendu sentences **okkate** ga kanipistayi —
+  endukante daaniki words ni oka **bag (sanchi)** laaga chustundi, order lekunda.
+
+```text
+Positional encoding LEKUNDA:
+  "Dog bites a man"  →  { Dog, bites, a, man }   ┐
+  "man bites a dog"  →  { man, bites, a, Dog }   ┘  → model ki rendu SAME ❌
+
+Positional encoding THO:
+  "Dog bites a man"  →  Dog@1, bites@2, a@3, man@4   ┐
+  "man bites a dog"  →  man@1, bites@2, a@3, dog@4   ┘  → rendu DIFFERENT ✅
+```
+
+**Ela pani chestundi?**
+
+Prathi position ki (1, 2, 3, …) oka **position vector** untundi. Daanni word embedding ki **add** chestaru —
+diagram lo unna **⊕** symbol ide.
+
+```text
+Final input vector  =  Word embedding ("Dog" meaning)  +  Position vector (position 1)
+
+"Dog" @ position 1  →  [0.21, 0.80, …] + [0.00, 1.00, …]  =  [0.21, 1.80, …]
+"Dog" @ position 4  →  [0.21, 0.80, …] + [-0.76, -0.65, …] = [-0.55, 0.15, …]
+                                         ↑ veru position → veru final vector
+```
+
+Ante **same word "Dog"**, position maarithe model ki **veru numbers** ga velthundi —
+andhuke "Dog" subject aa (kaarichindi) leda object aa (kaatu padindi) ani model ardham chesukuntundi.
+(Paina numbers ardham kosam matrame — nijam values model calculate chestundi.)
+
+**Position vectors ekkada nundi vastayi?**
+
+| Type | Ela | Ekkada use |
+|---|---|---|
+| **Sinusoidal** | `sin` / `cos` waves tho fixed formula — training avasaram ledu | Original Transformer (2017) — ee diagram |
+| **Learned** | Prathi position ki vector ni model training lo **nerchukuntundi** | GPT-2, BERT |
+| **RoPE (Rotary)** | Query, Key vectors ni position batti **rotate** chestaru | Llama, chala modern LLMs |
+
+> **Oka line lo:** Transformer anni words ni oke saari chustundi kabatti order teliyadu —
+> **positional encoding** prathi word ki *"nuvvu ee position lo unnav"* ani oka stamp vestundi.
+> Lekapothe "Dog bites a man" and "man bites a dog" model ki okkate!
+
+#### Multi-Head Attention — deep ga (Durga Sir class)
+
+![Multi-Head Attention — definition](images/multi-head-attention-definition.png)
+
+**Class lo ichhina definition:**
+
+> **Multi-Head Attention:** Focus is placed on most important words and relationships to get the main point.
+>
+> **Many minds (heads) reading the same input sentence at the same time, but each mind looks for a different meaning.**
+
+Simple ga — **oke sentence ni chala mandi (heads) oke saari chaduvutaru**, kaani
+**prathi okkaru veru vishayam** kosam chustaru. Chivarlo andari observations kalipithe
+sentence ki **full meaning** vastundi.
+
+Real life example: oka cricket match ni
+- **commentator** score chustadu,
+- **coach** players technique chustadu,
+- **umpire** rules chustadu,
+- **fan** entertainment chustadu.
+
+Andaru **same match** chustunnaru — kaani prathi okkari focus veru. Andari view kaliste match ki **complete picture**.
+
+##### Class example — "Durga drinks cold mansion house at night"
+
+![Multi-head example — Head 1 and Head 2](images/multi-head-attention-example-head1-head2.png)
+
+![Multi-head example — Head 2 to Head 5](images/multi-head-attention-example-head2-head5.png)
+
+```text
+Sentence:  "Durga drinks cold mansion house at night"
+```
+
+Ikkada **"Mansion House"** anedi oka **drink brand** (liquid) — ade model ardham chesukovali.
+
+| Head | Em chustundi? | Connect chese words | Nerchukune relation |
+|---|---|---|---|
+| **Head 1** | Who does the action (evaru chestunnaru?) | `Durga` ⟷ `drinks` | **Subject – action** relationship |
+| **Head 2** | What is being consumed (em taagutunnaru?) | `drinks` ⟷ `mansion house` | **Action – object** relationship |
+| **Head 3** | Property / Quality (ela undi?) | `cold` ⟷ `mansion house` | **Attribute** relation (cold ane quality) |
+| **Head 4** | Time (eppudu?) | `night` → `drinks` | Action **eppudu** jarugutundo |
+| **Head 5** | Type / Category (idi enti?) | `mansion house` → drink type | Idi **liquid, food kaadu** |
+
+```text
+                "Durga drinks cold mansion house at night"
+                                  │
+        ┌──────────┬──────────────┼──────────────┬──────────┐
+        ↓          ↓              ↓              ↓          ↓
+     Head 1     Head 2         Head 3         Head 4     Head 5
+     WHO?       WHAT?          QUALITY?       WHEN?      TYPE?
+   Durga ⟷    drinks ⟷       cold ⟷        night →    mansion house
+   drinks     mansion house  mansion house  drinks     → liquid
+        │          │              │              │          │
+        └──────────┴──────────────┼──────────────┴──────────┘
+                                  ↓
+                        [Concat — anni kalipi]
+                                  ↓
+     Full meaning: "Durga (evaru) raatri (eppudu) challani (ela)
+                    Mansion House ane drink (em, ye type) taagutadu"
+```
+
+Okka head matrame unte — adi **okka relation** matrame baga pattukuntundi (ex: who-action).
+**Chala heads** unte — who, what, quality, time, type **anni oke saari** pattukuntundi. Ade multi-head power.
+
+##### Entha heads vadali? — Edi decide chestundi?
+
+Idi chala common doubt. Important point:
+
+> **Heads count input sentence batti maaradu.** Adi model **design chesetappude (training mundu)**
+> engineers fix chese oka setting — deenni **hyperparameter** antaru.
+
+- "Durga drinks cold mansion house at night" ki 5 heads, peddha paragraph ki 50 heads — **ala kaadu**.
+- Model ki **8 heads** ani fix chesthe — 2-word input ki aina, 2000-word input ki aina **eppudu 8 heads ne**.
+- Class example lo **5 heads** chupincharu — **ardham kosam**. Nijam models lo heads count fixed, and **prathi layer ki separate set** of heads untayi.
+
+**Ye basis meeda decide chestaru?**
+
+| Basis | Explanation |
+|---|---|
+| **Model size (d_model)** | Prathi token vector size ni (`d_model`) heads madhya **samaanam ga divide** chestaru. Kabatti `d_model` ni heads tho divide cheyyagalagali. Formula: **head size = d_model ÷ heads** |
+| **Head size ~64–128** | Practical ga prathi head ki ~64 leda 128 numbers ichhe la heads count select chestaru — chala chinna head ayithe em nerchukoledu |
+| **Hardware (GPU/TPU)** | Heads anni **parallel** ga run avutayi — GPU ki suit ayye numbers (8, 12, 16, 32, 64, 96…) select chestaru |
+| **Experiments** | Engineers different values try chesi, ye value ki best accuracy / speed vastundo choose chestaru |
+
+**Real models lo numbers:**
+
+| Model | d_model (vector size) | Heads per layer | Head size (d_model ÷ heads) | Layers |
+|---|---|---|---|---|
+| Original Transformer (2017) | 512 | **8** | 64 | 6 |
+| GPT-2 small | 768 | **12** | 64 | 12 |
+| BERT-base | 768 | **12** | 64 | 12 |
+| GPT-3 (175B) | 12,288 | **96** | 128 | 96 |
+| Llama 2 7B | 4,096 | **32** | 128 | 32 |
+
+Ante GPT-3 lo **96 layers × 96 heads = 9,216 heads** motham!
+
+##### Prathi head ki "who" / "what" / "time" pani evaru istaru?
+
+> **Evaru ivvaru!** Engineers *"Head 1 = who, Head 2 = what"* ani program cheyyaru.
+
+- Training start lo anni heads **random numbers** tho start avutayi.
+- Training lo (billions of sentences chadivi) prathi head **tanantata tane** oka useful pattern nerchukuntundi.
+- Research lo chusinappudu — konni heads grammar (subject–verb), konni pronouns (`she` → `Sita`), konni next word, konni punctuation ni chustunnattu kanipistayi.
+- Durga Sir example lo **who / what / quality / time / type** labels — idea ardham avvadaniki **simple ga ichhina names**. Nijam heads chese pani anni saarlu intha clean ga undakapovachu.
+
+##### Lopala ela pani chestundi? (step by step)
+
+Original Transformer numbers tho (d_model = 512, heads = 8):
+
+```text
+Input: prathi token ki 512 numbers vector
+   │
+   ├─→ Head 1: own W_Q1, W_K1, W_V1 → Q1, K1, V1 (64 numbers each) → attention → output 64
+   ├─→ Head 2: own W_Q2, W_K2, W_V2 → Q2, K2, V2 (64 numbers each) → attention → output 64
+   ├─→ ...
+   └─→ Head 8: own W_Q8, W_K8, W_V8 → Q8, K8, V8 (64 numbers each) → attention → output 64
+                                    │
+                         [Concat: 8 × 64 = 512]
+                                    ↓
+                         [× W_O (output weight)]  → anni heads info ni mix chestundi
+                                    ↓
+                     Final: prathi token ki kotha 512 vector (context tho)
+```
+
+1. **Split:** Prathi head ki **own** Query, Key, Value weights (`W_Q`, `W_K`, `W_V`) untayi — andhuke prathi head veru angle lo chustundi.
+2. **Attention (prathi head lo vidiga):** Section 4.1.1 lo chusina formula ne — `softmax(Q·Kᵀ / √d) · V`. Head 1 lo `Durga`→`drinks` ki high score, Head 3 lo `cold`→`mansion house` ki high score… ila.
+3. **Parallel:** 8 heads **oke saari** run avutayi (GPU meeda — Section 4.5) — okati tarvata okati kaadu.
+4. **Concat:** 8 heads outputs (8 × 64) ni pakka pakkana pedithe malli 512 vastundi.
+5. **W_O (output projection):** Anni heads nundi vachina info ni **mix** chesi oka final vector chestundi.
+6. Tarvata **Add & Norm → Feed Forward** (diagram lo next blocks).
+
+> **Important:** 8 heads × 64 = 512 — ante heads ekkuva chesina **compute peragadu**, same 512 ni
+> chinna pieces ga divide chestunnam. Andhuke multi-head "free lo" ekkuva perspectives istundi.
+
+> **Oka line lo:** Multi-head attention = **oke sentence ni chala "minds" oke saari chadivi, prathi okkaru
+> veru relation (who / what / when / quality) pattukuntaru, chivarlo anni kalipi full meaning.**
+> Heads count = model design lo fix chese **hyperparameter** (input batti maaradu), prathi head em nerchukovalo
+> **training lo tane nerchukuntundi.**
+
+#### Add & Norm — deep ga (Encoder lo)
+
+Diagram lo encoder box chudandi — **Add & Norm** rendu saarlu vastundi:
+
+```text
+        ┌───────────────────────────────┐
+        │        [Add & Norm]  ←──────┐ │   ← 2nd Add & Norm
+        │             ↑               │ │
+        │       [Feed Forward]        │ │
+        │             ↑               │ │
+        │             ├───────────────┘ │   (shortcut / residual arrow)
+        │        [Add & Norm]  ←──────┐ │   ← 1st Add & Norm
+        │             ↑               │ │
+        │  [Multi-Head Attention]     │ │
+        │             ↑               │ │
+        │             ├───────────────┘ │   (shortcut / residual arrow)
+        └─────────────↑─────────────────┘
+               Input (embedding ⊕ position)
+```
+
+Diagram lo **pakkana nundi Add & Norm ki velle arrow** chudandi — adi block ni **skip chesi**
+direct ga velthundi. Ade **"Add"** part. Peru lo rendu panulu unnayi: **Add** + **Norm**.
+
+##### Mundu konni technical words — simple meanings
+
+| Word | Simple meaning |
+|---|---|
+| **Sub-layer** | Encoder lopala unna oka block — Multi-Head Attention leda Feed Forward |
+| **Residual connection / Skip connection** | Block ki velle input ni, block output ki **direct ga kalapadam** (shortcut) |
+| **Layer Normalization (LayerNorm)** | Prathi token vector lo numbers ni **balanced range** ki theesukuravadam (average ≈ 0, spread ≈ 1) |
+| **Mean** | Average |
+| **Variance / Std deviation** | Numbers average nundi **entha dooram** spread ayyayo |
+| **Gradient** | Training lo "ee weight ni entha maarchali" ane signal |
+| **Vanishing gradient** | Chala layers unte ee signal venakki velthu velthu **chala chinnaga ayipoyi** modati layers em nerchukolevu |
+
+##### Part 1 — "Add" (Residual Connection)
+
+**Formula:**
+
+```text
+Add output  =  x  +  Sublayer(x)
+
+x            = block ki vachina input (original word vector)
+Sublayer(x)  = Multi-Head Attention (leda Feed Forward) ichina output
+```
+
+Ante — attention em nerchukundo **adi matrame pampadam kaadu**, **original input ni kuda kalipi** pamputham.
+
+**Real life example — Notes edit cheyyadam:**
+
+```text
+❌ Add LEKUNDA:  Teacher mee notes motham theesesi, kotha notes rasi istaru
+                 → mee original points anni poyayi, teacher miss chesinavi kuda poyayi
+
+✅ Add THO:      Mee notes alaage untayi + teacher corrections / extra points add chestaru
+                 → original info safe, kotha info extra ga vachindi
+```
+
+Attention block **"track changes"** laaga pani chestundi — motham rewrite cheyyadu,
+**em maarchalo (change) matrame** nerchukuntundi. Migathadi original input nundi vastundi.
+
+**Enduku kavali? — 3 reasons:**
+
+| Reason | Explanation |
+|---|---|
+| **1. Original info poadu** | Attention context add chestundi, kaani word yokka original meaning (`Dog` ante kukka) + position info poakunda input lo ne untundi |
+| **2. Deep network train avutundi** | Encoder lo 6 layers, GPT-3 lo 96 layers. Shortcut lekapothe training signal (gradient) venakki velthu chinnaga ayipotundi (**vanishing gradient**). Shortcut ade signal ki **highway** laaga — direct ga modati layers varaku velthundi |
+| **3. Nerchukovadam easy** | Block "full answer" nerchukovakkarledu, **"input ki em add cheyyali"** (chinna correction) matrame nerchukunte chalu. Em add cheyyakkarledu ante — output ≈ 0, input alaage pass avutundi |
+
+##### Part 2 — "Norm" (Layer Normalization)
+
+Add chesina tarvata numbers **chala peddaga leda chala chinnaga** ayye chance undi —
+prathi layer lo add chestu pothe numbers inka perigipotayi. Andhuke **normalize** chestaru.
+
+**Real life example — Volume control:**
+
+Konni songs chala loud, konni chala silent ga record ayyayi anukondi. Player **volume ni balance** chesthe
+anni songs oke level lo vinipistayi — kaani **song (tune) maaradu**. LayerNorm kuda anthe —
+numbers **scale** maarchutundi, kaani vaati madhya **pattern (meaning)** alaage untundi.
+
+**Ela chestundi? (prathi token vector ki vidiga)**
+
+```text
+Step 1: Vector lo numbers average (mean) kanukko
+Step 2: Prathi number nundi mean theesey          → center 0 ki vastundi
+Step 3: Spread (std deviation) tho divide chey     → spread 1 ki vastundi
+Step 4: × γ (gamma) + β (beta)                     → model nerchukune 2 settings —
+                                                      avasaram aithe scale/shift adjust cheyyadaniki
+```
+
+##### Chinna number example (Add + Norm rendu kalipi)
+
+Oka word vector (4 numbers anukondi — nijam ga 512):
+
+```text
+x (input)               = [ 1.0,  2.0,  3.0,  2.0 ]
+Attention output        = [ 0.5, -1.0,  2.0,  0.5 ]
+
+─── ADD ───
+x + Attention           = [ 1.5,  1.0,  5.0,  2.5 ]
+
+─── NORM ───
+Mean                    = (1.5 + 1.0 + 5.0 + 2.5) / 4 = 2.5
+Mean theesesthe         = [ -1.0, -1.5,  2.5,  0.0 ]
+Variance                = (1 + 2.25 + 6.25 + 0) / 4 = 2.375
+Std deviation           = √2.375 ≈ 1.54
+Divide by 1.54          = [ -0.65, -0.97,  1.62,  0.00 ]   ← final (γ=1, β=0 anukunte)
+```
+
+Final numbers **0 chuttu, chinna range lo** unnayi — kaani **3rd number peddadi, 2nd chinnadi** ane
+pattern alaage undi. Next block (Feed Forward) ki ivi **stable, clean** numbers ga velthayi.
+
+##### Real sentence example — "bank" ane word (Add & Norm step by step)
+
+Paina numbers ki meaning ledu. Ippudu **meaning unna** example chuddam.
+Ardham kosam word vector lo 4 numbers ki **4 meanings** isthunnam (nijam model lo ila clean labels undavu, 512 numbers untayi):
+
+```text
+Vector position:   [ money,  water/nature,  place,  action ]
+```
+
+**Sentence 1:** `"I sat on the river bank"` → ikkada **bank = nadi oddu (river side)**
+
+**Step 0 — Input `x` (embedding ⊕ position):**
+`bank` ane word ki rendu meanings unnayi (money bank, river bank) — kabatti embedding lo rendu konchem konchem untayi.
+
+```text
+x ("bank")              = [ 0.8,  0.6,  0.9,  0.1 ]
+                            money  water  place  action
+                            (ambiguous — money aa? river aa? model ki inka teliyadu)
+```
+
+**Step 1 — Multi-Head Attention:**
+`bank` word `river`, `sat` words ni chusi context theeskuntundi:
+*"river undi kabatti water/nature penchu, money taggiinchu."*
+
+```text
+Attention output        = [ -0.6,  1.2,  0.3,  0.0 ]
+                            money↓ water↑ place↑
+```
+
+**Step 2 — ADD (residual):**
+
+```text
+x + Attention           = [ 0.8-0.6,  0.6+1.2,  0.9+0.3,  0.1+0.0 ]
+                        = [ 0.2,      1.8,      1.2,      0.1     ]
+```
+
+- Original `bank` info (**place = 0.9**) poledu — alaage undi, inka perigindi.
+- Attention ichina **correction** (money taggu, water perugu) add ayyindi.
+
+**Add LEKAPOTHE em avutundi?** Attention output `[-0.6, 1.2, 0.3, 0.0]` matrame next ki velthundi —
+"place" info dadapu poyindi (0.3 matrame), and **money negative** — idi asalu `bank` ane word ani
+gurthu pette info chala poyindi. Andhuke **original x ni kalapali**.
+
+**Step 3 — NORM (LayerNorm):**
+
+```text
+Mean                    = (0.2 + 1.8 + 1.2 + 0.1) / 4 = 0.825
+Mean theesesthe         = [ -0.625,  0.975,  0.375, -0.725 ]
+Variance                = (0.39 + 0.95 + 0.14 + 0.53) / 4 ≈ 0.50
+Std deviation           = √0.50 ≈ 0.71
+Divide by 0.71          = [ -0.88,   1.38,   0.53,  -1.02 ]
+                            money    WATER   place   action
+                            (low)    (HIGH)  (med)   (low)
+```
+
+**Result:** Highest = **water/nature**, next = **place** → model ki ardham ayyindi:
+**"ee bank = nadi pakkana unna place"** ✅. Numbers kuda **0 chuttu, chinna range** lo unnayi.
+
+---
+
+**Sentence 2:** `"I deposited money in the bank"` → ikkada **bank = money bank**
+
+Same word `bank`, same input `x` — kaani ippudu attention `deposited`, `money` ni chustundi:
+
+```text
+x ("bank")              = [ 0.8,  0.6,  0.9,  0.1 ]      ← same as before
+Attention output        = [ 0.9, -0.5,  0.2,  0.0 ]      ← money↑ water↓ (context veru!)
+
+─── ADD ───
+x + Attention           = [ 1.7,  0.1,  1.1,  0.1 ]
+
+─── NORM ───
+Mean = 0.75,  Std ≈ 0.68
+Final                   = [ 1.39, -0.95,  0.51, -0.95 ]
+                            MONEY  water   place  action
+                            (HIGH) (low)   (med)  (low)
+```
+
+**Result:** Highest = **money** → **"ee bank = money bank"** ✅
+
+| | Sentence 1 (river bank) | Sentence 2 (money bank) |
+|---|---|---|
+| Input `x` | `[0.8, 0.6, 0.9, 0.1]` | `[0.8, 0.6, 0.9, 0.1]` (same!) |
+| Attention ichina correction | water ↑, money ↓ | money ↑, water ↓ |
+| After **Add** | `[0.2, 1.8, 1.2, 0.1]` | `[1.7, 0.1, 1.1, 0.1]` |
+| After **Norm** | `[-0.88, 1.38, 0.53, -1.02]` | `[1.39, -0.95, 0.51, -0.95]` |
+| Model ki ardham | Nadi oddu 🌊 | Money bank 🏦 |
+
+> **Ee example lo gamaninchandi:** **Add** valla `bank` ane word identity (place) **poledu**, attention context **add** ayyindi.
+> **Norm** valla numbers balanced range lo ki vachayi — kaani **ye meaning high, ye meaning low** ane pattern maaraledu.
+
+##### Norm LEKAPOTHE em avutundi? — 6 layers example
+
+Prathi encoder layer lo Add chestu pothe — numbers **perigipothuntayi**:
+
+```text
+Norm LEKUNDA (prathi layer lo x + konchem add):
+  Layer 1:  [ 0.2,  1.8, ...]
+  Layer 2:  [ 0.5,  3.9, ...]
+  Layer 3:  [ 1.1,  8.2, ...]
+  Layer 6:  [ 9.0, 70.5, ...]   ← numbers explode 💥 → softmax lo okka word ki 100%, migathavi 0
+                                   → training unstable, model em nerchukoledu
+
+Norm THO:
+  Prathi layer tarvata → [ -0.9, 1.4, ...] range lo ne untayi ✅ → stable training
+```
+
+Ante — **Add** valla info safe, **Norm** valla numbers control lo. Rendu kalisthene deep encoder (6, 12, 96 layers) pani chestundi.
+
+##### Encoder lo full flow — Add & Norm ekkada?
+
+```text
+x0 = Embedding ⊕ Position
+x1 = LayerNorm( x0 + MultiHeadAttention(x0) )     ← 1st Add & Norm
+x2 = LayerNorm( x1 + FeedForward(x1) )            ← 2nd Add & Norm
+x2 → next encoder layer ki (Nx times repeat)
+```
+
+| Add & Norm | Mundu em vachindi | Em chestundi |
+|---|---|---|
+| **1st** | Multi-Head Attention | Context (attention) + original word info kalipi, balance chestundi |
+| **2nd** | Feed Forward | Refine chesina info + attention tarvata info kalipi, balance chestundi |
+
+##### Konni extra points
+
+- **LayerNorm vs BatchNorm:** BatchNorm (images lo/CNN lo common) — batch lo unna **anni examples** kalipi normalize chestundi. LayerNorm — **prathi token ni vidiga** normalize chestundi. Sentences length maarutu untayi kabatti Transformers ki **LayerNorm** better.
+- **Post-Norm vs Pre-Norm:** Original diagram lo Norm **tarvata** (`LayerNorm(x + Sublayer(x))`) — idi **Post-Norm**. GPT-2, GPT-3, Llama lantivi Norm ni **mundu** pedataru (`x + Sublayer(LayerNorm(x))`) — **Pre-Norm**. Chala layers unna models lo Pre-Norm training inka stable. (Llama **RMSNorm** ane simpler version vaadutundi.)
+- **Decoder lo kuda** same Add & Norm — kaani 3 saarlu (masked attention, cross-attention, feed forward tarvata).
+
+> **Oka line lo:** **Add** = *"original input ni marchipoku"* — block output ki input ni kalipi pamputhundi (shortcut, deep
+> training ki highway). **Norm** = *"numbers ni balance lo pettu"* — prathi token vector ni mean 0, spread 1 ki
+> theesukosthundi (volume control). Rendu kalisi encoder ni **stable ga, deep ga** train avvadaniki help chestayi.
+
+#### Feed Forward — deep ga (Durga Sir class)
+
+![Feed Forward — each word individually refined](images/feed-forward-definition-example.png)
+
+**Class lo ichhina definition:**
+
+> **Feed Forward:** Each input word is individually refined. Meaning is strengthened.
+
+Simple ga — attention tarvata, **prathi word ni vidiga (okko word, okko saari)** theesukoni,
+daani meaning ni **inka clear ga, strong ga** chestundi. Ikkada words okadaanitho okati **matladukovu** —
+prathi word tana daggara unna info ni (attention lo collect chesina context tho saha) **polish** chesukuntundi.
+
+##### Class example — "Durga drinks cold mansion house at night"
+
+| Word | Feed Forward tarvata model ki ardham ayyedi |
+|---|---|
+| **Durga** | Understand as a **person** (manishi) |
+| **drinks** | Understand as an **action** (pani) |
+| **cold** | Understand as a **quality / condition** (ela undi) |
+| **mansion house** | Understand as a **drink item** (taage vasthuvu) |
+| **at night** | Understand as **time information** (eppudu) |
+
+Multi-head attention lo chusam — Head 1 `Durga ⟷ drinks` connect chesindi, Head 5 `mansion house → drink type` connect chesindi…
+Aa **connections nundi vachina info** prathi word lo kalisindi. Ippudu Feed Forward prathi word ni vidiga chusi
+*"ok, nuvvu person vi"*, *"nuvvu drink item vi"* ani **final ga confirm / strong** chestundi.
+
+##### Attention vs Feed Forward — class note
+
+![Note — Attention = Connecting words, Feed Forward = Polishing each word](images/feed-forward-attention-vs-ffn-note.png)
+
+> **Note:**
+> **Attention = Connecting words**
+> **Feed Forward = Polishing each word**
+
+| | **Attention** | **Feed Forward** |
+|---|---|---|
+| Pani | Words ni **connect** chestundi | Prathi word ni **polish** chestundi |
+| Words madhya matladatayaa? | **Avunu** — prathi word migatha anni words ni chustundi | **Ledu** — prathi word **vidiga**, ontariga process |
+| Question | *"Naaku evaru important? evari nundi info theesukovali?"* | *"Naa daggara unna info tho nenu asalu enti?"* |
+| Durga example | `Durga` ⟷ `drinks` (who does action) | `Durga` → **person** |
+| Real life | **Group discussion** — andari tho matladi points collect cheyyadam | **Self study** — collect chesina points ni intiki vellaka ontariga revise chesi clear ga ardham chesukovadam |
+
+**Inko real life example — Cooking 🍛:**
+
+```text
+Attention     = Market ki velli anni ingredients collect cheyyadam
+                (onion, tomato, masala — veru veru shops nundi)
+Feed Forward  = Intlo prathi ingredient ni vidiga prepare cheyyadam
+                (onion cut, tomato puree, masala roast)
+```
+
+Ingredients collect cheyyakapothe (attention lekapothe) em cheyyalem. Prepare cheyyakapothe (feed forward lekapothe) vanta raadu.
+**Rendu kavali.**
+
+##### Lopala ela pani chestundi? — Expand → Filter → Shrink
+
+Feed Forward ante oka **chinna neural network** (2 layers). Prathi word vector ki **same network** apply chestaru.
+
+```text
+Word vector (512 numbers)
+      ↓
+[Layer 1: Expand]   512 → 2048 numbers   (4 times peddadi — ekkuva "features" check cheyyadaniki space)
+      ↓
+[ReLU: Filter]      negative numbers → 0  (useful features matrame unchu, migathavi off)
+      ↓
+[Layer 2: Shrink]   2048 → 512 numbers   (malli original size ki)
+      ↓
+Polished word vector (512 numbers)  → Add & Norm ki
+```
+
+**Formula (original paper):**
+
+```text
+FFN(x) = W2 · ReLU( W1 · x + b1 ) + b2
+
+W1  = 512 × 2048 weights   (expand)
+W2  = 2048 × 512 weights   (shrink)
+ReLU(z) = max(0, z)        (negative aithe 0, positive aithe alaage)
+```
+
+**Enduku expand chestaru?** 512 numbers lo chala features kalisi untayi. 2048 ki expand chesthe —
+model ki *"idi person aa?"*, *"idi liquid aa?"*, *"idi time word aa?"*… ila **velalla chinna chinna checks** cheyyadaniki space dorukutundi.
+Prathi hidden number ni oka **"feature detector" / switch** laaga anukondi.
+
+##### Chinna number example — "mansion house" polish avvadam
+
+Ardham kosam — 4 numbers → 6 hidden "checks" → 4 numbers (nijam ga 512 → 2048 → 512).
+
+```text
+Input (attention + Add & Norm tarvata "mansion house" vector):
+  x = [ 0.4, 1.1, -0.3, 0.7 ]
+
+Layer 1 — Expand (6 feature checks):
+  hidden = [ 1.5,      -0.8,     2.1,       -1.2,       0.3,      -0.5    ]
+             is_liquid  is_person is_drink   is_time     is_place  is_food
+
+ReLU — Filter (negative → 0):
+  hidden = [ 1.5,       0,        2.1,        0,         0.3,       0      ]
+             ✅ liquid   ❌        ✅ drink    ❌          ~          ❌ food kaadu
+
+Layer 2 — Shrink (malli 4 numbers):
+  output = [ 0.2, 1.9, -0.1, 1.4 ]   ← "drink item" meaning strong ayyindi
+```
+
+- **is_person, is_time, is_food** → negative → ReLU **off** chesindi (`mansion house` person kaadu, time kaadu, **food kaadu**).
+- **is_liquid, is_drink** → positive → **on** — ivi output ni build chestayi.
+- Ade class lo cheppindi: *"mansion house → understand as a drink item"*, *"This is liquid not a food"*.
+
+(Numbers ardham kosam matrame — nijam model lo feature names ila clean ga undavu, training lo tane nerchukuntundi.)
+
+##### Important points
+
+1. **Position-wise:** Prathi word ki **same W1, W2** — kaani prathi word **vidiga** process avutundi. Andhuke anni words ni GPU meeda **parallel** ga cheyyochu.
+2. **Prathi layer ki separate FFN:** Encoder layer 1 FFN weights, layer 2 FFN weights veru veru.
+3. **Model lo ekkuva parameters ikkade:** Transformer lo dadapu **2/3 parameters** Feed Forward layers lo ne untayi. Research prakaram model nerchukunna **facts / knowledge** (ex: "Mansion House oka drink brand") chala varaku ikkade store avutayi — oka **memory** laaga.
+4. **Activation function maarindi:** Original lo **ReLU**, GPT-2/GPT-3 lo **GELU**, Llama lo **SwiGLU** — anni "filter" pani ne, smooth versions.
+5. **Tarvata Add & Norm:** `x2 = LayerNorm( x1 + FFN(x1) )` — polish chesina info + original info kalipi balance.
+
+##### Encoder layer motham — oka chupu lo
+
+```text
+Input word vectors (embedding ⊕ position)
+      ↓
+[Multi-Head Attention]  → words CONNECT avutayi (Durga ⟷ drinks, cold ⟷ mansion house …)
+      ↓
+[Add & Norm]            → original info safe + balance
+      ↓
+[Feed Forward]          → prathi word POLISH (Durga = person, mansion house = drink …)
+      ↓
+[Add & Norm]            → original info safe + balance
+      ↓
+Next encoder layer (Nx) → prathi layer lo inka deep understanding
+```
+
+> **Oka line lo:** **Attention = connecting words** (group discussion), **Feed Forward = polishing each word** (self study).
+> Attention lo collect chesina context ni, Feed Forward prathi word lo **expand → filter → shrink** chesi meaning ni strong chestundi.
+
+#### Right side — Decoder (output ni okko token rayadam)
+
+```text
+Outputs (ippati varaku rasina tokens: "Nenu India")
+   ↓
+[Output Embedding] ⊕ Positional Encoding
+   ↓
+┌──────── Decoder layer (Nx times repeat) ─────────────┐
+│ [Masked Multi-Head Attention] → rasina tokens matrame │
+│                                  chudali, future kaadu │
+│ [Add & Norm]                                           │
+│ [Multi-Head Attention]  ← Encoder output ikkada vastundi│
+│                           (Cross-attention)            │
+│ [Add & Norm]                                           │
+│ [Feed Forward]                                         │
+│ [Add & Norm]                                           │
+└────────────────────────────────────────────────────────┘
+   ↓
+[Linear]   → vocabulary lo prathi token ki score
+   ↓
+[Softmax]  → probabilities
+   ↓
+Output Probabilities → "ni" (next token)
+```
+
+1. **Outputs (Output tokens from previous step):** Diagram kinda raasindi chudandi — decoder ki input **adi intaku mundu generate chesina tokens**. Idi mana **autoregressive loop** (Section 3) ne!
+2. **Output Embedding + Positional Encoding:** Encoder lo laage.
+3. **Masked Multi-Head Attention:** Rasina tokens okadaanini okati chustayi, kaani **future tokens ni chudakudadu** (mask). Endukante generate chesetappudu future inka puttaledu kada.
+4. **Multi-Head Attention (Cross-attention):** Diagram lo **encoder nundi decoder ki vachina arrow** ikkade kalustundi. Ikkada **Query** decoder nundi, **Key & Value** encoder output nundi vastayi. Ante decoder adugutundi — *"ippudu translate cheyyadaniki input sentence lo ye word chudali?"*
+5. **Feed Forward + Add & Norm:** Encoder lo laage.
+6. **Linear:** Final vector ni vocabulary lo unna **prathi token ki oka score** ga marchutundi.
+7. **Softmax:** Scores → probabilities. Highest probability token = next token. Daanni malli **Outputs** ki add chesi loop repeat.
+
+#### Doubt: "Encoder anni input tokens oke saari chustundi, Decoder okko token matrame chustundi" — idi nijamaa?
+
+**Answer: Sagam nijam, sagam tappu.**
+
+| Statement | Nijamaa? | Correct ga |
+|---|---|---|
+| Encoder anni input tokens ni **oke saari** chustundi | ✅ **Nijam** | Anni input words parallel ga process avutayi. Prathi word **mundu unna words ni, venaka unna words ni** rendu chustundi (**bidirectional**) |
+| Decoder **okko token matrame** chustundi | ❌ **Tappu** | Decoder **okko token generate** chestundi (okko saari okati **rastundi**) — kaani **chusedi** okka token kaadu. Ippati varaku rasina **anni tokens** + encoder nundi **motham input** chustundi |
+
+Confusion ekkada nundi vastundi ante — **"okko token rayadam"** ni **"okko token chudadam"** ani anukovadam.
+
+##### Encoder — anni oke saari, rendu vaipula
+
+Translation example: `"I love India"` → `"Nenu India ni premistanu"`
+
+```text
+Encoder input:   I   love   India
+                 ↕    ↕      ↕
+            anni words okadaanini okati chustayi (left + right rendu)
+
+"love" chustundi →  I ✅ (venaka)   India ✅ (mundu)
+```
+
+Encoder ki full input **mundhe** dorikindi — kabatti future words chudadam lo problem ledu.
+Andhuke encoder lo **mask ledu**.
+
+##### Decoder — okko token rastundi, kaani anni previous tokens chustundi
+
+Decoder `"Nenu India ni premistanu"` ni okko step lo rastundi:
+
+```text
+Step 1:  chusedi: [START]                          + encoder input motham  → rasedi: "Nenu"
+Step 2:  chusedi: [START] Nenu                     + encoder input motham  → rasedi: "India"
+Step 3:  chusedi: [START] Nenu India               + encoder input motham  → rasedi: "ni"
+Step 4:  chusedi: [START] Nenu India ni            + encoder input motham  → rasedi: "premistanu"
+Step 5:  chusedi: [START] Nenu India ni premistanu + encoder input motham  → rasedi: [END]
+```
+
+Step 4 lo decoder **okka token** (`ni`) ni matrame chudaledu — `[START] Nenu India ni` **anni** chusindi,
+plus cross-attention dwara `I love India` **motham** chusindi.
+
+Decoder lo rendu attentions:
+
+| Attention | Decoder em chustundi? |
+|---|---|
+| **Masked self-attention** | Ippati varaku **rasina anni** output tokens (future matrame block) |
+| **Cross-attention** | Encoder output — **input sentence motham** |
+
+##### Mask enduku? — "future chudakudadu" ane rule
+
+Decoder **chudalenidi** — **inka raayani future tokens** matrame.
+Generate chesetappudu future tokens **inka puttaledu** kabatti, training lo kuda chudanivvaru (cheating avvakunda).
+
+```text
+Masked attention — prathi token ye tokens ni chudagaladu (✅ chudochu, ❌ block):
+
+              [START]  Nenu  India   ni   premistanu
+[START]         ✅      ❌     ❌     ❌      ❌
+Nenu            ✅      ✅     ❌     ❌      ❌
+India           ✅      ✅     ✅     ❌      ❌
+ni              ✅      ✅     ✅     ✅      ❌
+premistanu      ✅      ✅     ✅     ✅      ✅
+```
+
+Prathi row lo — **tanu + tana venaka unnavi** anni ✅. Okka token matrame kaadu.
+
+##### Training lo vs Generation (inference) lo — inko twist
+
+| | **Training** | **Generation (inference)** |
+|---|---|---|
+| Decoder ki em telusu? | Correct answer motham mundhe telusu (`Nenu India ni premistanu`) | Answer teliyadu — okko token rastu velthundi |
+| Ela process | **Anni output tokens oke saari, parallel ga** — mask tho future block (paina table) | **Okko step lo okka kotha token** |
+| Speed | Fast (GPU parallel) | Slow (sequential — okati tarvata okati) |
+
+Ante **training lo decoder kuda anni tokens ni oke saari** process chestundi — mask matrame future ni daachestundi.
+Idi **teacher forcing** antaru.
+
+Generation lo **KV cache** (Section 4.4) vaadithe — prathi step lo **kotha token ni matrame calculate** chestaru,
+kaani adi **cache lo unna previous tokens anni** chustundi. Kabatti akkada kuda "okka token matrame chudadam" kaadu.
+
+##### Correct statement
+
+> **Encoder:** Input motham **oke saari** chustundi — prathi word **rendu vaipula** (venaka + mundu) chudagaladu. Mask ledu.
+>
+> **Decoder:** Output ni **okko token, okko saari rastundi** — kaani prathi step lo ippati varaku rasina **anni tokens** ni
+> (masked self-attention) + **input motham** ni (cross-attention) chustundi. **Future tokens** ni matrame chudadu.
+>
+> GPT (decoder-only) lo kuda same — prompt + rasina tokens **anni** chustundi, inka raayanivi matrame kaadu.
+
+#### Decoder — deep ga (Durga Sir class — red loop)
+
+![Decoder loop — Output Probabilities nundi malli Outputs ki (red arrow)](images/transformer-decoder-output-loop.png)
+
+Class lo Durga Sir **red pen** tho geesindi chudandi:
+
+```text
+Output Probabilities (paina, red circle)
+        │
+        └──── red line ────┐  (right side nundi kindaki)
+                           ↓
+Outputs (Output Tokens from Previous Step) (kinda)
+```
+
+Ante — decoder **paina** ichina answer (next token) ni, **malli kinda** decoder input ki pamputharu.
+Ade **loop**. Decoder **oka saari run ayithe okka token** vastundi. Full sentence kavali ante **malli malli run** avvali.
+Idi mana **autoregressive generation** (Section 3, board example) — exactly ade picture!
+
+##### Most important point — Encoder oka saari, Decoder chala saarlu
+
+```text
+"I love India"  →  [ENCODER]  → oka saari matrame run  → encoder output (memory) ready
+                                                              │
+                                                              ↓ (prathi step lo vadukuntundi)
+[START]                       → [DECODER] → "Nenu"        ┐
+[START] Nenu                  → [DECODER] → "India"       │
+[START] Nenu India            → [DECODER] → "ni"          │  red loop — prathi saari
+[START] Nenu India ni         → [DECODER] → "premistanu"  │  kotha token add chesi malli run
+[START] Nenu India ni premistanu → [DECODER] → [END]  ✋  ┘  [END] vasthe aagipotundi
+```
+
+| | Encoder | Decoder |
+|---|---|---|
+| Entha saarlu run? | **Oka saari** | **Prathi output token ki oka saari** (5 tokens → 5 saarlu) |
+| Input | Source sentence (`I love India`) | Ippati varaku rasina tokens (`[START] Nenu India …`) |
+| Output | Prathi input word ki meaning vector (memory) | **Next token** okkate |
+
+##### Class notes — Decoder steps 1 to 4 (Durga Sir)
+
+![Decoder Input, Output Embedding, Positional Encoding — class notes](images/decoder-input-embedding-position-notes.png)
+
+**1. Decoder Input**
+
+> Decoder does not start from zero.
+> It takes already generated words.
+> First time it starts with a **START** token.
+
+Decoder prathi saari **kotha ga, khaali ga** start avvadu — ippati varaku **already generate chesina words** ni input ga theeskuntundi (red loop).
+Modati saari inka emi generate avvaledu kabatti — special **`[START]`** token tho start chestundi.
+
+```text
+1st time:  [START]                  → "Nenu"
+2nd time:  [START] Nenu             → "India"
+3rd time:  [START] Nenu India       → "ni"
+```
+
+**2. Output Embedding**
+
+> Words are converted into numbers as transformer can understand only numbers.
+
+Encoder lo *Input Embedding* laage — decoder lo **output words** (`[START]`, `Nenu`, `India` …) ni **numbers (vectors)** ga marchadam.
+Transformer ki letters teliyavu, **numbers matrame** ardham avutayi (Section 1 lo chusam).
+
+**3. Positional Encoding**
+
+> Position of word is added.
+> Without position meaning will be changed.
+
+Prathi output word ki **position** add chestaru. Lekapothe `Nenu India ni premistanu` and `India Nenu ni premistanu` model ki okkate ga kanipistayi —
+**meaning maaripotundi** ("Dog bites a man" vs "man bites a dog" laage — Positional Encoding section chudandi).
+
+**4. Masked Multi-Head Self-Attention**
+
+![Masked multi-head self attention — class notes](images/decoder-masked-attention-notes.png)
+
+![Masked attention — Prevents cheating](images/decoder-masked-attention-prevents-cheating.png)
+
+> Decoder looks only at past words.
+> Future words are hidden (masked).
+> This masking concept is applicable at the time of **training** where total output statement is visible.
+> Masking is not required at the time of using the model.
+> Masked attention hides future words so that model learns to **predict, not copy**.
+> **Prevents cheating.**
+
+Simple ga:
+- Decoder **venaka words (past)** matrame chustundi, **future words** daachestaru (mask).
+- Training lo **motham answer sentence** model ki kanipistundi — mask lekapothe next word ni **copy** chesestundi, em nerchukodu.
+- Mask valla model **guess (predict)** cheyyadam nerchukuntundi — **cheating aagipotundi**.
+
+**Exam example 📝:** Student ki question paper tho paatu **answer key kuda** isthe — answers copy chesestadu, em nerchukodu.
+Answer key ni **cover (mask)** chesi, okko answer rasina tarvata ne next line chupisthe — appude nijam ga nerchukuntadu.
+Training lo mask chese pani ade.
+
+##### ⭐ Core Truth (First understand this)
+
+![Core Truth — training lo full sentence oke saari (parallel)](images/decoder-training-core-truth-parallel.png)
+
+> **During training, the model does NOT process one word at a time.**
+> **It processes the FULL sentence at once (in parallel).**
+
+Chala mandi anukuntaru — training lo kuda decoder okko word rasi, malli run chesi, malli okko word…
+**Ala kaadu!** Training lo correct answer motham mundhe telusu kabatti, **full sentence ni oke saari** decoder lopaliki pampistaru.
+
+**Mari full sentence oke saari isthe cheating avvada?** — Ikkade **mask** vastundi.
+Mask valla prathi position **tana venaka words matrame** chustundi. Ante oke forward pass lo,
+prathi position **vidiga oka chinna exam** rastunnattu:
+
+```text
+Decoder ki oke saari:   [START]   Nenu   India   ni
+                           ↓        ↓       ↓      ↓
+Prathi position chusedi: [START]  [START]  [START]  [START]
+                                   Nenu     Nenu     Nenu
+                                            India    India
+                                                     ni
+                           ↓        ↓       ↓      ↓
+Predict cheyyalsindi:    "Nenu"  "India"   "ni"  "premistanu"
+                           ✅       ✅       ✅      ✅
+              ── 4 predictions, OKE forward pass lo ──
+```
+
+| | Mask LEKUNDA (okko word, okko saari) | Mask THO (full sentence, parallel) |
+|---|---|---|
+| Runs | 4 words ki **4 separate runs** | **1 run** lo 4 predictions |
+| Cheating | — | ❌ Ledu — prathi position ki future hidden |
+| Speed | Slow | **Chala fast** — GPU parallel power (Section 4.5) |
+
+> **Key connection:** **Mask** valle **parallel training** possible. Mask cheating aaputhundi,
+> parallel processing training ni fast chestundi — rendu kalisi pani chestayi.
+> Billions of sentences meeda train cheyyagaligedi ee trick valle. Idi **teacher forcing** antaru.
+
+**Usage (generation) lo matram** — answer teliyadu kabatti **okko token, okko saari** (red loop). Ade difference:
+
+```text
+TRAINING:  full sentence → 1 forward pass → anni positions predict (parallel, mask tho)
+USAGE:     [START] → run → "Nenu" → run → "India" → run → ... (sequential, red loop)
+```
+
+##### Doubt: "Training lo manam questions emi adagam kada — mari masking ekkada vastundi?"
+
+Correct — training lo **evaru question type cheyyaru**. Kaani **question data lopale daagi undi**:
+**prathi word daggara model ni silent ga adugutaru — *"next em vastundi?"*** Aa question **fair** ga undadaniki ne mask.
+
+**Training ela jarugutundi? (GPT style)**
+
+Training data nundi oka sentence: `"The cat sat on the mat"`
+
+Ade sentence **input** kuda, **answer key** kuda — answer ante same sentence **okka word left ki jarupithe** vachedi:
+
+```text
+Position:        1      2      3      4      5
+Input:          The    cat    sat    on     the
+Answer (label): cat    sat    on     the    mat
+```
+
+5 positions **oke saari (parallel)** lopaliki velthayi — prathi position ki oka **hidden question**:
+
+| Position | Chusedi | Hidden question | Correct answer |
+|---|---|---|---|
+| 1 | The | next em vastundi? | cat |
+| 2 | The cat | next em vastundi? | sat |
+| 3 | The cat sat | next em vastundi? | on |
+| 4 | The cat sat on | next em vastundi? | the |
+| 5 | The cat sat on the | next em vastundi? | mat |
+
+Prathi position lo model guess ni **correct answer tho compare** chestaru → difference = **loss** →
+loss taggela weights update chestaru. Evaru question adagaledu — **text ne questions + answers rendu istundi**.
+Deenni **self-supervised learning** antaru (manishi labels rayakkarledu).
+
+**Mask ekkada vastundi?**
+
+Full sentence **oke saari** model lopala undi. Mask lekapothe — position 1 (`The`) attention tho position 2 ni chusi
+**"cat"** ni chudagaladu — adi exactly daaniki guess cheyyalsina **answer**!
+
+```text
+Mask LEKUNDA:  position 1 → kudi vaipu chusi "cat" kanipinchindi → copy → perfect score, em nerchukoledu ❌
+Mask THO:      position 1 → "The" matrame kanipistundi → nijam ga "cat" guess cheyyali ✅
+```
+
+Inka — usage lo future words **asalu undavu**, kabatti mask lekunda train chesina model akkada **completely fail** avutundi
+(training lo copy chesi alavaatu paddadi, usage lo copy cheyyadaniki emi undadu).
+Ade slide lo cheppindi — *"predict, not copy"*, *"Prevents cheating"*.
+
+**Translation (encoder-decoder) example lo kuda same idea:**
+
+```text
+"Question"  = source sentence  (I love India)              → Encoder ki
+"Answer"    = target sentence  (Nenu India ni premistanu)   → Decoder ki oke saari, mask tho
+Prathi decoder position hidden question = "next Telugu word enti?"
+```
+
+> **Oka line lo:** Training lo type chesina question undadu — **prathi word position oka hidden "next word guess chey" question**,
+> training text ne **answer key**, and **mask aa answer key ni prathi position nundi daachestundi**.
+
+##### Doubt: "Decoder ki default ga `[START]` okka token matrame input — input sentence lekunda?"
+
+**Answer: Sagam nijam.** Decoder **tana side** lo modati input `[START]` okkate — kaani **input sentence lekunda run avvadu**.
+Model type batti maarutundi:
+
+**1. Encoder-decoder (translation — ee diagram)**
+
+```text
+Encoder input:  "I love India"   ← input sentence IKKADA velthundi
+Decoder input:  [START]          ← decoder tana side lo idi okkate
+```
+
+- Decoder **tana input side** lo `[START]` tho start avutundi — endukante inka emi rayaledu.
+- Kaani **cross-attention** dwara, decoder prathi step lo (**modati step lo kuda**) encoder output (`I love India`) motham chustundi.
+- Ante modati step nijam ga: **`[START]` + cross-attention tho full input sentence** → `"Nenu"`.
+- `[START]` okkate ante — *"rayadam start chey"* ani matrame. **Em rayali?** ane answer encoder output nundi vastundi.
+
+```text
+Step 1:   Decoder side: [START]        +  Cross-attention: "I love India" (motham)  → "Nenu"
+Step 2:   Decoder side: [START] Nenu   +  Cross-attention: "I love India" (motham)  → "India"
+```
+
+**2. Decoder-only (GPT, Claude, Llama)**
+
+- Encoder ledu, separate input sentence ledu — **mee prompt ne decoder input**.
+- Prompt chivari nundi generation continue avutundi — separate `[START]` kosam wait cheyyadu.
+- 2 practical details:
+  - Chala models sequence **modatlo** oka special **begin token** pedatayi (ex: Llama lo `<|begin_of_text|>`).
+  - Chat models lo **chat format special tokens** *"ikkada nundi assistant answer start"* ani signal istayi.
+    Section 1.2 lo tiktokenizer demo lo chusam — **`<|im_start|>assistant`** ade "answer rayadam start chey" signal (START laage pani).
+
+```text
+GPT input:  <|im_start|>user Hi How can I Help you <|im_end|> <|im_start|>assistant
+                                                                          ↑
+                                                answer ikkada nundi start (START laage)
+```
+
+**3. Training lo (encoder-decoder)**
+
+Decoder input = `[START]` + target sentence **shifted right**, oke saari, mask tho (Core Truth box chudandi):
+
+```text
+Decoder input:  [START]  Nenu   India  ni
+Labels:          Nenu    India  ni     premistanu
+```
+
+| Model / Phase | Decoder modati input | Input sentence ela chustundi? |
+|---|---|---|
+| **Encoder-decoder — usage** | `[START]` okkate | **Cross-attention** tho encoder output |
+| **Encoder-decoder — training** | `[START]` + shifted target (motham, mask tho) | **Cross-attention** tho encoder output |
+| **Decoder-only (GPT) — usage** | Begin token + **prompt** (+ `<|im_start|>assistant`) | Prompt ne input — **same sequence lo** |
+
+> **Oka line lo:** `[START]` = decoder **tana side** lo modati token matrame. Translation lo input sentence
+> **cross-attention** tho vastundi. GPT lo **prompt + chat format assistant token** ne `[START]` pani chestayi.
+
+##### Doubt: "Training lo output isthamu, testing lo mask chestam, usage lo masking undadu" — correct aa?
+
+**Answer: Konchem tappu.** Masking **testing lo kaadu — training lo** jarugutundi.
+
+| Phase | Full output (answer) isthara? | Masking undaa? | Enduku |
+|---|---|---|---|
+| **Training** | ✅ Avunu — correct answer motham isthamu (`Nenu India ni premistanu`) | ✅ **Avunu — masking ikkade** | Answer motham kanipistundi kabatti, mask lekapothe next word copy chesestundi. Mask future ni daachi **predict** cheyyistundi — *"Prevents cheating"* |
+| **Testing / Usage** (inference) | ❌ Ivvamu — model tane rastundi | ❌ Avasaram ledu (slide cheppina meaning lo) | Okko token generate avutundi — future words **inka puttaledu**, daachalsindi emi ledu |
+
+**Rendu corrections:**
+1. **Training = output isthamu + mask chestam** — rendu kalisi vastayi. Output kanipistundi **kabatte** mask kavali.
+2. **Testing and usage = same** — rendu lo model tane generate chestundi, answer ivvamu, daachalsindi emi ledu.
+
+```text
+TRAINING:   Input:  I love India
+            Answer: Nenu India ni premistanu  ← motham kanipistundi
+            Mask:   "India" position lo unnappudu → "ni", "premistanu" ❌ hidden
+            → model "ni" ni guess cheyyali, copy cheyyalekapotundi ✅
+
+USAGE:      Input:  I love India
+            Answer: ???  ← model ki teliyadu
+            [START] → Nenu → India → ...   (okko token rastundi)
+            → future words asalu levu, daachalsina avasaram ledu
+```
+
+**Slide ki minchina 2 chinna nuances:**
+
+- **"Testing" ki ML lo rendu meanings:**
+  - Correct answer ichhi **loss / accuracy check** chesthe (evaluation) — training laage pani chestundi, **mask use avutundi**.
+  - Model ni **free ga generate** cheyyanisthe — usage laage, daachalsina future words undavu.
+- **"Usage lo masking ledu" — idi simplification:** GPT lo mee **prompt** (ex: 50 tokens) ni **oke saari** process chestundi (**prefill** — Section 4.4).
+  Appudu code lo **causal mask on lo ne untundi**. Tarvata **KV cache** tho okko kotha token generate chesetappudu future tokens levu kabatti, mask ki **pani undadu**.
+  Concept ga slide correct — code lo matram mask switch off cheyyaru.
+
+> **Oka line lo:** Mask = **training rule** — answer kanipisthunnappudu model cheating cheyyakunda (copy cheyyakunda) aapadaniki.
+> Usage lo future inka raayaledu kabatti daachalsindi emi ledu.
+
+##### Class notes — Decoder steps 5 to 9 (Durga Sir)
+
+Steps 1–4 (Decoder Input, Output Embedding, Positional Encoding, Masked Attention) paina chusam. Ippudu migatha steps.
+
+**5. Add & Norm (After Masked Multi-Head Attention)**
+
+![Add and Norm after masked multi-head attention — class notes](images/decoder-add-norm-notes.png)
+
+> Original input added back.
+> Values are normalized.
+> Keep learning stable.
+> Avoids confusion.
+
+| Slide line | Tenglish meaning |
+|---|---|
+| Original input added back | Masked attention output ki **original input ni malli kaluputharu** (residual — "Add") — rasina words original info poadu |
+| Values are normalized | Numbers ni **balanced range** ki theesukostharu ("Norm" — volume control laaga) |
+| Keep learning stable | Numbers explode avvakunda → training **stable** |
+| Avoids confusion | Info kalavakunda, numbers gandaragolam avvakunda — next block ki **clean** input |
+
+Encoder lo chusina **Add & Norm ne** — detailed explanation + "bank" example kosam **"Add & Norm — deep ga"** section chudandi.
+Decoder lo idi **3 saarlu** vastundi — masked attention tarvata, cross-attention tarvata, feed forward tarvata.
+
+**6. Multi-Head Attention (Encoder-Decoder Attention / Cross-Attention)**
+
+![Encoder-Decoder attention — class notes](images/decoder-cross-attention-notes.png)
+
+> Decoder looks at encoder output.
+> Connects input meaning with output generation.
+> Helps generate correct and relevant words.
+
+| Slide line | Tenglish meaning |
+|---|---|
+| Decoder looks at encoder output | Decoder **input sentence ni** (encoder ardham chesukunnadi) chustundi — Query decoder nundi, Key & Value encoder nundi |
+| Connects input meaning with output generation | **"Input lo em undi"** ni **"nenu em rastunna"** tho connect chestundi — iddari madhya **bridge** |
+| Helps generate correct and relevant words | Input ki **sambandham unna, correct** words rayadaniki help — lekapothe decoder tanaki nachindi rasestundi |
+
+```text
+Decoder ippudu: [START] Nenu India  → next?
+Cross-attention: "I love India" lo ye word chudali?  → India (0.65), love (0.25)
+→ "ni" (correct + relevant) ✅      cross-attention lekapothe → "cricket"?? (random) ❌
+```
+
+**7. Feed Forward Network**
+
+![Feed forward and Linear — class notes](images/decoder-feed-forward-linear-notes.png)
+
+> Extra thinking layer.
+> Improves understanding quality.
+> Helps grammar and structure.
+
+- **Extra thinking layer** — attention collect chesina info meeda prathi word **vidiga inka alochistundi** (encoder lo *"polishing each word"* laage).
+- **Improves understanding quality** — meaning inka clear, strong.
+- **Helps grammar and structure** — decoder rase part kabatti, ikkada **grammar correct ga** (ex: Telugu lo object tarvata `ni`, chivarlo verb `premistanu`) undela help chestundi.
+
+**8. Linear**
+
+> It is the last thinking step.
+> It converts model thinking into **word scores**.
+> It does not choose the word.
+> It only prepares options.
+
+| Slide line | Tenglish meaning |
+|---|---|
+| Last thinking step | Decoder layers anni ayyaka **chivari** calculation |
+| Converts model thinking into word scores | Model final vector (512 numbers) → vocabulary lo **prathi word ki oka score** (logit) |
+| Does not choose the word | Linear **select cheyyadu** — scores matrame istundi |
+| Only prepares options | *"Ivi options, ivi vaati scores"* ani **list ready** chestundi |
+
+```text
+Model thinking (512 numbers) → [Linear] → ni: 6.1,  ki: 3.9,  lo: 3.2,  premistanu: 2.5,  ... (vela words)
+                                           ↑ options + scores matrame — inka choose cheyyaledu
+```
+
+**9. Softmax Layer**
+
+![Softmax and decoder summary — class notes](images/decoder-softmax-summary-notes.png)
+
+> Converts scores into probabilities.
+> Choose the best next word.
+> Highest probability word will be selected.
+
+```text
+Scores:         ni: 6.1    ki: 3.9    lo: 3.2    premistanu: 2.5   ...
+   ↓ Softmax
+Probabilities:  ni: 0.82   ki: 0.09   lo: 0.05   premistanu: 0.02  ...  (motham = 1.0)
+   ↓ Highest select
+Next word:      "ni" ✅
+```
+
+> **Chinna note:** Technical ga **Softmax probabilities matrame istundi** — select chese pani (highest pick = *greedy*)
+> daani tarvata jarugutundi. ChatGPT lantivi eppudu highest ne theesukovu — **temperature** tho konchem random ga kuda select chestayi
+> (Section 7.4). Class lo simple ga "Softmax choose chestundi" ani cheppindi — idea correct.
+
+##### Summary — For each word, decoder does (class note)
+
+> 1. Look at past words (**Masked Multi-Head Attention**)
+> 2. Look at input meaning (**Cross-Attention** | Encoder-Decoder Multi-Head Attention)
+> 3. Think deeper (**Feed Forward**)
+> 4. Score all words (**Linear Layer**)
+> 5. Pick one word (**Softmax Layer**)
+
+| # | Step | Block | Question | Translation example (`[START] Nenu India` → ?) |
+|---|---|---|---|---|
+| 1 | Look at past words | Masked Multi-Head Attention | *"Nenu ippati varaku em rasanu?"* | `Nenu`, `India` chusindi |
+| 2 | Look at input meaning | Cross-Attention | *"Input lo em undi? ippudu edi chudali?"* | `I love India` lo `India`, `love` |
+| 3 | Think deeper | Feed Forward | *"Naa info tho grammar, meaning enti?"* | Object tarvata case marker kavali |
+| 4 | Score all words | Linear | *"Prathi word ki entha score?"* | `ni`: 6.1, `ki`: 3.9 … |
+| 5 | Pick one word | Softmax (+ select) | *"Edi best?"* | **`ni`** (0.82) → red loop 🔴 |
+
+(Prathi step tarvata **Add & Norm** untundi — steps 1, 2, 3 tarvata. Steps 1–3 **Nx layers** repeat avutayi, 4–5 chivarlo **oka saari**.)
+
+> **Oka line lo:** Decoder prathi word ki — **venaka chudu → input chudu → alochinchu → anni words ki score ivvu → okati pick chey**,
+> tarvata aa word tho **red loop** lo malli.
+
+##### Class example — "What is todays weather?" → "Rain is heavy" (Durga Sir)
+
+```text
+Encoder input understanding:  What is todays weather?
+Decoder output:               Rain is heavy
+```
+
+Encoder question ni ardham chesukundi. Ippudu decoder **modati word `Rain`** ela rastundo step by step chuddam.
+
+**Step 0 — START token**
+
+![Weather example — Step 0 START token](images/decoder-weather-example-step0.png)
+
+> Tells the decoder **'start generating output'**.
+> You open the mouth to speak. No word spoken yet.
+> Decoder has **[START]**.
+
+Manam matladadaniki **noru terichinattu** — inka okka word kuda cheppaledu. `[START]` ante decoder ki *"ippudu answer cheppadam start chey"* ani signal.
+
+**Step 1 — Masked Multi-Head Attention**
+
+![Weather example — Step 1 and Step 2](images/decoder-weather-example-step1-2.png)
+
+> Masked multi head attention look only past words.
+> No words generated yet.
+> Decoder sees only **[START]**.
+
+Inka emi rayaledu kabatti venaka chudadaniki `[START]` okkate undi. Ee step lo kotha info peddaga raadu — kaani block run avutundi (next steps lo `Rain`, `is` add ayyaka ikkada nijam ga pani untundi).
+
+**Step 2 — Cross-Attention (Look at encoder meaning)**
+
+> You remember the question — *Describe todays weather?*
+> Decoder thinks: **I must talk about weather.**
+
+Manam answer cheppe mundu **question ni gurthu chesukuntam** — decoder kuda encoder output ni chustundi.
+`[START]` position (Query) → encoder words (Key, Value) lo **`weather`** ki highest attention:
+
+| Encoder word | Attention weight (ardham kosam) |
+|---|---|
+| What | 0.05 |
+| is | 0.03 |
+| todays | 0.22 |
+| **weather** | **0.70** |
+
+Result: decoder vector lo ippudu **"topic = weather, today"** ane meaning vachindi.
+
+**Step 3 — Feed Forward Network (Extra thinking)**
+
+![Weather example — Step 3, Step 4, Softmax](images/decoder-weather-example-step3-4.png)
+
+> Decoder thinks: **weather → rain… may be start with rain**
+
+**Step 4 — Linear layer scores to all words**
+
+> Rain, Sun, Wind …
+
+**Softmax picks the best word: `Rain`** ✅
+
+```text
+[START] → Masked Attn → Cross-Attn ("weather") → FFN ("weather → rain/sun/wind…") → Linear (scores) → Softmax → "Rain"
+```
+
+##### Step 3 lo "Rain" ani ela decide chestundi?
+
+Idi chala important doubt. Mundu **oka nijam**:
+
+> ⚠️ **Model ki ivvala nijam ga varsham padutundo ledo teliyadu!** Daniki window ledu, weather report ledu, internet ledu.
+> `Rain` ani cheppedi **training lo nerchukunna patterns** batti — **fact kaadu, probability guess**.
+
+Mari ela? — 3 parts lo chuddam.
+
+**Part 1 — Feed Forward lo "memory" (training lo nerchukunnadi)**
+
+Feed Forward section lo chusam — model **knowledge chala varaku FFN weights lo** store avutundi.
+Training lo model laksha laksha sentences chadivindi:
+
+```text
+"Today's weather: heavy rain expected..."
+"What's the weather? It's sunny and hot."
+"The weather is windy today..."
+"Weather update: rain in Hyderabad..."
+```
+
+Ee data nundi FFN lo konni neurons **"weather topic vasthe → rain, sun, wind, cloudy, hot words ready cheyyi"** ane connection nerchukunnayi.
+Ade slide lo — *"weather → rain… may be start with rain"*.
+
+**Part 2 — FFN lopala ela jarugutundi? (Expand → Filter → Shrink)**
+
+Step 2 tarvata vector lo "weather question" meaning undi. FFN lo (ardham kosam 6 feature checks):
+
+```text
+Input vector: "topic = weather, today" (cross-attention nundi)
+
+Expand → feature detectors:
+  [ weather_topic: 2.4,  rain_words: 1.8,  sun_words: 1.1,  wind_words: 0.6,  food: -1.5,  person: -0.9 ]
+
+ReLU (negative → 0):
+  [ weather_topic: 2.4,  rain_words: 1.8,  sun_words: 1.1,  wind_words: 0.6,  food: 0,     person: 0    ]
+                                                                               ❌ off       ❌ off
+
+Shrink → output vector:  "weather answer words" vaipu, ANDULO "rain" vaipu konchem ekkuva push ✅
+```
+
+- `food`, `person` lantivi **off** — weather question ki sambandham ledu.
+- `rain`, `sun`, `wind` anni **on** — kaani `rain` neuron **ekkuva strong** ga fire ayyindi.
+
+**Enduku `rain` ekkuva strong?** — training data lo *"what is today's weather?"* lantivi questions tarvata
+**"rain"** words ekkuva saarlu vachi unte, aa connection weights lo **strong** ga nerchukuntundi.
+(Durga Sir example lo — ee question ki answer `Rain is heavy` ane pair tho train chesinattu anukovachu. Andhuke `Rain`.)
+
+**Part 3 — Linear + Softmax lo final decision**
+
+Step 3 lo FFN **decide cheyyadu** — vector ni "rain" vaipu **tilt (vanchu)** chestundi matrame.
+Final decision Linear + Softmax lo:
+
+```text
+Linear: final vector ni vocabulary lo prathi word vector tho compare (dot product) → score
+        vector "rain" vaipu ekkuva tilt ayyindi → Rain ki highest score
+
+          Score    Probability (Softmax)
+Rain       5.2   →   0.61   ← highest ✅
+Sun        4.3   →   0.25
+Wind       3.4   →   0.10
+Cloudy     2.1   →   0.03
+Banana    -3.0   →   0.00
+```
+
+Andhuke **"Rain"** select ayyindi. (Numbers ardham kosam matrame.)
+
+> **Gamaninchandi:** Sun ki kuda 0.25 undi — **temperature** ekkuva unte (Section 7.4) kondari saarlu `Sun` kuda ravochu.
+> Ade model ki fact teliyadu ani proof — adi **probabilities** tho guess chestundi.
+
+**Nijam ga anni layers kalisi decide chestayi:** Slide lo simple ga *"Step 3 lo FFN alochinchindi"* ani cheppindi. Nijam ga
+6 (leda 96) decoder layers lo prathi layer lo attention + FFN konchem konchem ee "rain" direction ni build chestayi. FFN ki
+**knowledge / association** pani ekkuva — andhuke slide lo daaniki credit.
+
+**Nijam weather kavali ante?**
+
+Model ki live info ledu kabatti — real apps (ChatGPT weather, Google assistant) **tool / API** call chesi (weather API) live data theeskuni
+prompt lo pedatayi, tarvata model answer rastundi. Idi **RAG / tool calling** idea (RAG folder lo chusam). Lekapothe model rase answer
+**hallucination** (Section 7.3) avvochu — confident ga, kaani tappu.
+
+> **Oka line lo:** Step 3 lo FFN **"weather → rain/sun/wind"** ane training lo nerchukunna association ni fire chesi vector ni
+> **rain vaipu vanchutundi**. Linear + Softmax lo `Rain` ki highest probability vachi select avutundi.
+> **Model ki nijam weather teliyadu** — idi patterns tho chese **probability guess**.
+
+##### Second round — "is" ela generate avutundi? (Durga Sir)
+
+`Rain` generate ayyindi → **red loop** → decoder input ippudu `[START] Rain`. Malli anni blocks run avutayi.
+
+**Step 5 — Masked Multi-Head Attention (Second round)**
+
+![Weather example — Step 5 and Step 6](images/decoder-weather-example-step5-6.png)
+
+> Already said: **Rain**
+> Decoder thinks: **Sentence is not complete**
+> Decoder sees: **Rain**
+
+- Ippudu venaka chudadaniki nijam ga oka word undi — `Rain` (plus `[START]`).
+- `Rain` okkate — *"sentence inka complete kaaledu, Rain gurinchi inka emaina cheppali"* ani decoder ki ardham.
+- First round lo ee step lo peddaga pani ledu — **second round nundi masked attention nijam ga useful** avutundi.
+
+**Step 6 — Cross-Attention (malli)**
+
+> Re-checks input meaning.
+> **Avoids going off topic.**
+> Question reminder: *Describe todays weather?*
+> Decoder thinks: **I should describe rain.**
+
+- Prathi round lo decoder **question ni malli check** chestundi — okka saari chusi marchipodu.
+- Enduku? **Off topic vellakunda.** `Rain` tarvata *"Rain is a famous movie"* ani vellipokunda — question **weather** gurinchi kabatti, **rain ni describe** cheyyali ani gurthu chesukuntundi.
+
+**Step 7 — Feed Forward (Extra thinking)**
+
+![Weather example — Step 7 and Step 8](images/decoder-weather-example-step7-8.png)
+
+> Extra thinking layer.
+> Describes **grammar pattern and structure**.
+> **Rain …. is … something**
+
+- FFN ki training nundi telusu — English lo **noun (Rain) tarvata sadharanam ga verb** vastundi.
+- Pattern: **`Rain` + `is/was/falls` + description** → *"Rain …. is … something"*.
+
+**Step 8 — Linear + Softmax**
+
+> Options: **is, was, falls**
+> Softmax selected **is**.
+> **Second word generated: is**
+
+| Option | Probability (ardham kosam) | Enduku |
+|---|---|---|
+| **is** | **0.58** | Question lo **"todays"** — present tense → `is` best fit |
+| falls | 0.22 | Grammar correct, kaani "describe" ki `is` better |
+| was | 0.12 | **Past tense** — "todays" question ki match avvadu |
+| … | 0.08 | migatha words |
+
+Ikkada **cross-attention** (`todays` → present) + **FFN** (grammar: noun tarvata verb) rendu kalisi `is` ni gelipinchayi.
+
+```text
+Round 1:  [START]       → ... → "Rain"
+Round 2:  [START] Rain  → Masked Attn ("sentence complete kaaledu")
+                        → Cross-Attn ("weather describe cheyyali, today")
+                        → FFN ("noun tarvata verb")
+                        → Linear + Softmax → "is" ✅
+```
+
+##### Third round — "heavy" ela generate avutundi? (Durga Sir)
+
+`is` generate ayyindi → **red loop** → decoder input ippudu `[START] Rain is`. Malli anni blocks.
+
+**Step 9 — Masked Multi-Head Attention (3rd round)**
+
+![Weather example — Step 9 and Step 10](images/decoder-weather-example-step9-10.png)
+
+> **Keep track of sentence so far.**
+> Decoder sees: **Rain is**
+> **Listener expects more.**
+
+- Decoder ippati varaku rasindi gurthu pettukuntundi — `Rain is`.
+- *"Rain is…"* ani aapesthe vinevaallu *"is… em?"* ani **inka wait** chestaru — sentence **incomplete**.
+- `is` chusi masked attention ki ardham — **is tarvata oka description (adjective)** ravali.
+
+**Step 10 — Cross-Attention + Feed Forward**
+
+> **Decide description word.**
+> **Keep answer aligned to input.**
+> Decoder thinks: **How is rain?**
+
+| Block | Em chestundi | Weather example lo |
+|---|---|---|
+| **Cross-Attention** | Answer ni **input ki aligned** ga unchutundi | Question *"todays weather"* — kabatti rain ni **weather laaga** describe cheyyali (rain yokka taste kaadu, speed kaadu) |
+| **Feed Forward** | **Description word** decide cheyyadaniki alochistundi | *"How is rain?"* — rain ki training lo common descriptions: heavy, light, continuous … |
+
+**Step 11 — Linear + Softmax**
+
+![Weather example — Step 11, final sentence](images/decoder-weather-example-step11.png)
+
+> Options: **heavy, sweet, fast**
+> **Third word generated: Heavy**
+> **Rain is heavy.**
+
+| Option | Probability (ardham kosam) | Enduku |
+|---|---|---|
+| **heavy** | **0.74** | Training lo **"heavy rain"** chala common — weather description ki perfect fit |
+| fast | 0.06 | Grammar correct, kaani rain ni ala describe cheyyaru — weather meaning ki match avvadu |
+| sweet | 0.01 | Rain **taste** gurinchi kaadu question — off topic, cross-attention + FFN ee option ni taggistayi |
+| … (light, continuous …) | 0.19 | migatha words |
+
+**Step 12 — 4th round: `[END]` (slide lo ledu, kaani ilaage aagutundi)**
+
+```text
+Decoder input: [START] Rain is heavy
+Masked Attn:   "Rain is heavy" — subject + verb + description, sentence complete
+Cross-Attn:    question ki answer ayipoyindi
+Linear+Softmax: [END] ki highest probability → STOP ✋
+```
+
+##### Weather example — motham journey (3 rounds + END)
+
+| Round | Decoder input | Masked Attn | Cross-Attn | FFN | Pick |
+|---|---|---|---|---|---|
+| 1 | `[START]` | Inka emi ledu | *"weather gurinchi cheppali"* | weather → rain/sun/wind | **Rain** |
+| 2 | `[START] Rain` | *"sentence complete kaaledu"* | *"rain ni describe cheyyali, today"* | noun tarvata verb | **is** |
+| 3 | `[START] Rain is` | *"listener expects more"* | *"answer input ki aligned"* | *"how is rain?"* → description | **heavy** |
+| 4 | `[START] Rain is heavy` | Sentence complete | Answer ayipoyindi | — | **[END]** ✋ |
+
+```text
+"What is todays weather?"  →  [ENCODER] (oka saari)
+                                   │
+[START] ──→ Rain ──→ is ──→ heavy ──→ [END]
+   🔴 red loop — prathi round lo kotha word input ki add, malli decoder run
+```
+
+> **Oka line lo:** Prathi round lo decoder — **ippati varaku em cheppano (masked attn)**, **question em adigaro (cross-attn)**,
+> **grammar/meaning prakaram next em ravali (FFN)** chusi, **anni words ki score (linear)** ichhi **best okati (softmax)** pick chestundi.
+> Ala `Rain` → `is` → `heavy` → `[END]` — **"Rain is heavy."**
+
+##### Decoder lo Positional Encoding ela pani chestundi?
+
+Encoder lo laage decoder lo kuda prathi token ki **position add** chestaru (diagram lo decoder kinda **Output Embedding ⊕ Positional Encoding**).
+Kaani decoder lo konni **special points** unnayi.
+
+**1. Prathi kotha token ki next position**
+
+```text
+Round 1:  [START]@0
+Round 2:  [START]@0   Rain@1
+Round 3:  [START]@0   Rain@1   is@2
+Round 4:  [START]@0   Rain@1   is@2   heavy@3
+                                       ↑ kotha token → next position number
+```
+
+- Prathi round lo **kotha token** ki **next position** (0, 1, 2, 3 …) vastundi.
+- **Paata tokens positions maaravu** — `Rain` eppudu position 1 ne, enni rounds ayina.
+- Final input = **Output Embedding (word meaning) + Position vector** — encoder lo chusina ⊕ ne.
+
+**2. Encoder positions, Decoder positions — veru veru counters**
+
+```text
+Encoder:  What@0   is@1   todays@2   weather@3        ← encoder counter
+Decoder:  [START]@0   Rain@1   is@2   heavy@3         ← decoder counter (malli 0 nundi)
+```
+
+- Encoder and decoder ki **separate positions** — rendu **0 nundi** start.
+- Encoder lo `is@1`, decoder lo `Rain@1` — same number, kaani **veru sequences**, confusion ledu.
+- Rendu kalisedi **cross-attention** lo matrame — akkada decoder ki *"input lo ye word"* ani content (meaning) tho match avutundi.
+
+**3. Enduku decoder lo position kavali?**
+
+Position lekapothe decoder ki **"nenu ye order lo rasanu"** teliyadu:
+
+```text
+Position THO:     Rain@1  is@2  heavy@3   → "Rain is heavy" ✅ → next: [END]
+Position LEKUNDA: { Rain, is, heavy }     → "heavy is Rain"? "is Rain heavy?" — anni same ❌
+```
+
+- **Grammar** kosam (Step 7 lo *"Rain … is … something"*) — `Rain` **mundu**, `is` **tarvata** ani telisthe ne next word (description) correct ga vastundi.
+- **Next word ye position lo?** — Model ki *"nenu ippudu 3rd word rastunna"* ani telisthe, *"sentence chivariki vachindi, [END] ivvali"* ani kuda decide cheyyagaladu.
+- **Masked attention** "venaka words" ane concept kuda **position order** meeda ne depend — edi mundu, edi tarvata telisthe ne future block cheyyagalam.
+
+**4. Training lo vs Usage lo**
+
+| | Training | Usage (generation) |
+|---|---|---|
+| Positions | Full target `[START] Rain is heavy` ki **anni positions oke saari** (0, 1, 2, 3) | Okko round lo **kotha token ki okka kotha position** |
+| KV cache tho | — | Paata tokens (position tho) **cache lo** already unnayi — kotha token position matrame calculate |
+
+**5. GPT (decoder-only) lo**
+
+Encoder ledu kabatti **prompt + answer rendu oke counter**:
+
+```text
+<|im_start|>@0  user@1  What@2  is@3  todays@4  weather@5  ...  assistant@9   Rain@10  is@11  heavy@12
+└────────────────────── prompt ──────────────────────────────────────────────┘ └──── answer ─────────┘
+```
+
+Answer **0 nundi start avvadu** — prompt ayina chote nundi continue. Andhuke **context window** (Section 7.2) limit — prompt + answer motham positions limit lo undali.
+(Modern models lo — Llama lantivi — **RoPE** vaadutaru: position ni vector ki add cheyyakunda, Query/Key ni position batti **rotate** chestaru. Idea same — order cheppadam.)
+
+> **Oka line lo:** Decoder lo prathi kotha token ki **next position number** vastundi, paata tokens positions maaravu,
+> encoder–decoder ki **separate counters**. Position valle decoder ki *"nenu em order lo rasanu, next ekkada"* telusthundi —
+> lekapothe "Rain is heavy" and "heavy is Rain" okkate.
+
+##### Decoder lo prathi block — oka step ni full ga follow cheddam
+
+**Step 3** theesukundam — decoder ki ippati varaku `[START] Nenu India` undi, next token `ni` ravali.
+
+**① Outputs (Output Tokens from Previous Step)**
+
+```text
+Input:  [START]  Nenu  India
+```
+
+- Diagram kinda unna **"Outputs (Output tokens from previous step)"** ide — **red loop nundi vachina tokens**.
+- Modati step lo emi undadu kabatti special **`[START]`** token tho start chestaru.
+- Answer ki oka step **venaka** unna tokens istharu — deenni **"shifted right"** antaru (original paper lo diagram lo "Outputs (shifted right)" ani untundi).
+
+**② Output Embedding ⊕ Positional Encoding**
+
+```text
+[START] → vector,  Nenu → vector,  India → vector
+   + position 1       + position 2     + position 3
+```
+
+Encoder lo laage — token → meaning vector, plus **position** info (Section "Positional Encoding" chudandi).
+
+**③ Masked Multi-Head Attention** — *"nenu ippati varaku em rasanu?"*
+
+```text
+"India" chustundi →  [START] ✅   Nenu ✅   India ✅  (tanu)   ni ❌ (future — block)
+```
+
+- Output tokens **okadaanini okati** chustayi — kaani **future block** (mask).
+- `India` → `Nenu` ni chusi *"subject Nenu, object India — ippudu object tarvata 'ni' ravali"* ane pattern pattukuntundi.
+- **Multi-head** — encoder lo laage chala heads (grammar, order, meaning…) parallel ga.
+
+**④ Add & Norm** — original info + attention info kalipi, balance (encoder lo chusina Add & Norm ne).
+
+**⑤ Multi-Head Attention (Cross-Attention)** — *"input sentence lo ippudu ye word chudali?"*
+
+Diagram lo **encoder box nundi decoder ki vachina arrow** ikkade kalustundi.
+
+```text
+Query (Q)        ← decoder nundi   ("nenu ippudu 'India' tarvata em rayali?")
+Key (K), Value (V) ← ENCODER output nundi  ("I", "love", "India" meanings)
+```
+
+`India` tarvata next word kosam cross-attention weights (ardham kosam):
+
+| Encoder word | Attention weight | Enduku |
+|---|---|---|
+| I | 0.10 | Subject already "Nenu" ga rasesam |
+| **love** | **0.25** | Verb inka raayaledu — konchem focus |
+| **India** | **0.65** | Ippude "India" rasam — Telugu lo object tarvata **"ni"** case marker vastundi |
+
+Ikkade **translation magic** jarugutundi — decoder English sentence ni chusi Telugu lo em rayalo decide chestundi.
+Next step lo (`premistanu` kosam) **`love`** ki highest weight vastundi.
+
+**⑥ Add & Norm** — malli shortcut + balance.
+
+**⑦ Feed Forward** — prathi token ni vidiga **polish** (encoder lo chusina Feed Forward ne — *"Attention = connecting, FFN = polishing"*).
+
+**⑧ Add & Norm** — malli shortcut + balance.
+
+**⑨ Nx times repeat** — ③ nundi ⑧ varaku unna decoder layer ni **Nx saarlu** (original lo 6) stack chestaru.
+**Prathi decoder layer lo cross-attention undi** — prathi layer encoder output ni chustundi.
+
+**⑩ Linear** — *"vocabulary lo prathi word ki score"*
+
+Chivari token (`India`) yokka final vector (512 numbers) ni → **vocabulary size** scores (logits) ga marchutundi.
+
+```text
+512 numbers  →  [Linear]  →  37,000 scores (original paper vocabulary size)
+                              (prathi possible token ki okka score)
+```
+
+> **Gamaninchandi:** Chivari position (`India`) vector matrame next token predict cheyyadaniki vaadutaru —
+> endukante masked attention valla adi **venaka unna anni tokens** info ni already collect chesindi.
+
+**⑪ Softmax** — scores → probabilities (motham = 1.0)
+
+| Token | Score (logit) | Probability |
+|---|---|---|
+| **ni** | 6.1 | **0.82** |
+| ki | 3.9 | 0.09 |
+| lo | 3.2 | 0.05 |
+| premistanu | 2.5 | 0.02 |
+| … (migatha vela tokens) | … | 0.02 |
+
+**⑫ Output Probabilities → token select → RED LOOP 🔴**
+
+- Highest probability **`ni`** select (greedy) — leda temperature tho sampling (Section 7.4).
+- `ni` ni decoder input chivara ki add → `[START] Nenu India ni` → **malli ① nundi** (red arrow!).
+- **`[END]`** token vachinappudu leda max length reach ayinappudu **aagipotundi**.
+
+(Paina weights, scores — ardham kosam ichhina numbers matrame.)
+
+##### Decoder full flow — oka chupu lo
+
+```text
+                    ┌─────────────────────────────────────────────┐
+                    │                                             │
+Outputs so far ─────┤  [Output Embedding ⊕ Position]              │
+([START] Nenu India)│           ↓                                 │
+                    │  ┌──── Decoder layer (Nx) ────────────────┐ │
+                    │  │ [Masked Multi-Head Attention]          │ │  "nenu em rasanu?"
+                    │  │ [Add & Norm]                           │ │
+                    │  │ [Multi-Head Attention] ← ENCODER output│ │  "input lo em chudali?"
+                    │  │ [Add & Norm]                           │ │
+                    │  │ [Feed Forward]                         │ │  "prathi token polish"
+                    │  │ [Add & Norm]                           │ │
+                    │  └────────────────────────────────────────┘ │
+                    │           ↓                                 │
+                    │  [Linear]  → vocabulary scores              │
+                    │  [Softmax] → probabilities                  │
+                    │           ↓                                 │
+                    │  Next token: "ni"  ─────── RED LOOP 🔴 ─────┘
+                    │                    (input ki add chesi malli run)
+```
+
+##### Encoder vs Decoder — side by side
+
+| Block | Encoder | Decoder |
+|---|---|---|
+| Input | Source sentence | Previous output tokens (red loop) |
+| Self-attention | **Normal** — anni words rendu vaipula | **Masked** — future block |
+| Cross-attention | ❌ Ledu | ✅ Undi — encoder output ni chustundi |
+| Add & Norm | 2 saarlu | **3 saarlu** |
+| Feed Forward | ✅ | ✅ |
+| Linear + Softmax | ❌ Ledu | ✅ Chivarlo — next token probabilities |
+| Run count | Oka saari | Prathi token ki oka saari (loop) |
+| Pani | **Ardham chesukovadam** | **Rayadam** |
+
+##### GPT lo decoder ela untundi?
+
+GPT = **decoder-only** — paina decoder lo nundi **cross-attention (⑤, ⑥) teesestaru** (encoder ledu kabatti).
+Migathadi anni same — **red loop kuda same**:
+
+```text
+Prompt + rasina tokens → [Embedding ⊕ Position] → [Masked MHA → Add & Norm → FFN → Add & Norm] × N
+                       → [Linear] → [Softmax] → next token → RED LOOP 🔴 → malli input ki
+```
+
+ChatGPT lo answer **token-by-token** type ayyedi — ee red loop valle!
+
+> **Oka line lo:** Decoder = **rase part**. Prathi step lo — ippati varaku rasinavi chustundi (masked attention),
+> input sentence chustundi (cross-attention), polish chestundi (feed forward), vocabulary lo prathi token ki probability istundi
+> (linear + softmax), best token ni select chesi **red loop** tho malli input ki pamputhundi — `[END]` vachevaraku.
+
+#### Prathi block — oka line lo
+
+| Block | Oka line meaning |
+|---|---|
+| Input / Output Embedding | Token → meaning vector |
+| Positional Encoding | Word order cheppadam |
+| Multi-Head Attention | Anni words ni chala angles lo chusi context theeskovadam |
+| Masked Multi-Head Attention | Same, kaani future words ni chudakunda |
+| Cross-Attention (decoder lo middle MHA) | Output rasetappudu input sentence ni chudadam |
+| Add & Norm | Shortcut + balance — training stable |
+| Feed Forward | Prathi word ni vidiga deep ga process |
+| Nx | Ee layers ni chala saarlu stack chestaru |
+| Linear | Vector → vocabulary scores |
+| Softmax | Scores → probabilities |
+
+#### Ee diagram ki GPT ki sambandham enti?
+
+GPT **decoder-only** model (Section 4.4 lo table chusam). Ante ee diagram lo:
+
+```text
+❌ Encoder (left box) motham teesestaru
+❌ Cross-attention (decoder lo middle Multi-Head Attention) kuda teesestaru
+✅ Migiledi: Embedding ⊕ Position → [Masked Multi-Head Attention → Add & Norm
+             → Feed Forward → Add & Norm] × N → Linear → Softmax
+```
+
+Ade **Section 4.3** lo chusina GPT pipeline. Prompt + generate chesina tokens anni **oke sequence** ga
+decoder lopaliki velthayi — andhuke separate encoder avasaram ledu.
+
+| Model | Ee diagram lo ye part? |
+|---|---|
+| **Original Transformer, T5** | Rendu — Encoder + Decoder |
+| **BERT** | Left side (Encoder) matrame |
+| **GPT, Claude, Llama** | Right side (Decoder) matrame, cross-attention lekunda |
+
+#### Gurthu pettukovalsina points
+
+1. Diagram ni **kinda nundi paiki** chadavali.
+2. **Encoder = ardham chesukune part**, **Decoder = rase part**.
+3. **Positional Encoding** lekapothe model ki word order teliyadu.
+4. **Masked** attention = future chudakudadu; **Cross**-attention = decoder, encoder ni chudadam.
+5. **Add & Norm** prathi sub-layer tarvata undi — deep network stable ga train avvadaniki.
+6. Chivarlo **Linear + Softmax** = next token probabilities — mana **next token prediction** ide!
+7. GPT = ee diagram lo **right side matrame** (decoder-only).
 
 ---
 
