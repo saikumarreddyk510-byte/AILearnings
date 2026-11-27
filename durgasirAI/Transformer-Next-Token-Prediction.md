@@ -825,6 +825,121 @@ print(enc_35.encode(itext))                            # veru IDs vastayi — e.
 > Decode token IDs ni malli text ga marchutundi — model ichhe answer IDs ni manaki
 > chupinchedi ide step.
 
+### 1.9 Class notes — What is Token? Why Tokenization? Types of Tokens (Durga Sir)
+
+![What is token, why tokenization, tiktoken cl100k_base example](images/token-definition-tiktoken-cl100k.png)
+
+#### What is Token?
+
+> **Token is the smallest unit of text that AI understands.**
+> **A word can be a token or many tokens.**
+
+- AI text ni **letters ga kaadu, words ga kaadu** — **tokens** ga chustundi. Adi AI ki **smallest unit**.
+- Oka word = **okka token** avvochu (`is`, `powerful`) leda **chala tokens** avvochu (`ChatGPT` = `Chat` + `G` + `PT`).
+  Section 1.1 lo `unbelievable` = 3 tokens chusam — same idea.
+
+#### Why Tokenization is needed in NLP?
+
+> Tokenization is needed because **computers cannot understand raw text**.
+> Tokenization breaks text into **small units**, which can be **converted into numbers** for processing by NLP models.
+
+```text
+Raw text        →   Tokenization      →   Numbers (token IDs)   →   NLP model
+"ChatGPT is powerful"   Chat|G|PT| is| powerful    [16047, 38, 2898, 374, 8147]
+```
+
+| Word | Simple meaning |
+|---|---|
+| **NLP** | Natural Language Processing — computers ki manushula bhasha (text) ardham ayyela cheyyadam |
+| **Raw text** | Manam type chese normal text — computer ki adi direct ga ardham kaadu |
+| **Tokenization** | Text ni **chinna pieces (tokens)** ga break cheyyadam |
+| **Token ID** | Prathi token ki vocabulary lo unna **number** |
+
+Computer ki **numbers matrame** telusu — andhuke text → tokens → numbers. Ee numbers ne transformer lopaliki velthayi (Section 1.7).
+
+#### Class code — tiktoken with `cl100k_base`
+
+```python
+# ---------------- Architecture Diagram ----------------
+# [Text: "ChatGPT is powerful"]
+#    ↓
+# [cl100k_base tokenizer]  → text ni tokens ga break chestundi
+#    ↓
+# [Token IDs]  → [16047, 38, 2898, 374, 8147]
+#
+# ---------------- Deep Architecture Notes ----------------
+# Step 1: tiktoken library import
+# Step 2: cl100k_base encoding (gpt-4 / gpt-3.5-turbo tokenizer) load
+# Step 3: text ni encode() tho token IDs list ga marchadam
+# Step 4: IDs print — prathi number oka token
+
+import tiktoken                                    # OpenAI tokenizer library — text ↔ token IDs
+
+enc = tiktoken.get_encoding("cl100k_base")         # cl100k_base tokenizer load — gpt-4 / gpt-3.5-turbo vaadedi (~1 lakh vocab)
+
+#text = "ChatGPT is powerful"                      # modati example — comment chesi pettaru
+text = "ChatGPTPro is powerful"                    # rendo example — "Pro" add chesi try chesaru
+tokens = enc.encode(text)                          # text → token IDs list
+
+print(tokens)  #[16047, 38, 2898, 374, 8147]       # token IDs print
+```
+
+**Class code lo chinna gamanika:** Comment lo unna output `[16047, 38, 2898, 374, 8147]` (5 tokens) —
+idi **modati text `"ChatGPT is powerful"`** di:
+
+| Token | ID |
+|---|---|
+| `Chat` | 16047 |
+| `G` | 38 |
+| `PT` | 2898 |
+| ` is` (space tho) | 374 |
+| ` powerful` (space tho) | 8147 |
+
+- `ChatGPT` okka word — kaani **3 tokens** (`Chat`, `G`, `PT`) — *"a word can be many tokens"* ki perfect example.
+- ` is`, ` powerful` — prathi word **okka token**, **mundu space tho saha** (Section 1.2 lo chusam).
+- `"ChatGPTPro is powerful"` run chesthe — **"Pro"** kosam **extra token(s)** vastayi, kabatti list **5 kanna ekkuva** untundi.
+  Kotha word (`ChatGPTPro`) vocabulary lo ledu kabatti, tokenizer daanni **telisina pieces** ga break chestundi. Mee system lo run chesi exact IDs chudandi.
+
+#### Types of tokens
+
+![Types of tokens — word, subword, character](images/token-types-word-subword-character.png)
+
+> 1. **Word tokens** → Every word is treated as separate token — *Simple NLP tasks*
+> 2. **Subword tokens** → Words are broken into meaningful smaller parts — *GPTs / LLMs*
+> 3. **Character tokens** → Each character or symbol is one token — *Special research*
+
+Same sentence ni 3 types lo chuddam — `"ChatGPT is powerful"`:
+
+```text
+1. Word tokens:       [ChatGPT] [is] [powerful]                              → 3 tokens
+2. Subword tokens:    [Chat] [G] [PT] [ is] [ powerful]                      → 5 tokens  (cl100k_base)
+3. Character tokens:  [C][h][a][t][G][P][T][ ][i][s][ ][p][o][w][e][r][f][u][l]  → 19 tokens
+```
+
+| Type | Ela break chestundi | Ekkada vaadutaru | Plus ✅ | Minus ❌ |
+|---|---|---|---|---|
+| **Word tokens** | Prathi **full word** = okka token | Simple NLP tasks (spam filter, basic sentiment) | Simple, ardham easy | Vocabulary **chala peddadi** (anni words + forms: run, runs, running…). Kotha word (`ChatGPTPro`) vasthe → **unknown** ❌ |
+| **Subword tokens** | Words ni **meaningful chinna parts** ga (`un` + `believ` + `able`) | **GPT, Claude, Llama — anni LLMs** | Vocabulary medium size (~1–2 lakh), **kotha words kuda handle** (telisina pieces ga break) | Konchem complex, oka word ki chala tokens avvochu |
+| **Character tokens** | Prathi **letter / symbol** = okka token | Special research, konni languages / spelling tasks | Vocabulary **chala chinnadi** (~100s), unknown word ane problem ledu | Sequence **chala podavu** → slow, ekkuva compute, meaning nerchukovadam kashtam |
+
+**LLMs enduku subword choose chesayi?** — Rendu extremes madhya **balance**:
+
+```text
+Word tokens       ←───────── Subword tokens ─────────→   Character tokens
+vocabulary huge             ✅ best balance               vocabulary tiny
+sequence short              vocabulary medium             sequence very long
+kotha words ❌               kotha words ✅                 kotha words ✅
+                            sequence medium
+```
+
+- `ChatGPTPro` lantivi kotha words vachina — subword tokenizer `Chat` + `G` + `PT` + `Pro` laaga **telisina pieces** tho handle chestundi. Word tokenizer ki idi **unknown**.
+- Character tokens laaga sequence **19 tokens** avvadu — **5–6 tokens** tho ayipotundi → context window (Section 7.2) save, speed ekkuva.
+- GPT vaade subword method peru **BPE (Byte Pair Encoding)** — tarachuga kalise letters ni kalipi tokens ga nerchukuntundi.
+
+> **Oka line lo:** Token = AI ki **smallest text unit**. Computer ki raw text ardham kaadu kabatti **tokenization** tho
+> text → tokens → numbers. 3 types — **word** (simple), **subword** (LLMs — best balance), **character** (research).
+> GPT `"ChatGPT"` ni `Chat` + `G` + `PT` ga chustundi.
+
 ---
 
 ## 2. Transformer asalu em chestundi? (Oke oka pani)
@@ -3553,6 +3668,181 @@ Daanini daatithe, mundu unna matalu **marchipotundi** (truncate avutayi).
 | GPT-4o | 128,000 tokens |
 | Claude | 200,000+ tokens |
 
+#### Class notes — Token Limit (Durga Sir)
+
+![Token limit — definition and memory & performance](images/token-limit-definition-memory.png)
+
+> **Token Limit:** The maximum number of tokens GPT can **read (input)** and **write (output)** in **one interaction**.
+>
+> **Token limit = input tokens + output tokens**
+
+Simple ga — okka request lo GPT **chadive tokens** (mee prompt + chat history) + **rase tokens** (answer) — rendu kalipi oka **maximum** undi.
+
+```text
+Token limit (example: 8,000 tokens)
+┌─────────────────────────────────────────┬──────────────────────┐
+│  Input: prompt + chat history  (6,500)  │  Output: answer (1,500) │
+└─────────────────────────────────────────┴──────────────────────┘
+  Input ekkuva aithe → answer ki takkuva space migiluthundi
+```
+
+> **Chinna note:** Chat lo prathi message ki **full chat history malli** pamputharu (Section 7.1) — kabatti chat podavu ayye koddi
+> **input tokens perugutu** untayi. Konni APIs lo **output ki separate max limit** kuda untundi (ex: answer max 4K–16K tokens).
+
+#### Why token limits are needed?
+
+![Why token limits are needed — context window, cost, quality](images/token-limit-why-needed.png)
+
+**1. Memory and Performance**
+
+> More tokens means: more memory usage, more computation, slower response.
+> Token limits keep GPT: **fast, stable, efficient**.
+
+- Attention lo prathi token **migatha anni tokens** tho score calculate chestundi (Section 4.1.1) — 1,000 tokens → ~10 lakh scores, 10,000 tokens → ~10 **crore** scores!
+  Tokens **double** aithe attention pani dadapu **4 times** perugutundi.
+- KV cache (Section 4.4) kuda prathi token ki **GPU memory** theeskuntundi (Section 4.5).
+- Limit lekapothe — okka user 10 lakh tokens pampi **GPU motham** aakraminchukovachu → andariki slow.
+
+**2. Context Window size**
+
+> If the input is too big: **old tokens are dropped**, **confusion happens**.
+
+- Limit daatithe **paata messages** cut avutayi — model ki ika kanipinchavu (Section 7.6 — whiteboard example).
+- Ex: chat modatlo *"naa peru Sai, Telugu lo cheppu"* annaru — 500 messages tarvata adi drop ayyi, model English lo matladochu, peru marchipovachu → **confusion**.
+
+**3. Cost control**
+
+> **More tokens = more cost.**
+
+- API lo **per token** charge chestaru — **input tokens** ki oka rate, **output tokens** ki inko rate (sadharanam ga output **ekkuva costly**).
+- Peddha PDF motham prathi saari pampithe → prathi request ki **bill perugutundi**.
+
+**4. Quality of output**
+
+> Very long input can: **confuse the model**, **reduce focus**, **reduce answer quality**.
+
+- Chala peddha input lo important point **madhyalo daagipothe** model miss avvochu (researchers deenni **"lost in the middle"** antaru).
+- Attention **anni tokens madhya divide** avutundi — unnecessary text ekkuva unte important words ki **focus taggutundi**.
+
+| # | Reason | Oka line lo |
+|---|---|---|
+| 1 | Memory & Performance | Ekkuva tokens = ekkuva GPU memory + compute + slow |
+| 2 | Context window size | Limit daatithe paata tokens drop → confusion |
+| 3 | Cost control | Ekkuva tokens = ekkuva bill |
+| 4 | Quality of output | Chala long input → focus taggi answer quality taggutundi |
+
+#### How to use GPTs smartly with Token Limits
+
+![How to use GPTs smartly with token limits](images/token-limit-use-smartly.png)
+
+**1. Be clear and short**
+
+> Avoid unnecessary words. Ask precise questions.
+
+| ❌ Long | ✅ Short & clear |
+|---|---|
+| *"Hi, how are you? I hope you are doing well. I have a small doubt, actually I was reading about Python and I wanted to know, if it's not a problem, can you please tell me what is a list?"* | *"Python list ante enti? oka example tho cheppu"* |
+| ~50 tokens | ~12 tokens |
+
+(Token counts approximate.)
+
+**2. Break big tasks**
+
+> Instead of one long prompt, use **multiple small prompts**.
+
+```text
+❌ Okka huge prompt:  "Full e-commerce website code rayi — login, cart, payment, admin panel anni"
+                      → answer madhyalo cut avvochu, quality takkuva
+
+✅ Small prompts:     1. "Login page code rayi"
+                      2. "Ippudu cart feature add chey"
+                      3. "Payment integration explain chey"
+                      → prathi answer focused, complete
+```
+
+**3. Control output size**
+
+> Ask: **"Explain in 5 points"**, **"Answer in 100 words"**.
+> **This saves tokens.**
+
+- Output length cheppakapothe GPT **podavu** answer rayochu — output tokens ekkuva = ekkuva cost + time.
+- *"5 points lo"*, *"100 words lo"*, *"oka table lo"* ani cheppithe — **short, focused** answer + **tokens save**.
+
+**Inka konni smart tips (slide ki extra):**
+
+| Tip | Enduku |
+|---|---|
+| **Topic maarithe kotha chat** | Paata chat history prathi message tho malli velthundi — kotha topic ki kotha chat → input tokens takkuva, confusion takkuva |
+| **Peddha document lo avasaram unna part matrame** | Motham PDF kaakunda relevant section matrame paste cheyyandi (ide **RAG** idea — relevant chunks matrame pampadam) |
+| **Long chat ki summary** | *"Ippati varaku matladindi 5 points lo summarize chey"* → aa summary tho kotha chat start |
+
+> **Oka line lo:** **Token limit = input + output tokens** okka interaction lo maximum. Enduku ante — **memory/speed, context window,
+> cost, quality**. Smart ga vaadali ante — **clear & short** ga adugu, **peddha tasks break** chey, **output size control** chey.
+
+#### Why tokens cost money? (Durga Sir)
+
+![Why tokens cost money — servers, GPUs, electricity, engineers](images/why-tokens-cost-money.png)
+
+> **Behind AI:**
+> - Huge servers are running
+> - Powerful GPUs are working
+> - Electricity is consumed
+> - Engineers maintain systems
+>
+> **AI is not magic. AI is heavy computation.**
+
+Manam ChatGPT lo type chesi answer chustam — chala simple ga anipistundi. Kaani **venaka** jarigedi:
+
+| Behind AI | Tenglish meaning |
+|---|---|
+| **Huge servers** | Pedda pedda **data centers** — velalla computers 24×7 run avutu untayi |
+| **Powerful GPUs** | Prathi answer ki GPUs (Section 4.5) billions of calculations chestayi — okka high-end AI GPU dhara **lakshallo** untundi |
+| **Electricity** | GPUs + cooling (AC) ki **chala current** — konni data centers oka chinna town antha power vaadutayi |
+| **Engineers** | Systems ni build, update, fix chese teams — vaallaki salaries |
+
+> **AI is not magic** — prathi answer venaka **real hardware + real current + real manushulu** unnaru. Andhuke free kaadu.
+
+**Every token means:**
+
+> - Calculation
+> - Memory usage
+> - Processing time
+>
+> **Companies are charging based on tokens.**
+
+| Every token = | Ela | Ee file lo ekkada chusam |
+|---|---|---|
+| **Calculation** | Prathi token ki embedding, attention, feed forward, linear, softmax — **anni layers** run avvali | Section 4.3 (GPT pipeline), 4.6 |
+| **Memory usage** | Prathi token ki **KV cache** lo GPU memory | Section 4.4, 4.5 |
+| **Processing time** | Output prathi token ki decoder **malli run** (red loop) — 500 token answer = 500 runs | Section 4.6 (red loop) |
+
+Andhuke companies **per token** charge chestaru — ekkuva tokens = ekkuva GPU pani = ekkuva kharchu.
+
+**Ela charge chestaru? (API pricing idea)**
+
+```text
+Bill = (input tokens × input rate) + (output tokens × output rate)
+
+Example (ardham kosam — nijam rates model batti, time batti maarutayi):
+  Input rate  = ₹X per 1 million tokens
+  Output rate = sadharanam ga input kanna 3–5 times ekkuva
+```
+
+**Output tokens enduku ekkuva costly?**
+
+```text
+Input (prompt)  → anni tokens OKE SAARI parallel ga process (prefill — Section 4.4) → GPU efficient ✅
+Output (answer) → OKKO token, OKKO run (red loop)                                    → GPU ekkuva time ⏳
+```
+
+Input 1,000 tokens — okka forward pass lo ayipotundi. Output 1,000 tokens — **1,000 forward passes**. Andhuke output ki rate ekkuva.
+
+**ChatGPT free version kuda undi kada?** — Free plan lo company kharchu **bharistundi** (limits tho — konni messages, chinna model).
+Paid plans / API lo **meeru** token prakaram pay chestaru. Andhuke paina chusina **token-saving tips** (clear & short, output control) money kuda save chestayi.
+
+> **Oka line lo:** AI **magic kaadu — heavy computation**. Prathi token ki **calculation + memory + time** kharchu avutundi
+> (servers, GPUs, current, engineers). Andhuke companies **tokens batti** charge chestaru — output tokens inka ekkuva costly.
+
 ### 7.3 Hallucination — enduku jarugutundi
 
 Model **facts lookup cheyyadu**. Adi *statistically likely* word ni select
@@ -3566,6 +3856,85 @@ Model: "XYZ vs State lo court ila judgment ichindi..."  <-- idi fully kalpitham 
 Enduku? Endukante model ki aa case teliyakapoyina, *"aa type question ki
 answer ila untundi"* ani adi nerchukundi. Aa shape lo text generate chestundi.
 
+#### Class notes — Hallucination in AI (Durga Sir)
+
+![Hallucination in AI — definition and reasons](images/hallucination-definition-reasons.png)
+
+> **Hallucination in AI:** AI gives an answer that **looks correct, sounds confident**, but is actually **wrong or not verified**.
+> This is called Hallucination.
+
+Simple ga — AI answer **chudataniki correct ga**, **confident ga** untundi, kaani nijam ga **tappu** leda **check cheyyani** info.
+Manishi *"naaku teliyadu"* anakunda **confident ga kalpinchi** cheppinattu.
+
+**Real life example:** Exam lo answer teliyani student — blank vadalakunda, **confident ga, neat ga, points tho** edo rastadu.
+Chudataniki correct answer laage untundi — kaani content tappu. AI kuda ade.
+
+#### Reasons for Hallucination
+
+| # | Reason | Tenglish meaning | Example |
+|---|---|---|---|
+| 1 | **GPT predicts, not checks** | Model **next token predict** chestundi — facts ni **database lo check cheyyadu**. "Correct aa?" ani verify chese step ledu | *"Telangana lo 2025 best hospital?"* → oka peru confident ga cheppestundi |
+| 2 | **Missing or confusing data** | Model daggara info **ledu** leda **gandaragolam** ga undi | (kinda chudandi) |
+| 3 | **Your prompt is vague** | Question **clear ga lekapothe** model **guess** chestundi | *"Tell about java"* — ye topic? ye level? |
+
+**Reason 2 — model ki em undakapovachu:**
+
+| Missing | Enduku | Example |
+|---|---|---|
+| **Exact latest information** | Model **training cutoff** varake chadivindi — tarvata jarigindi teliyadu (Section 7.6 — training knowledge) | *"Ivvala gold rate entha?"* → paata number leda kalpitham |
+| **Exact local information** | Mee **ooru, mee company, mee college** gurinchi training data lo takkuva / ledu | *"Maa village lo bus timings?"* → edo timings cheppestundi |
+
+Reason 1 ki connection — **model eppudu edo oka next token istundi** (softmax lo anni words ki probability untundi).
+"Naaku teliyadu" ani cheppadam **nerchukokapothe**, teliyani chota kuda **likely-sounding** words ne generate chestundi.
+Weather example lo chusam — model ki ivvala weather teliyakapoyina `Rain` ani cheppindi.
+
+#### How to reduce Hallucination
+
+![How to reduce hallucination — ask for sources, say I don't know, be specific](images/hallucination-how-to-reduce.png)
+
+**1. Ask for sources**
+
+> Say: **"Give sources or links."**
+
+- Sources adigithe — model ki **evidence tho** cheppali ani signal; meeru kuda **links open chesi verify** cheyyochu.
+- ⚠️ **Jagratha:** Model **fake links / fake references** kuda create cheyyagaladu (adi kuda hallucination!).
+  Andhuke links **open chesi check** cheyyandi. Web search unna tools (ChatGPT search, Perplexity) ayithe real sources vastayi.
+
+**2. Ask it to say "I don't know"**
+
+> Say: **"If you are not sure, say you are not sure."**
+
+- Default ga model **edo answer ivvalani** try chestundi. Ee line add chesthe *"teliyakapothe teliyadu ani cheppu"* ani **permission** isthunnam.
+- Model **guess** cheyyakunda **honest** ga cheppe chance perugutundi.
+
+**3. Be specific**
+
+> Vague: **"Tell about java"**
+> Specific: **"Explain java 21 virtual threads in simple words with one example"**
+
+| | Vague prompt | Specific prompt |
+|---|---|---|
+| Prompt | Tell about java | Explain java 21 virtual threads in simple words with one example |
+| Topic | ❓ Java history? syntax? island? coffee? | ✅ Java 21 → virtual threads |
+| Level | ❓ | ✅ Simple words |
+| Format | ❓ | ✅ One example |
+| Result | Model **guess** chesi edo general ga rastundi | Clear target — **correct, useful** answer |
+
+Specific ga adigithe model ki **guess cheyyalsina space** taggutundi → hallucination taggutundi.
+
+**Inka konni ways (slide ki extra):**
+
+| Way | Ela help chestundi |
+|---|---|
+| **Context / documents ivvandi** | *"Ee PDF base chesukoni answer ivvu"* — model **mee data** nundi cheptundi, guess kaadu. Ide **RAG** (RAG folder lo chusam) |
+| **Web search / tools** | Latest info (gold rate, weather, news) ki search tool unna AI vaadandi — **live data** theeskuntundi |
+| **Low temperature** | Facts kavali ante temperature takkuva (Section 7.4) — random words takkuva |
+| **Cross-check** | Important vishayalu (medical, legal, money) — **eppudu verify** cheyyandi, AI answer final kaadu |
+
+> **Oka line lo:** Hallucination = **confident ga cheppina tappu answer**. Enduku ante GPT **predict chestundi, check cheyyadu**,
+> latest / local info ledu, leda question vague. Taggiinchadaniki — **sources adugu**, **"teliyakapothe teliyadu cheppu"** ani cheppu,
+> **specific ga adugu** — and important answers **eppudu verify** chey.
+
 ### 7.4 Temperature — same prompt, different answers
 
 Highest probability token **eppudu** select cheyyakunda, kondaru saarlu 2nd/3rd
@@ -3576,6 +3945,104 @@ option select cheyyadaniki **temperature** setting undi.
 | `0` | Eppudu highest probability ne — same prompt ki same answer | Code, facts, extraction |
 | `0.7` | Konchem variety — natural ga untundi | Chat, general use |
 | `1.5` | Chala random — creative kaani tappulu ekkuva | Story, brainstorming |
+
+#### Class example — Probability tho word select cheyyadam (`random.choices`)
+
+![random.choices — morning, evening, night with probabilities](images/random-choices-probability-tea-example.png)
+
+Model next word ni **probability prakaram** ela select chestundo — Durga Sir chinna Python example tho chupincharu:
+
+```python
+# ---------------- Architecture Diagram ----------------
+# [words list]  +  [probability list]
+#    ↓
+# [random.choices()]  → probability batti okka word random ga pick
+#    ↓
+# [Selected word]  → "morning" ekkuva saarlu, "night" chala takkuva saarlu
+#
+# ---------------- Deep Architecture Notes ----------------
+# Step 1: options (words) ready chestam — model vocabulary laaga
+# Step 2: prathi word ki probability istham — softmax output laaga
+# Step 3: random.choices() aa probabilities prakaram okka word ni pick chestundi
+# Step 4: prathi saari run chesthe answer maaravachu — highest eppudu raadu, kaani ekkuva saarlu vastundi
+
+import random                                        # Python built-in random module — random selection kosam
+
+words = ['morning', 'evening', 'night']              # options — model vocabulary lo konni words laaga
+probability = [0.6, 0.3, 0.1]                        # prathi word ki chance — morning 60%, evening 30%, night 10%
+
+print("Usually I am taking tea at:", random.choices(words, probability))   # probability batti okka word pick chesi print
+```
+
+**Output (prathi run lo maaravachu):**
+
+```text
+Usually I am taking tea at: ['morning']     ← ekkuva saarlu idi (60%)
+Usually I am taking tea at: ['evening']     ← appudappudu (30%)
+Usually I am taking tea at: ['night']       ← chala arudu ga (10%)
+```
+
+##### Line by line
+
+| Line | Em chestundi |
+|---|---|
+| `import random` | Python lo random selection kosam built-in module |
+| `words = [...]` | Select cheyyalsina **options** — model lo **vocabulary** laaga |
+| `probability = [0.6, 0.3, 0.1]` | Prathi option ki **chance** — model lo **softmax output** laaga (motham = 1.0) |
+| `random.choices(words, probability)` | Probabilities prakaram **okka word random ga pick** chestundi — 2nd argument **weights** |
+
+##### Ardham — 10 saarlu run chesthe?
+
+```text
+Run:     1        2        3        4        5        6        7        8        9        10
+Pick:  morning  morning  evening  morning  night   morning  evening  morning  morning  evening
+```
+
+Sumaru **6 saarlu morning, 3 saarlu evening, 1 saari night** — probability ki daggaraga (prathi saari exact ga 6-3-1 raadu, random kabatti).
+
+- **Morning** highest probability — **ekkuva saarlu** vastundi, kaani **eppudu kaadu**.
+- **Night** probability takkuva — kaani **0 kaadu**, kabatti appudappudu vastundi.
+
+##### Idi LLM ki ela connect avutundi?
+
+Ide exactly ChatGPT next word select chese vidhanam:
+
+```text
+Prompt: "Usually I am taking tea at"
+   ↓
+Transformer → Linear → Softmax
+   ↓
+Probabilities:   morning: 0.6    evening: 0.3    night: 0.1     ← mana `probability` list
+   ↓
+Sampling (random.choices laaga)  → "morning" (ekkuva saarlu), kondari saarlu "evening"
+```
+
+| Selection type | Ela | Mana example lo |
+|---|---|---|
+| **Greedy** (temperature = 0) | Eppudu **highest** probability | Eppudu `morning` — same answer prathi saari |
+| **Sampling** (`random.choices` laaga) | Probability **batti random** ga | Ekkuva saarlu `morning`, appudappudu `evening`, `night` |
+
+Andhuke **same prompt ki ChatGPT veru veru answers** istundi — sampling valla.
+
+**Temperature** ee probabilities ni maarchutundi (sampling cheyyadaniki mundu):
+
+```text
+Low temperature (0.2):   morning: 0.97   evening: 0.03   night: 0.00   → dadapu eppudu morning (safe)
+Normal (1.0):            morning: 0.6    evening: 0.3    night: 0.1    → mana example
+High temperature (2.0):  morning: 0.47   evening: 0.33   night: 0.20   → anni daggaraga — chala random
+```
+
+(Temperature T tho: prathi probability ni `p^(1/T)` chesi malli total 1.0 ki normalize chestaru — numbers rounded.)
+
+##### Chinna Python notes
+
+- `random.choices()` **list** return chestundi (`['morning']`) — andhuke output lo brackets. Word matrame kavali ante `random.choices(words, probability)[0]`.
+- 2nd argument **weights** — clear ga rayali ante `random.choices(words, weights=probability)`.
+- Weights sum **1.0 avvakkarledu** — `[6, 3, 1]` ichhina same result (ratio matrame important).
+- Okkasari ekkuva picks kavali ante `k` — `random.choices(words, probability, k=10)` → 10 words list.
+
+> **Oka line lo:** `random.choices(words, probability)` = **LLM sampling chinna version** — highest probability word ekkuva saarlu vastundi,
+> kaani takkuva probability words kuda appudappudu vastayi. Andhuke ChatGPT same prompt ki veru veru answers istundi.
 
 ### 7.5 Oke pani, kaani anni panulu
 
@@ -3588,6 +4055,289 @@ likely continuation marutundi.
 "Summarize: <long text>"      --> next likely tokens: short summary
 "def add(a, b):"              --> next likely tokens: "    return a + b"
 ```
+
+### 7.6 How GPT remembers things — 2 types of memory (Durga Sir class)
+
+![How GPT remembers things — Context Window](images/gpt-memory-context-window.png)
+
+> **GPTs work with 2 types of memory.**
+> 1. **Context Window** (Working Memory — Temporary)
+> 2. **Personal Context** (Long-term Archive)
+
+Section 7.1 lo chusam — **model ki sontha memory ledu**. Mari ChatGPT mana peru, mana matalu ela gurthu pettukuntundi?
+Ee **2 types of memory** valla.
+
+#### Mundu konni technical words — simple meanings
+
+| Word | Simple meaning |
+|---|---|
+| **Context window** | Model **okkasari** chudagalige tokens limit — current chat antha ikkade |
+| **Working memory** | Ippudu pani chestunnappudu matrame gurthu unde memory (mana brain lo short-term laaga) |
+| **Temporary** | Konchem sepu matrame — tarvata pothundi |
+| **Personal context / Memory** | User gurinchi important details ni **chats bayata save** chese feature |
+| **Long-term archive** | Chala kaalam unde storage — kotha chat lo kuda dorukutundi |
+| **Truncate** | Limit daatithe **paata messages ni kattirinchadam** (cut) |
+
+#### 1. Context Window (Working Memory — Temporary)
+
+> It remembers what we talk **inside one chat**.
+> When the chat ends **it is cleared**.
+> **Capacity is limited.** If this chat becomes 500 pages long, it will start **forgetting the very first messages**.
+
+| Slide line | Tenglish meaning |
+|---|---|
+| Remembers what we talk inside one chat | **Ee chat** lo matladindi matrame gurthu — Section 7.1 lo chusinattu, prathi message ki **full chat history** malli pamputharu |
+| When the chat ends it is cleared | **Kotha chat** open chesthe — paata chat lo matalu model ki **kanipinchavu** (paata chat history app lo save untundi, kaani kotha chat context lo ki raadu) |
+| Capacity is limited | Context window ki **token limit** undi (Section 7.2 — GPT-4o ~128K, Claude ~200K tokens) |
+| 500 pages aithe first messages marchipotundi | Limit daatithe **modati messages** context nundi bayataki — model ki ika kanipinchavu |
+
+**Real life example — Whiteboard 🧑‍🏫:**
+
+```text
+Class lo board meeda rastu potharu  →  board nindipothe  →  paina rasinadi cheripesi kotha daaniki space
+Class ayipogane                     →  board motham clean
+```
+
+Context window ade — **board size limited**, nindithe **paatadi cheripotundi**, chat ayipothe **clean**.
+
+```text
+Context window (limit anukondi 10 messages):
+
+Msg 1  "Naa peru Sai"           ← ❌ limit daatindi — bayataki (marchipoyindi)
+Msg 2  ...                      ← ❌
+Msg 3  ...                      ┐
+...                             │  ✅ ivi matrame model ki kanipistayi
+Msg 12 "Naa peru enti?"         ┘
+         → Model: "Sorry, mee peru naaku teliyadu" 😅
+```
+
+> **Note:** 500 pages ane number ardham kosam. Nijam limit **tokens** lo — 128K tokens ≈ sumaru **300 pages** text.
+> Limit daatinappudu apps sadharanam ga **paata messages cut** chestayi, leda vaatini **chinna summary** ga marchi pedatayi.
+
+#### 2. Personal Context (Long-term Archive)
+
+![Personal context — long term memory across chats](images/gpt-memory-personal-context.png)
+
+> This is **long term memory**.
+> It remembers important user details like **name, learning style, preferences**.
+> It works **across many chats**.
+
+| Slide line | Tenglish meaning |
+|---|---|
+| Long term memory | Chat ayipoyina **pothundi kaadu** — save ayyi untundi |
+| Name, learning style, preferences | Ex: *"Naa peru Sai"*, *"Telugu-English mix lo explain chey"*, *"examples tho cheppu"*, *"nenu Python developer"* |
+| Works across many chats | **Kotha chat** open chesina — ee details gurthu untayi |
+
+**Real life example — Diary 📔:**
+
+```text
+Whiteboard (context window) = class lo rasedi, class ayyaka cheripotharu
+Diary (personal context)    = important vishayalu diary lo rasi pettukuntam — eppudaina open chesi chudochu
+```
+
+#### Lopala ela pani chestundi? — Model weights maaravu!
+
+Chala important point — **personal context model lopala save avvadu**. Model weights (training lo nerchukunnadi) **maaravu**.
+App (ChatGPT) user details ni **separate ga database lo** save chesi, prathi kotha chat lo **context window lo pedutundi**:
+
+```text
+1. Old chat:  Meeru: "Naa peru Sai, nenu Telugu-English lo ardham chesukuntanu"
+                 ↓  app important details gurthinchi save chestundi
+              [Memory database]:  name = Sai,  style = Tenglish
+
+2. New chat (rendu rojula tarvata):
+   App background lo prompt ki mundu add chestundi:
+   ┌──────────────────────────────────────────────────────┐
+   │ [Memory] User name: Sai. Prefers Telugu-English mix.  │  ← personal context
+   │ User: "Transformer ante enti?"                         │  ← current chat
+   └──────────────────────────────────────────────────────┘
+                 ↓  idanta CONTEXT WINDOW lo ki velthundi
+   Model: "Sai, Transformer ante..." (Tenglish lo) ✅
+```
+
+Ante — **personal context kuda chivariki context window lo ne** model ki velthundi. Model ki "gurthu" ledu —
+app **gurthu chesi** prathi saari **pampistundi**. (Idi RAG idea laantide — bayata nundi info theeskochi prompt lo pettadam.)
+
+#### Context Window vs Personal Context — side by side
+
+| | **Context Window** | **Personal Context** |
+|---|---|---|
+| Type | Working memory — **temporary** | Long-term **archive** |
+| Em gurthu pettukuntundi | **Current chat** conversation motham | User gurinchi **important details** (name, style, preferences) |
+| Entha kaalam | **Ee chat** varake — chat ayithe clear | **Chala chats** — delete chese varaku |
+| Size | Limited (tokens) — nindithe paatadi pothundi | Chinna — konni important points matrame |
+| Ekkada untundi | Prathi request lo model ki pampe text | App database lo — kotha chat lo context window ki add |
+| Real life | Whiteboard 🧑‍🏫 | Diary 📔 |
+
+> **Class note:**
+> **Context window = remembers the current chat conversation.**
+> **Personal context = remembers the person across multiple chats.**
+
+#### Bonus — 3rd type: Training knowledge (model weights)
+
+Slide lo 2 types — kaani ardham avvadaniki inkokati telusukovali:
+
+| Memory | Em untundi | Maarutunda? |
+|---|---|---|
+| **Training knowledge** (weights) | Training lo chadivina general knowledge — *"Hyderabad Telangana capital"*, grammar, facts | ❌ Chat lo maaradu — **kotha training** tho matrame |
+| **Context window** | Ee chat | ✅ Prathi message tho |
+| **Personal context** | Mee details | ✅ App save/update chestundi |
+
+Andhuke model ki **training cutoff** tarvata jarigina vishayalu teliyavu (weights lo levu), kaani **mee peru** gurthu untundi (personal context lo undi).
+
+> **Oka line lo:** GPT ki 2 memories — **context window** (ee chat, temporary, limited — whiteboard laaga) and
+> **personal context** (mee details, chats bayata kuda — diary laaga). Rendu chivariki **context window lo ne** model ki velthayi —
+> model weights maaravu.
+
+### 7.7 GPT Strengths — GPT edi baga chestundi? (Durga Sir class)
+
+![GPT strengths — explaining concepts, writing and drafting](images/gpt-strengths-explaining-writing.png)
+
+Section 7.3 lo GPT **weakness** (hallucination) chusam. Ippudu GPT **strengths** — ye panulaki GPT ni confident ga vaadochu.
+
+#### 1. Explaining concepts clearly
+
+> - Explaining basics
+> - Breaking complex topics
+> - Give examples
+
+| Strength | Tenglish meaning | Example prompt |
+|---|---|---|
+| **Explaining basics** | Kotha topic ni **zero nundi** simple ga cheppadam | *"Transformer ante enti? beginner ki cheppu"* |
+| **Breaking complex topics** | Kashtamaina topic ni **chinna chinna steps** ga vidagottadam | *"Attention ni step by step explain chey"* |
+| **Give examples** | Concept ki **real life / code examples** ivvadam | *"Positional encoding ki oka daily life example ivvu"* |
+
+**Enduku idi baga vastundi?** — Training lo GPT **koti koti explanations** chadivindi — textbooks, tutorials, blogs, Q&A sites.
+Kabatti *"ee concept ni ela explain cheyyali"* ane **pattern** baga nerchukundi. Ee notes file lo chala explanations kuda ilaage tayaru ayyayi!
+
+> **Tip:** *"Explain like I'm a beginner"*, *"Telugu-English mix lo"*, *"oka example tho"* ani adigithe inka better.
+> Kaani **facts / numbers** unte (dates, prices, versions) — verify cheyyandi (Section 7.3).
+
+#### 2. Writing and Drafting content
+
+> GPT can:
+> - Write emails
+> - Create resumes
+> - Draft documents
+> - Prepare notes
+
+| Pani | Example prompt | Meeru em check cheyyali |
+|---|---|---|
+| **Write emails** | *"Manager ki 2 days leave kosam polite email rayi"* | Dates, names correct aa? tone okay aa? |
+| **Create resumes** | *"3 years Python experience ki resume points rayi"* | **Mee nijam experience** matrame undali — GPT kalpinchina skills teeseyandi |
+| **Draft documents** | *"Project proposal ki outline + first draft ivvu"* | Company specific details meere add cheyyali |
+| **Prepare notes** | *"Ee class transcript nundi short notes chey"* | Important points miss ayyayemo chudandi |
+
+**Enduku idi baga vastundi?** — GPT **next token prediction** lo expert — **fluent, grammar correct, structured** text rayadam daani asalu pani.
+Blank page nundi start cheyyakunda **first draft** fast ga vastundi — meeru **edit + improve** chesthe chalu.
+
+> **Golden rule:** GPT = **first draft writer**, meeru = **final editor**.
+> Draft fast ga vastundi, kaani **facts, names, numbers, personal details** meere check chesi send cheyyali.
+
+#### Strengths vs Weaknesses — quick view
+
+| ✅ GPT baga chestundi (strengths) | ⚠️ Jagratha (weaknesses — Section 7.3) |
+|---|---|
+| Concepts explain cheyyadam | Latest info (training cutoff tarvata) |
+| Complex topics break cheyyadam | Local / company specific info |
+| Examples ivvadam | Exact facts, numbers, links (verify!) |
+| Emails, resumes, documents, notes draft | Confident ga tappu cheppadam (hallucination) |
+
+> **Oka line lo:** GPT **explain cheyyadam** (basics, complex topics, examples) lo and **rayadam** (emails, resumes, documents, notes) lo strong —
+> endukante training lo koti koti explanations, documents chadivindi. Kaani **first draft** ga vaadandi — facts meere verify cheyyandi.
+
+### 7.8 GPT Limitations — GPT ki em raadu? (Durga Sir class)
+
+Strengths chusam (7.7). Ippudu **limitations** — ivi telisthe GPT ni **safe ga, correct ga** vaadagalam.
+
+#### 1. No real understanding or emotions
+
+![GPT limitations 1 and 2](images/gpt-limitations-1-2.png)
+
+> GPT cannot **think**, **feel**, **understand like humans**.
+> **It just predicts words — that's all.**
+
+| GPT cannot | Tenglish meaning | Example |
+|---|---|---|
+| **Think** | Manishi laaga sontha ga alochinchi, nammakalu, goals pettukoledu | *"Nuvvu em anukuntunnav?"* ki answer kuda **next token prediction** ne |
+| **Feel** | Santosham, badha, kopam — **emotions levu** | *"I'm sorry to hear that"* ani rasina — adi **feel avvadu**, training lo nerchukunna polite pattern |
+| **Understand like humans** | Manam **anubhavam (experience)** tho ardham chesukuntam — GPT ki body, life experience ledu | "Tea taste" gurinchi rayagaladu, kaani **eppudu taagaledu** |
+
+**It just predicts words** — ee motham file lo chusindi ide: tokens → transformer → softmax → **next token**. Antey.
+Answer chala intelligent ga anipinchina — lopala jarigedi **probability tho next word guess**.
+
+> **Chinna note:** GPT reasoning laaga kanipinche panulu (maths steps, code logic) chestundi — patterns valla.
+> Adi "nijam understanding" aa kaada ani researchers lo ippatiki debate undi. Kaani **emotions levu, manishi laaga experience ledu** — idi clear.
+> Andhuke GPT ni **friend / doctor / therapist** laaga full ga nammakandi.
+
+#### 2. Can be confidently wrong — Hallucination
+
+> **Hallucination.**
+> **Never trust blindly for facts.**
+
+- Section 7.3 lo detailed ga chusam — **confident ga, correct laaga, kaani tappu**.
+- **Facts** (dates, numbers, names, laws, medicines) — **eppudu verify** cheyyandi.
+- Confident tone ≠ correct answer. GPT tappu cheppetappudu kuda **same confidence** tho cheptundi.
+
+#### 3. No real-time awareness
+
+![GPT limitations 3 and 4](images/gpt-limitations-3-4.png)
+
+> GPT may not:
+> - know **latest news**
+> - know **live prices**
+> - know **today's events**
+>
+> **…unless connected to tools.**
+
+| Teliyakapovachu | Enduku | Example |
+|---|---|---|
+| **Latest news** | Model **training cutoff** varake chadivindi — tarvata vishayalu weights lo levu (Section 7.6) | *"Ninna match lo evaru gelicharu?"* |
+| **Live prices** | Prices prathi nimisham maarutayi — model lo **fixed** numbers matrame | *"Ippudu gold / Bitcoin / stock rate?"* |
+| **Today's events** | Model ki **ivvala date** kuda teliyakapovachu (app cheppakapothe) | *"Ivvala Hyderabad lo traffic ela undi?"* |
+
+**"Unless connected to tools"** ante?
+
+```text
+Tools LEKUNDA:   "Gold rate?"  → model weights nundi paata / kalpitha number ❌
+Tools THO:       "Gold rate?"  → app web search / price API call → live number theeskochi
+                                → context window lo pedutundi → model answer ✅
+```
+
+ChatGPT search, Perplexity, weather / stock APIs — ivi **tools**. Model ki live data **bayata nundi** theeskochi istayi
+(Section 7.6 lo personal context laage — anni chivariki **context window** lo ne).
+Weather example lo (`Rain is heavy`) — tools lekapothe model ki nijam weather teliyadu ani chusam.
+
+#### 4. No responsibility
+
+> If GPT gives wrong advice:
+> - **GPT is not responsible**
+> - **You are responsible**
+
+- GPT tappu salaha isthe — daani **consequences meeve**. GPT ki **accountability ledu** (adi oka tool, manishi kaadu).
+- Ex: GPT cheppina medicine dose, legal advice, investment tip, code ni production lo test cheyyakunda pettadam — problem vasthe **meere** responsible.
+
+| Area | GPT ni ela vaadali |
+|---|---|
+| **Medical** 🏥 | Information kosam okay — **decision doctor tho** |
+| **Legal** ⚖️ | Basics ardham kosam — final ga **lawyer** |
+| **Money / Investment** 💰 | Concepts nerchukovadaniki — real decisions **mee research + expert** |
+| **Code** 💻 | Draft ga — **test chesi, review chesi** use cheyyandi |
+| **Office emails / documents** 📧 | Draft ga — **chadivi, correct chesi** send cheyyandi |
+
+> **Golden rule (malli):** GPT = **assistant**, meeru = **decision maker**. Final call, final responsibility — **meede**.
+
+#### Limitations — quick view
+
+| # | Limitation | Gurthu pettukovalsindi |
+|---|---|---|
+| 1 | No real understanding or emotions | Words predict chestundi — think / feel cheyyadu |
+| 2 | Confidently wrong (hallucination) | Facts ni **blindly nammakandi** |
+| 3 | No real-time awareness | Latest news / prices / events — **tools** unte matrame |
+| 4 | No responsibility | Tappu salaha ki **meere** responsible |
+
+> **Oka line lo:** GPT **words predict chese tool** — emotions levu, confident ga tappu cheppagaladu, live info teliyadu (tools lekapothe),
+> and daani salaha ki **responsibility meede**. Strengths (7.7) kosam vaadandi, limitations (7.8) gurthu pettukoni verify cheyyandi.
 
 ---
 
