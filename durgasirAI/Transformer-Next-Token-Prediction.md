@@ -940,6 +940,1154 @@ kotha words ❌               kotha words ✅                 kotha words ✅
 > text → tokens → numbers. 3 types — **word** (simple), **subword** (LLMs — best balance), **character** (research).
 > GPT `"ChatGPT"` ni `Chat` + `G` + `PT` ga chustundi.
 
+#### Word-based tokens lo problem enti? (LLMs enduku vaadavu?)
+
+Word tokens chudataniki simple — *"prathi word okka token"*. Kaani peddha AI models ki **6 peddha problems** unnayi.
+
+**Problem 1 — Vocabulary chala peddadi 📚**
+
+Prathi word ki, prathi **form** ki separate token kavali:
+
+```text
+play, plays, played, playing, player, players, playful, replay, ...   ← anni separate tokens
+run, runs, ran, running, runner, ...
++ names (Sai, Durga, Hyderabad...) + technical words + slang + ...
+→ English okkate lakshallo words → vocabulary lakshallo / millions
+```
+
+- Model lo **embedding table** (prathi token ki oka vector) and chivari **Linear + Softmax** (prathi token ki score — Section 4.6) **vocabulary size antha** peddavi avutayi.
+- Millions of tokens → **chala GPU memory + slow** (Section 7.2 — token cost).
+
+**Problem 2 — Unknown words (OOV — Out Of Vocabulary) ❓**
+
+Vocabulary lo leni word vasthe — word tokenizer daanni **`[UNK]` (unknown)** ga marchestundi. **Meaning motham pothundi**:
+
+```text
+Input:  "ChatGPTPro is powerful"
+Word tokenizer:     [UNK]  [is]  [powerful]          ← "ChatGPTPro" ki em ardham kaaledu ❌
+Subword tokenizer:  [Chat] [G] [PT] [Pro] [is] [powerful]  ← telisina pieces tho ✅
+```
+
+`[UNK]` ayye words chala common:
+
+| Type | Example |
+|---|---|
+| Kotha words / products | `ChatGPTPro`, `iPhone17`, kotha slang |
+| Names | `Venkateswarlu`, mee village peru |
+| **Typos** | `helo`, `pythn`, `recieve` |
+| Hashtags / code | `#AIRocks`, `getUserName`, `my_variable` |
+
+**Problem 3 — Related words madhya connection ledu 🔗**
+
+```text
+Word tokens:     play=501   playing=9832   played=4410     ← 3 separate IDs, sambandham ledu
+Subword tokens:  play | ing     play | ed                  ← "play" common — meaning share ✅
+```
+
+- Model `play` nerchukunna — `playing`, `played` meaning **malli separate ga** nerchukovali.
+- **Rare forms** (`replaying`) training lo takkuva vasthayi → vaati embeddings **weak** → model ki sariga ardham kaavu.
+- Subword lo `re` + `play` + `ing` — prathi piece **common**, kabatti rare word kuda baga ardham avutundi.
+
+**Problem 4 — Telugu lantivi languages lo inka worse 🇮🇳**
+
+Telugu lo okka root word ki **chala forms** — suffixes kalisi **kotha words** avutayi:
+
+```text
+chey → chestanu, chesthunnanu, chesanu, chestunnaru, cheyyaledu, cheyyochu, chesukuntanu, ...
+vellu → velthanu, vellanu, vellipoyadu, vellaledu, vellochu, ...
+```
+
+- Prathi form ki separate token ante — vocabulary **explode** avutundi.
+- Chinese / Japanese lo **words madhya spaces levu** — *"word ekkada aagutundi?"* ane problem kuda.
+- Subword (byte-level BPE) ki spaces avasaram ledu — **edaina language** handle chestundi.
+
+**Problem 5 — Word ekkada start, ekkada end? ✂️**
+
+| Text | Okka word aa? rendu aa? |
+|---|---|
+| `don't` | `don't`? `do` + `n't`? |
+| `New York` | 1 word aa (city)? 2 words aa? |
+| `e-mail` / `email` | Same aa? veru aa? |
+| `Hello!!!` | Punctuation tho kalipi aa? vidiga aa? |
+
+Word tokenizer ki **manual rules** chala rayali — prathi language ki veru. Subword lo frequency ne decide chestundi.
+
+**Problem 6 — Rare words ki training data saripodu 📉**
+
+- Vocabulary lo lakshallo words unte — chala words training lo **konni saarlu matrame** vastayi.
+- Takkuva examples → aa word embedding **sariga nerchukodu** (data sparsity).
+- Subword lo pieces **common** kabatti prathi piece ki **chala examples** → baga nerchukuntundi.
+
+##### Word tokens problems → Subword ela fix chestundi
+
+| # | Word token problem | Subword (BPE) solution |
+|---|---|---|
+| 1 | Vocabulary huge (millions) | **~1–2 lakh** tokens chalu |
+| 2 | Unknown words → `[UNK]`, meaning loss | Telisina **pieces** ga break — `[UNK]` **ledu** |
+| 3 | `play` / `playing` connection ledu | `play` + `ing` — **meaning share** |
+| 4 | Telugu, Chinese lantivi languages kashtam | **Byte-level** — edaina language |
+| 5 | Word boundary rules confusion | **Frequency** decide chestundi — manual rules avasaram ledu |
+| 6 | Rare words weak ga nerchukuntundi | Pieces common — **baga nerchukuntundi** |
+
+> **Oka line lo:** Word tokens problem — **vocabulary chala peddadi**, **kotha / typo words ki `[UNK]`**, **related words connection ledu**,
+> Telugu lantivi languages lo **explode**. Andhuke GPT, Claude, Llama anni **subword tokens** vaadutayi — pieces tho **edaina word** handle chestayi.
+
+#### Doubt: Transformer subword tokens ni ela handle chestundi? Ye basis meeda split avutundi?
+
+**Short answer:** Transformer **split cheyyadu!** Split chesedi **tokenizer** — transformer ki **mundu** jarigedi.
+Tokenizer **frequency (ekkuva saarlu kalisi vache pieces)** batti mundhe nerchukunna rules tho split chestundi.
+Transformer ki **token IDs matrame** velthayi — aa pieces ela kalustayo adi **attention tho nerchukuntundi**.
+
+##### 1. Evaru split chestaru? Eppudu?
+
+```text
+"ChatGPT is powerful"
+      ↓
+[Tokenizer]   ← split IKKADA jarugutundi (fixed rules — neural network kaadu)
+      ↓
+Chat | G | PT | " is" | " powerful"  →  [16047, 38, 2898, 374, 8147]
+      ↓
+[Transformer] ← ee 5 IDs matrame chustundi — original word "ChatGPT" asalu chudadu
+```
+
+- Tokenizer ni **model kanna mundu, okka saari** train chestaru — tarvata **freeze** (maaradu).
+- Split cheyyadam = **dictionary lookup** laantidi — model decide cheyyadu.
+
+##### 2. Ye basis meeda split avutundi? — Frequency (BPE)
+
+GPT vaade method — **BPE (Byte Pair Encoding)**. Rule simple:
+> **Ekkuva saarlu kalisi vache pieces ni kalipi okka token chey.**
+
+**Tokenizer ela build avutundi? (toy example)**
+
+Training text lo `low` ×5, `lower` ×2, `lowest` ×3 unnayi anukondi:
+
+```text
+Start: prathi word ni characters ga vidagottu
+  l o w      l o w e r      l o w e s t
+
+Pakka pakkana unna pairs lo EKKUVA saarlu vachedi count chesi merge — malli malli:
+  Merge 1:  l + o      → "lo"       (10 saarlu)
+  Merge 2:  lo + w     → "low"      (10 saarlu)
+  Merge 3:  low + e    → "lowe"     (5 saarlu)
+  Merge 4:  s + t      → "st"       (3 saarlu)
+  Merge 5:  lowe + st  → "lowest"   (3 saarlu)
+... vocabulary target size vachevaraku repeat (cl100k_base ≈ 1,00,000 tokens)
+```
+
+**Encode chesetappudu** — nerchukunna merges ni **same order lo** apply chestundi:
+
+| Word | Tokens | Enduku |
+|---|---|---|
+| `lowest` | `[lowest]` | Ekkuva saarlu vachindi → **okka token** |
+| `lower` | `[lowe] [r]` | `lower` full ga merge avvadaniki saripoyinanni saarlu raaledu |
+| `slow` (**eppudu chudaledu!**) | `[s] [low]` | Telisina pieces tho build — unknown word problem ledu ✅ |
+
+**Basis summary:**
+- **Common words** → **okka token** (`" is"`, `" powerful"`)
+- **Rare words** → **common pieces** ga split (`ChatGPT` → `Chat` + `G` + `PT`)
+- **Inka emi match kaakapothe** → characters / bytes
+
+**`ChatGPT` enduku `Chat` + `G` + `PT`?** — Tokenizer training text lo **"Chat"** chala common, kaani **"ChatGPT"** full word ga antha common kaadu.
+` is`, ` powerful` — **mundu space tho saha** okka token, endukante *"space + word"* ane pattern ne common.
+
+**Inka 2 details:**
+- **Byte-level:** Letters kaadu, **bytes** meeda pani chestundi — kabatti **edaina text** (Telugu, emoji, code) tokenize avutundi.
+  Training lo takkuva vachina text (ex: **Telugu script**) **chala ekkuva tokens** ga split avutundi → ekkuva cost, context window fast ga nindutundi.
+- **Prathi model ki sontha tokenizer:** Same word gpt-4o lo okalaa, gpt-3.5 lo inkolaa split avvochu (Section 1.3).
+
+##### 3. Transformer aa pieces ni ela handle chestundi?
+
+1. **Prathi piece ki sontha embedding** — `Chat`, `G`, `PT` prathi okkati oka vector.
+2. **Positional encoding order unchutundi** — `Chat@0  G@1  PT@2`.
+3. **Attention pieces ni malli okka meaning ga kaluputhundi** — early layers lo `PT` → `G`, `Chat` meeda strong attention.
+   *"Chat G PT kalisthe = ChatGPT product"* ani model **training lo nerchukundi** (millions of times aa 3 tokens kalisi chusindi). Evaru program cheyyaledu.
+4. **Output kuda piece by piece** — model `Chat` → `G` → `PT` ani **3 red-loop steps** lo generate cheyyochu. Decoding pieces ni **kalipi** text chestundi.
+   Spaces tokens lopale unnayi (`" is"`) kabatti — just kalipithe correct text vastundi.
+
+```text
+Generate:  "Chat" → "G" → "PT" → " is" → " powerful"
+Decode:    "Chat" + "G" + "PT" + " is" + " powerful"  =  "ChatGPT is powerful"
+```
+
+> **Oka line lo:** Split chesedi **tokenizer** — training kanna mundu nerchukunna **BPE frequency rules** tho (common → okka token, rare → pieces).
+> Transformer ki **words teliyavu, pieces matrame** — avi ela kalisi meaning istayo **attention tho nerchukuntundi**.
+
+#### Doubt: Spelling mistake word isthe em avutundi? Vocabulary lo full word → subword → characters ani search chestunda? Character tokens problem enti?
+
+##### 1. Spelling mistake (typo) isthe em avutundi?
+
+Tokenizer **fail avvadu** — typo word ni **inka ekkuva, chinna pieces** ga split chestundi:
+
+```text
+"beautiful"   →  [beautiful]                  ← common word, 1 token
+"beutiful"    →  [be] [ut] [iful]   (sumaru)   ← typo — telisina pieces ga
+"beautifull"  →  [beautiful] [l]    (sumaru)
+```
+
+(Splits ardham kosam — exact pieces tokenizer batti maarutayi.)
+
+**Model inka ardham chesukuntundi — 3 reasons:**
+- **Training lo millions of typos chusindi** — internet text nindaa typos. `be|ut|iful` ante "beautiful" ani nerchukundi.
+- **Context help chestundi** — *"I love my fmaily"* — chuttu unna words batti **"family"** ani clear.
+- **Attention pieces ni kaluputhundi** — `Chat|G|PT` ni kalipinattu (paina doubt chudandi).
+
+**Disadvantages:**
+- **Ekkuva tokens** → konchem ekkuva cost.
+- Appudappudu **tappu ardham** — mukhyamga typo **inko real word** ayithe (`form` vs `from`), leda **names / code** lo typo (`getUesr()`).
+
+##### 2. Predefined vocabulary undaa? "Full word → subword → characters" ani search chestunda?
+
+**Avunu — fixed vocabulary undi.** Ex: `cl100k_base` lo **~1,00,000 entries + merge rules list** — tiktoken download chese file lo save untundi.
+Tokenizer train ayyaka **eppudu maaradu**.
+
+**Mee idea daggara ga undi — kaani GPT BPE reverse direction lo pani chestundi:**
+
+| | Mee idea (top-down search) | GPT BPE (bottom-up merge) |
+|---|---|---|
+| Start | **Full word** vocabulary lo search | **Single bytes** nundi start |
+| Tarvata | Dorakakapothe **subwords** search | Nerchukunna **merge rules priority order** lo apply (ekkuva frequent pairs mundu) |
+| End | Inka dorakakapothe **characters** | Inka merge rule apply kaanappudu aagutundi — migilinavi tokens |
+
+```text
+"lowest" — BPE ela:
+  bytes:     l  o  w  e  s  t
+  merge 1:   lo  w  e  s  t
+  merge 2:   low  e  s  t
+  merge 3:   lowe  s  t
+  merge 4:   lowe  st
+  merge 5:   lowest            ← full word vocabulary lo undi → 1 token ✅
+```
+
+**Result chivariki mee idea laage:** common word → full ga merge ayyi **1 token**, rare word → **subwords** daggara aagutundi, unknown → **chinna pieces**.
+
+**2 corrections:**
+- **BERT tokenizer (WordPiece)** nijam ga mee idea laage — vocabulary lo unna **longest piece ni greedy ga match** chestundi.
+- **Final fallback — characters kaadu, bytes.** Okka Telugu letter = UTF-8 lo **3 bytes** → **3 tokens** varaku avvochu.
+  Prathi byte (0–255) vocabulary lo undi kabatti — **`[UNK]` eppudu raadu**.
+
+**Mundu oka pre-split step:** Text ni mundu **spaces, punctuation** daggara vidagodatharu — kabatti sadharanam ga **okka token rendu words ni daatadu**.
+
+##### 3. Prathi character okka token aithe disadvantage enti?
+
+| Problem | Enduku |
+|---|---|
+| **Chala ekkuva tokens** | `"ChatGPT is powerful"` → **19** character tokens vs **5** subword tokens — ~4× |
+| **Context window fast ga nindutundi** | 128K limit lo **~4× takkuva text** pattutundi (Section 7.2) |
+| **Ekkuva cost** | Per token payment (Section 7.2 — why tokens cost money) |
+| **Slow** | Attention prathi token anni tokens tho → 4× tokens = **~16× attention pani**. Generation kuda **okko character, okko step** (red loop) |
+| **Prathi token ki meaning dadapu ledu** | `t`, `h` ki ontariga meaning ledu — model **layers waste** chesi words build cheyyali |
+| **Long-range connections kashtam** | Subword lo 20 tokens dooram unna related words → characters lo **~80 tokens** dooram |
+
+##### 4. Characters ga unte meaning ela ardham avutundi?
+
+Model meaning ni **layers lo build** chestundi — pillalu chadavadam nerchukunnattu (aksharalu → padalu → vaakyalu):
+
+```text
+Characters:  [f][a][m][i][l][y]
+     ↓  embeddings + positions (order: f@0 a@1 m@2 ...)
+Early layers:  attention characters ni group chesi word laaga → "family"
+     ↓
+Deeper layers: word meaning + context → "family = relatives, home, love..."
+```
+
+1. **Prathi character ki embedding** — ontariga chala takkuva meaning.
+2. **Positional encoding order unchutundi** — ikkada chala critical: `f-a-m-i-l-y` vs `m-a-f-y-i-l`.
+3. **Early attention layers spelling patterns nerchukuntayi** — characters ni kalipi **word-level meaning**. Evaru program cheyyaru — data nundi nerchukuntundi.
+4. **Deeper layers meaning + context** — subwords tho laage.
+
+Ante **pani chestundi** (andhuke research lo character models vaadutaru), kaani model **words ni malli build cheyyadaniki capacity waste** chestundi.
+Subwords aa pani **free ga** istayi — andhuke **best balance**: tokens takkuva (fast), pieces ki meaning undi.
+
+**Mana brain kuda ide chestundi:**
+
+> *"Aoccdrnig to rscheearch, the oredr of ltteers deosn't mttaer"*
+
+Letters jumbled ayina — **letter patterns + context** tho chadivesthunnam. Model kuda letters / pieces nundi patterns + context tho meaning build chestundi.
+
+> **Oka line lo:** Typo isthe tokenizer **chinna pieces** ga split chestundi — training lo typos chusindi + context + attention valla model inka ardham chesukuntundi.
+> Vocabulary **fixed** — BPE **bytes nundi merge** chestundi (result: common → 1 token, rare → subwords, unknown → bytes, `[UNK]` ledu).
+> Character tokens — **chala ekkuva tokens, slow, costly, meaning build cheyyadaniki layers waste** — andhuke LLMs subwords vaadutayi.
+
+#### Class notes — Tokenizer, Vocabulary, Token ID (Durga Sir)
+
+![Tokenizer breaks sentences into tokens, token ID is like index](images/tokenizer-token-id-index.png)
+
+> Tokenizer breaks the sentences into tokens.
+> Each token **already exists in vocabulary (vocab)** and has a **fixed token ID**.
+> **ID is something like index.**
+
+- Tokenizer kotha tokens **create cheyyadu** — vocabulary lo **already unna** tokens lo nundi ne select chestundi.
+- Prathi token ki **fixed ID** — `" is"` eppudu `374` ne (cl100k_base lo), evaru vaadina, eppudu vaadina.
+- **ID = index** — book lo **page number** laaga, list lo **position** laaga. ID tho table lo aa row ni direct ga theeskovachu.
+
+![Vocabulary — fixed list, contains only token text and ID](images/vocabulary-fixed-list-contains.png)
+
+> **Vocabulary** is a fixed list of all tokens that tokenizer already knows.
+> - Created **before the model released**
+> - **Same for all users**
+> - **Never changes** during usage
+> - **Shared between tokenizer and embedding layer**
+
+| Slide line | Tenglish meaning |
+|---|---|
+| Fixed list of all tokens | Tokenizer ki telisina **anni tokens list** — cl100k_base lo ~1 lakh |
+| Created before the model released | Model training **kanna mundu** BPE tho build chesaru (paina doubt) |
+| Same for all users | Meeru, nenu, evaru vaadina **same vocabulary** — same text → same IDs |
+| Never changes during usage | Chat chestunnappudu **kotha tokens add avvavu** |
+| Shared between tokenizer and embedding layer | Tokenizer ichhe ID = embedding table lo **row number** — rendu **same numbering** follow avvali |
+
+> **Vocabulary does NOT contain:** Meanings ❌, Grammar rules ❌, Intelligence ❌
+> **Vocabulary contains only:** **Token text** + **Token ID**
+
+```text
+Vocabulary (cl100k_base) — chinna bhaagam:
+  Token text      Token ID
+  "Chat"     →    16047
+  "G"        →    38
+  "PT"       →    2898
+  " is"      →    374
+  " powerful"→    8147
+  ...             (~1,00,000 rows)
+```
+
+Vocabulary ante just **dictionary index** — *"ee text ki ee number"*. **Meaning, grammar, intelligence** — avi anni **model weights** lo untayi (embeddings + transformer layers), vocabulary lo kaadu.
+
+#### Token ID vs Token value (Embedding) — numbers lo difference
+
+Rendu **numbers** e — kaani **chala veru**. (Section 1.6 lo basic comparison chusam — ikkada deep ga.)
+
+```text
+Text  →  [Tokenizer + Vocabulary]  →  Token ID (okka number)  →  [Embedding layer]  →  Embedding (vector — chala numbers)
+" is"                                  374                                           [0.12, -0.48, 0.91, ..., 0.05]
+```
+
+**ID = index → Embedding table lo row lookup:**
+
+```text
+Embedding table (model lopala — training lo nerchukunnadi):
+  Row (= Token ID)     Vector (embedding)
+  0                    [ 0.03, -0.11,  0.27, ... ]
+  1                    [-0.45,  0.08,  0.62, ... ]
+  ...
+  374  (" is")         [ 0.12, -0.48,  0.91, ... ]   ← ID 374 → ee row theeskuntundi
+  ...
+  16047 ("Chat")       [ 0.77,  0.20, -0.35, ... ]
+  ...
+  (~1,00,000 rows  ×  prathi row lo vela numbers — ex: GPT-3 lo 12,288)
+```
+
+Slide lo *"ID is something like index"* — exactly ide: `embedding = embedding_table[token_id]`.
+
+| | **Token ID** | **Token value (Embedding)** |
+|---|---|---|
+| Enti | **Okka integer** — list lo position | **Vector** — vela decimal numbers list |
+| Example | `" is"` → `374` | `" is"` → `[0.12, -0.48, 0.91, ...]` |
+| Meaning undaa? | ❌ **Ledu** — just label / roll number | ✅ **Undi** — meaning numbers lo encode |
+| Ekkada untundi | **Vocabulary** (tokenizer file — public) | **Embedding table** (model weights — secret) |
+| Evaru create chesaru | BPE tokenizer training (frequency) | **Model training** (billions of sentences nundi nerchukundi) |
+| Maarutunda? | ❌ Eppudu fixed | Training lo update avutundi; usage lo fixed |
+| Size | 1 number | 768 – 12,288+ numbers (model batti) |
+
+**ID numbers ki meaning enduku ledu?**
+
+```text
+Token IDs:     " king" = 10780     " queen" = 29006     " apple" = 24149     (ardham kosam numbers)
+               → 10780 ki 29006 daggara aa? 24149 daggara aa? — numbers chusi emi cheppalem ❌
+               → ID 16047 ("Chat") and ID 16048 — pakka pakka numbers, kaani meaning lo sambandham UNDAKKARLEDU
+
+Embeddings:    king  ≈ [0.8, 0.6, 0.1, ...]
+               queen ≈ [0.8, 0.5, 0.2, ...]   ← king ki DAGGARA (similar meaning → similar vector) ✅
+               apple ≈ [0.1, 0.0, 0.9, ...]   ← dooram (veru meaning)
+```
+
+- **ID** = roll number — `101` student ki `102` student tho sambandham ledu, just order lo vachharu.
+- **Embedding** = student **full profile** — similar students ki similar profiles (Section 1.6 analogy).
+- Andhuke model **IDs meeda direct ga maths cheyyadu** — mundu embedding ga marchi, aa vectors meeda attention, feed forward chestundi.
+
+**Embedding kuda 2 stages lo:**
+
+| Stage | Em untundi | "bank" example |
+|---|---|---|
+| **Starting embedding** (table nundi) | Prathi token ki **eppudu same** vector — context teliyadu | `bank` ki river sentence lo aina, money sentence lo aina **same** vector |
+| **Context embedding** (attention layers tarvata) | Chuttu unna words batti **maarina** vector | River sentence lo "nadi oddu", money sentence lo "money bank" (Add & Norm "bank" example chudandi) |
+
+Ante — **ID fixed**, **starting embedding fixed**, kaani transformer layers lo **context tho meaning maarutundi**.
+
+**Chinna Python illustration (ardham kosam — nijam numbers kaadu):**
+
+```python
+# ---------------- Architecture Diagram ----------------
+# [Token text]
+#    ↓  vocabulary lookup
+# [Token ID]  → okka number (index)
+#    ↓  embedding table lo aa row
+# [Embedding vector]  → meaning unna numbers list
+#
+# ---------------- Deep Architecture Notes ----------------
+# Step 1: vocabulary = token text → ID dictionary (meaning ledu)
+# Step 2: embedding_table = prathi ID ki oka vector (training lo nerchukunnadi)
+# Step 3: text → ID → embedding_table[ID] → vector
+
+vocabulary = {"king": 0, "queen": 1, "apple": 2}      # vocabulary — token text ki ID matrame, meaning ledu
+
+embedding_table = [                                   # embedding table — row number = token ID
+    [0.8, 0.6, 0.1],                                  # row 0 → "king" vector
+    [0.8, 0.5, 0.2],                                  # row 1 → "queen" vector — king ki daggara
+    [0.1, 0.0, 0.9],                                  # row 2 → "apple" vector — dooram
+]
+
+token_id = vocabulary["queen"]                        # step 1: text → ID (index) — idi 1
+embedding = embedding_table[token_id]                 # step 2: ID ni index ga vaadi row theeskovadam
+
+print("Token ID:", token_id)                          # output: Token ID: 1  — just position
+print("Embedding:", embedding)                        # output: Embedding: [0.8, 0.5, 0.2] — meaning unna numbers
+```
+
+> **Oka line lo:** **Vocabulary** = fixed **text ↔ ID** list (meaning ledu, andariki same, eppudu maaradu).
+> **Token ID** = **index** (roll number — meaning ledu). **Embedding** = aa index tho embedding table nundi theeskune **vector** (full profile — meaning undi).
+> Model **IDs ni kaadu, embeddings ni** process chestundi.
+
+#### Class example — Apple, Orange, Car, Bike: embedding ante features list (Durga Sir)
+
+![Token → Token ID → Vector embedding — Apple example](images/embedding-token-id-vector-apple.png)
+
+> **Token → Token ID → Vector Embedding**
+> `Apple ---> 101 ---> [1.0, 2.5, 3.6, .......]`
+
+- `Apple` → **101** = Token ID (roll number — meaning ledu).
+- `101` → **`[1.0, 2.5, 3.6, …]`** = embedding (profile — meaning undi). Ee numbers ki ardham enti? — kinda example chudandi.
+
+![Embedding features — Is it food, machine, round, wheels, grow](images/embedding-features-apple-orange-car-bike.png)
+
+Durga Sir prathi word ki **5 questions** adigi, prathi daaniki **0 to 10** marks icharu:
+
+| Word | Is it Food? | Is it a machine? | Is it round? | Does it have wheels? | Does it grow? | Embedding |
+|---|---|---|---|---|---|---|
+| **Apple** | 10 | 0 | 8 | 0 | 10 | `[10, 0, 8, 0, 10]` |
+| **Orange** | 10 | 0 | 10 | 0 | 10 | `[10, 0, 10, 0, 10]` |
+| **Car** | 0 | 10 | 2 | 10 | 0 | `[0, 10, 2, 10, 0]` |
+| **Bike** | 0 | 8 | 4 | 10 | 0 | `[0, 8, 4, 10, 0]` |
+
+**Ee table lo em kanipistundi?**
+
+- **Apple, Orange** — numbers **dadapu same** (food 10, grow 10, machine 0, wheels 0). Round lo matrame konchem difference (8 vs 10).
+- **Car, Bike** — numbers **daggara** (machine, wheels high; food, grow 0).
+- **Apple vs Car** — **poorthiga veru** numbers.
+
+Ante **embedding = prathi word ni chala questions (features) tho describe chese numbers list**. Similar things ki similar answers → **similar numbers → daggara vectors**.
+
+**Cosine similarity tho check cheddam** (Section 1.9 doubt lo chusina formula — calculate chesinavi):
+
+| Pair | Cosine similarity | Ardham |
+|---|---|---|
+| Apple ↔ Orange | **0.99** | ✅ Chala similar (rendu fruits) |
+| Car ↔ Bike | **0.98** | ✅ Chala similar (rendu vehicles) |
+| Apple ↔ Bike | 0.15 | ❌ Sambandham ledu |
+| Orange ↔ Car | 0.08 | ❌ Sambandham ledu |
+| Apple ↔ Car | 0.07 | ❌ Sambandham ledu |
+
+```text
+                 Is it a machine / wheels ↑
+                                          │      • Car
+                                          │    • Bike        ← vehicles group
+                                          │
+                                          │
+                                          │                    • Apple
+                                          │                  • Orange   ← fruits group
+                                          └──────────────────────────────→ Is it food / grow
+```
+
+**Apple → Orange search chesthe** — Apple vector ki daggara unna vector Orange → *"Apple laantidi = Orange"*. Ide **semantic search** (kinda section) and model lopala **next token scoring** (Section 1.10) lo jarige pani.
+
+> ⚠️ **Important difference — class example vs nijam model:**
+>
+> | | Class example (Durga Sir) | Nijam model (GPT) |
+> |---|---|---|
+> | Features | **5**, manam pettina **clear questions** (Is it food?…) | **Vandala nundi velalla** numbers |
+> | Labels | Prathi number ki **peru undi** | **Labels levu** — "dimension 37 = food" ani evaru cheppaleru |
+> | Values evaru isthaaru | **Manam** (0–10 marks) | **Training lo tane nerchukuntundi** (random start → similar contexts valla daggaraki — kinda doubt) |
+>
+> Class example **idea ardham avvadaniki perfect** — nijam model kuda ilaage *"chala hidden questions ki answers"* laaga pani chestundi, kaani aa questions evaru define cheyyaru.
+
+#### GPT-5 lo entha numbers / parameters? — Semantic kosam enni features?
+
+Ikkada **rendu veru numbers** unnayi — confuse avvakandi:
+
+| Term | Ardham | Class example lo |
+|---|---|---|
+| **Embedding dimension** (d_model) | **Prathi token ki enni numbers** — meaning ni describe chese "features" count | **5** (food, machine, round, wheels, grow) |
+| **Total parameters** | Model lo **motham numbers (weights)** — embedding table + attention + feed forward + output layer anni kalipi | — |
+
+**GPT-5 gurinchi nijam:**
+
+> **OpenAI GPT-5 parameter count kaani, embedding dimension kaani officially publish cheyyaledu.**
+> Internet lo *"3–5 trillion"*, *"52 trillion"* lantivi numbers kanipistayi — avi **unofficial guesses / leaks** matrame, confirm kaadu.
+> GPT-4 nundi OpenAI (Anthropic, Google kuda) model size details bayataki ivvatledu.
+
+Andhuke **published** models numbers tho scale ardham chesukundam:
+
+**Embedding dimension — prathi token ki enni numbers (semantic features):**
+
+| Model | Embedding dimension | Source |
+|---|---|---|
+| Class example | 5 | Durga Sir |
+| GPT-2 small | 768 | OpenAI published |
+| GPT-2 XL | 1,600 | OpenAI published |
+| **GPT-3** (175B) | **12,288** | OpenAI paper |
+| Llama 3.1 405B | 16,384 | Meta published |
+| OpenAI `text-embedding-3-small` | 1,536 | Semantic search API model |
+| OpenAI `text-embedding-3-large` | 3,072 | Semantic search API model |
+| **GPT-5** | ❓ **Not published** | — |
+
+**Total parameters — model motham size:**
+
+| Model | Total parameters | Status |
+|---|---|---|
+| GPT-2 | 1.5 billion | Published |
+| GPT-3 | 175 billion | Published |
+| Llama 3.1 405B | 405 billion | Published |
+| GPT-4, **GPT-5** | ❓ Not published | Trillions range ani estimates — **unofficial** |
+
+**Ardham:**
+
+- Class example lo **5 questions** tho Apple ≈ Orange ani telisindi. GPT-3 lo prathi token ki **12,288 hidden "questions"** — chala **subtle differences** kuda pattukuntundi
+  (ex: apple fruit vs Apple company, formal vs casual, positive vs negative tone…).
+- **Embedding dimension** = *meaning entha detailed ga* describe cheyyagalado. **Total parameters** = *model motham entha nerchukogaladu* (facts, grammar, reasoning patterns).
+- Semantic search lo vaade **embedding models** (`text-embedding-3-small` — 1,536) chat models kanna **chinnavi** — vaati pani okkate: text ni manchi vector ga marchadam.
+
+> **Oka line lo:** Embedding = **features list** — class lo 5 features (food, machine, round, wheels, grow) tho Apple ≈ Orange, Car ≈ Bike.
+> Nijam models lo **velalla features** (GPT-3 lo 12,288), avi **training lo tane nerchukuntayi**, labels undavu.
+> **GPT-5 numbers OpenAI publish cheyyaledu** — internet lo unna numbers guesses matrame.
+
+**Sources (GPT-5 parameters — official ga publish kaaledu ani confirm):**
+- [How many parameters does GPT-5 have? — R-bloggers](https://www.r-bloggers.com/2025/08/how-many-parameters-does-gpt-5-have/)
+- [How many parameters does GPT-5 have? — CometAPI](https://www.cometapi.com/en/how-many-parameters-does-gpt-5-have/)
+- [The Memo — Special edition — GPT-5 — Lifearchitect](https://lifearchitect.substack.com/p/the-memo-special-edition-gpt-5-aug2025)
+#### Doubt: Same category words ki embedding values enduku daggara ga untayi? Evaru identify chesi istaru?
+
+**Short answer:** **Evaru category assign cheyyaru, evaru values set cheyyaru.** Prathi embedding **random numbers tho start** avutundi.
+Training lo **similar contexts lo vache words** ki malli malli **similar corrections** vasthayi — kabatti avi **daggaraki** vachestayi.
+Closeness **data nundi tanantata tane** vastundi.
+
+##### 1. Core idea — "Oka word ni daani snehitulu (chuttu unna words) batti telusukovachu"
+
+Deenni **distributional hypothesis** antaru — *similar contexts lo vaade words ki similar meanings*.
+
+```text
+"I ate a fresh ___"          → apple, mango, banana
+"___ juice is sweet"         → apple, mango, orange
+"I drove my ___ to office"   → car, bike, scooter
+```
+
+`apple`, `mango` **same type sentences** lo malli malli vastayi. `car` **poorthiga veru** sentences lo vastundi.
+
+**Real life example:** Class lo iddaru students eppudu **cricket ground, sports room, PT period** lo kanipisthe — evaru cheppakapoyina
+*"veellu sports type"* ani manaki ardham avutundi. Model kuda words ni **ekkada kanipistayo** chusi group chestundi.
+
+##### 2. Values ela daggaraki vastayi? (Training)
+
+**Step 1 — Random start:** Training mundu vectors ki meaning ledu:
+
+```text
+apple = [ 0.9, -0.2]     mango = [-0.5,  0.7]     car = [ 0.1,  0.4]   ← random, pattern ledu
+```
+
+**Step 2 — Next-token prediction + chinna corrections (gradient descent):**
+Model *"I ate a fresh **apple**"* chusi next words predict chestundi → **entha tappu** ayyindo (loss) chustundi →
+involved anni numbers ni **konchem** maarustundi — **apple embedding kuda** — next time better prediction kosam.
+
+**Step 3 — Same contexts → same corrections:**
+`apple`, `mango` **food context** lo vachina prathi saari — vaati vectors **"food context direction"** vaipu konchem jarugutayi.
+`car` **vehicle context** direction vaipu. Idi **billions of times** repeat:
+
+```text
+Training tarvata:
+apple = [ 0.80, 0.70]
+mango = [ 0.75, 0.72]   ← apple ki chala daggara ✅
+car   = [-0.60, 0.10]   ← dooram
+```
+
+(Toy 2-number vectors — nijam vectors lo vandalu / velalla numbers.)
+
+```text
+Training mundu (random):            Training tarvata:
+
+   mango •                              • apple  • mango     ← food group
+              • car                     • banana
+  • apple                                                    
+                                                  • car      ← vehicle group
+                                                  • bike
+```
+
+**Model enduku ila chestundi?** — **Loss taggiinchadaniki idi efficient way.** `apple`, `mango` rendu *"juice", "sweet", "fresh"* lantivi
+similar next words predict cheyyali — similar vectors unte **same downstream weights** rendintiki pani chestayi.
+Closeness = **predict cheyyadam baga nerchukovadam valla vachina side effect**.
+
+##### 3. "Daggara" ani ela measure chestaru?
+
+Sadharanam ga **cosine similarity** — rendu vectors **entha same direction** lo unnayo chustundi:
+
+| Value | Ardham |
+|---|---|
+| **1** | Same direction — chala similar |
+| **0** | Sambandham ledu |
+| **−1** | Opposite direction |
+
+```text
+cos(apple, mango) ≈ 0.99    → chala similar
+cos(apple, car)   ≈ -0.63   → sambandham ledu / opposite
+```
+
+(Paina toy vectors tho calculate chesinavi.)
+
+Transformer lopala attention **dot product** (Q·K — Section 4.1.1) vaadutundi — same idea, normalize cheyyakunda.
+
+##### 4. Common misunderstandings
+
+| Misunderstanding | Nijam |
+|---|---|
+| *"Dimension 3 = fruitness"* ani labels untayi | **Labels levu** — meaning anni numbers lo **spread** ayyi untundi. Kaani konni **directions** concepts tho match avutayi — famous example: **`king − man + woman ≈ queen`** |
+| Daggara vectors = **same meaning** | Eppudu kaadu — `hot`, `cold` kuda daggara ga untayi (*"the tea is ___"* — same sentences lo vastayi). Embeddings **usage** ni capture chestayi — mostly meaning, kaani exact ga kaadu |
+| Idi GPT kotha trick | **Word2Vec (2013)** lo famous ga chupincharu — pakka words predict chese chinna network tho similar words cluster ayyayi. GPT embedding table kuda **ade vidhanga** training lo nerchukuntundi |
+| Embedding okkasari vasthe fixed meaning | **Starting embedding** matrame fixed — attention tarvata **context** tho maarutundi ("bank" example — Add & Norm section) |
+
+> **Oka line lo:** Embeddings **random ga start**. Similar contexts lo vache words ki next-token training lo **similar corrections** vachi vaati vectors
+> **daggaraki jarugutayi** — category evaru define cheyyaru. Closeness ni **cosine similarity / dot product** tho measure chestaru.
+
+#### Semantic Search — meaning batti search ela pani chestundi?
+
+Paina chusam — **similar meaning → daggara vectors**. Ee idea ni vaadi chese search ye **Semantic Search**:
+**words match kaakapoyina, meaning match aithe** result vastundi.
+
+##### Keyword search vs Semantic search
+
+Company help documents:
+
+```text
+Doc 1: "How to reset your password"
+Doc 2: "Refund policy for cancelled orders"
+Doc 3: "Steps to change your login credentials"
+```
+
+User query: **`"I forgot my login PIN"`**
+
+| | Keyword search (paata method) | Semantic search |
+|---|---|---|
+| Ela | Query **words** documents lo **exact ga** unnaya chustundi | Query **meaning** ki daggara unna documents chustundi |
+| Result | `"login"` → Doc 3 matrame. `"PIN"`, `"forgot"` — ye doc lo levu. **Doc 1 (password reset) miss** ❌ | Doc 1 (password reset) ✅, Doc 3 (login credentials) ✅ — **PIN ≈ password** ani ardham |
+| Problem | Synonyms (`PIN` / `password`, `car` / `vehicle`), typos, veru words lo adigithe fail | Exact codes / IDs lo konchem weak (kinda chudandi) |
+
+##### Semantic search — step by step
+
+```text
+        ─── OKKA SAARI (indexing) ───                      ─── PRATHI QUERY KI (search) ───
+
+[Documents]                                           [User query: "I forgot my login PIN"]
+    ↓ 1. Chunking (chinna pieces)                          ↓ 4. SAME embedding model
+[Chunks]                                              [Query vector: 384 numbers]
+    ↓ 2. Embedding model                                   ↓ 5. Similarity search (cosine)
+[Prathi chunk ki oka vector — 384 numbers]  ←──────── compare ────────┘
+    ↓ 3. Store                                             ↓ 6. Top-k results
+[Vector Database (Chroma / FAISS / Pinecone)]         [Doc 1, Doc 3]  → user ki / LLM ki (RAG)
+```
+
+**Step 1 — Chunking:** Peddha documents ni chinna pieces (chunks) ga — paragraph laaga (mee `RAG/chunking/` folder lo chusina splitters).
+
+**Step 2 — Embedding:** Prathi chunk ni **embedding model** ki isthe — **motham sentence ki okka vector** vastundi.
+
+> **Gamaninchandi:** Paina chusinavi **token embeddings** (prathi token ki oka vector). Semantic search lo **sentence embedding** —
+> motham sentence / paragraph ki **okka vector**. Embedding model lopala transformer — anni token vectors ni kalipi (pooling) okka vector chestundi.
+
+**Step 3 — Vector database lo store:** Chunk text + daani vector save. Ide mee **career coach RAG project** lo jarugutundi:
+`HuggingFaceEmbeddings("all-MiniLM-L6-v2")` → prathi chunk **384-dim vector** → **ChromaDB** lo store ([rag_engine.py](../Project-ai_career_coach_rag/ai_career_coach_rag/src/rag_engine.py)).
+
+**Step 4 — Query embedding:** User query ni **SAME embedding model** tho vector ga marchali.
+⚠️ Documents ki oka model, query ki inko model vaadithe — vectors **veru "language"** lo untayi, compare cheyyalem.
+
+**Step 5 — Similarity search:** Query vector ni anni chunk vectors tho **cosine similarity** (paina doubt) tho compare:
+
+```text
+Query: "I forgot my login PIN"
+
+Doc 1  "How to reset your password"             → 0.82  ✅
+Doc 3  "Steps to change your login credentials" → 0.74  ✅
+Doc 2  "Refund policy for cancelled orders"     → 0.08  ❌
+```
+
+(Scores ardham kosam — nijam values model batti maarutayi.)
+
+**Step 6 — Top-k results:** Highest scores unna **k** chunks (ex: top 3) return. Vector DB lu crores of vectors lo kuda **fast** ga vetukutayi (approximate nearest neighbour search — ANN).
+
+##### Semantic search + LLM = RAG
+
+```text
+User question → semantic search → top chunks → [question + chunks] prompt lo → LLM → answer
+```
+
+Ide **RAG (Retrieval-Augmented Generation)** — Section 7.3 lo hallucination taggiinchadaniki, Section 7.8 lo "latest / local info" kosam chusina solution.
+LLM ki **mee documents nundi correct chunks** isthe — guess cheyyakunda **mee data base chesukoni** answer istundi.
+
+##### Chinna Python example (sentence-transformers)
+
+```python
+# ---------------- Architecture Diagram ----------------
+# [Documents]  → embedding model → [document vectors]
+#                                        ↓ cosine similarity
+# [Query]      → SAME model      → [query vector]
+#    ↓
+# [Scores]  → highest score unna document = best match
+#
+# ---------------- Deep Architecture Notes ----------------
+# Step 1: embedding model load (all-MiniLM-L6-v2 — local ga run, 384-dim vectors)
+# Step 2: documents ni vectors ga marchu
+# Step 3: query ni SAME model tho vector ga marchu
+# Step 4: cosine similarity tho query vs prathi document compare
+# Step 5: score order lo print — meaning daggara unnavi paina
+
+from sentence_transformers import SentenceTransformer        # sentence embedding models load cheyyadaniki
+from sentence_transformers import util                       # cosine similarity helper function kosam
+
+model = SentenceTransformer("all-MiniLM-L6-v2")              # embedding model — prathi sentence ki 384 numbers vector
+
+documents = [                                                # search cheyyalsina documents list
+    "How to reset your password",                            # doc 0 — password reset
+    "Refund policy for cancelled orders",                    # doc 1 — refund
+    "Steps to change your login credentials",                # doc 2 — login credentials
+]
+
+doc_vectors = model.encode(documents)                        # prathi document → okka vector (3 × 384)
+
+query = "I forgot my login PIN"                              # user query — "PIN" ye doc lo ledu
+query_vector = model.encode(query)                           # query ni SAME model tho vector ga marchu
+
+scores = util.cos_sim(query_vector, doc_vectors)[0]          # query vs prathi doc cosine similarity (3 scores)
+
+ranked = sorted(zip(documents, scores), key=lambda pair: float(pair[1]), reverse=True)   # high score modata
+for doc_text, score in ranked:                               # prathi document ni score tho print
+    print(f"{float(score):.2f}  {doc_text}")                 # password / login docs paina, refund kinda
+```
+
+Run cheyyadaniki: `pip install sentence-transformers` (modati saari model download avutundi — tarvata local ga, API key avasaram ledu).
+
+##### Limitations — eppudu jagratha?
+
+| Limitation | Example | Solution |
+|---|---|---|
+| **Exact codes / IDs / names** | `"Order #A7731"`, `"error E404"` — meaning kaadu, **exact match** kavali | **Hybrid search** — keyword + semantic rendu kalipi |
+| **Daggara ≠ correct** | `"hot weather"` query ki `"cold weather"` doc kuda high score (paina hot/cold point) | Re-ranking, LLM tho check |
+| **Chunk size** | Chunk chala peddadi → meaning dilute; chala chinnadi → context miss | Chunking tune cheyyali (`RAG/chunking/`) |
+| **Model choice** | English model ki Telugu text isthe weak | Multilingual embedding model vaadali |
+
+> **Oka line lo:** Semantic search = **documents + query rendu ni SAME embedding model tho vectors ga marchi**, **cosine similarity** tho
+> **meaning lo daggara unna** documents ni vetakadam — words match avvakapoyina. Daaniki LLM kaliste **RAG**.
+
+#### Internal Embeddings vs External Embeddings — difference enti?
+
+"Embedding" ane word **rendu veru chotla** vaadataru — confuse avvakandi:
+
+| | **Internal embeddings** | **External embeddings** |
+|---|---|---|
+| **Ekkada** | **LLM lopala** (GPT, Llama, Claude) | LLM **bayata** — separate **embedding model** |
+| **Pani** | Model **text generate** cheyyadaniki (next token prediction) | Text ni vector ga marchi **search / compare** cheyyadaniki (semantic search, RAG) |
+| **Okka vector deeniki** | **Prathi token** ki okka vector | **Motham sentence / chunk / document** ki okka vector |
+| **Evaru create** | LLM training lo — embedding table (Section 1.9, 1.10) | Embedding model (`all-MiniLM-L6-v2`, `text-embedding-3-small`…) |
+| **Manaki kanipistaya?** | ❌ Ledu — model lopale (API lo ivvaru) | ✅ Avunu — manam generate chesi **vector DB lo save** chestam |
+| **Store ekkada** | Model weights lo | **Vector database** (Chroma, FAISS, Pinecone) |
+| **Example size** | Llama 3.1 8B — **4,096** numbers per token | all-MiniLM-L6-v2 — **384** numbers per chunk |
+| **Real life** | Brain lopala **thoughts** — bayataki kanipinchavu | Library lo books ki **catalog cards** — vetakadaniki |
+
+##### Internal embeddings — LLM lopala
+
+```text
+"I drink tea"  →  tokenizer  →  [ID, ID, ID]  →  EMBEDDING TABLE (LLM lopala)  →  token vectors
+                                                       ↓
+                                              attention, feed forward ...  →  next token
+```
+
+- Section 1.9, 1.10 lo chusinavi **anni internal embeddings** — Token ID → row lookup → vector → transformer → softmax.
+- **Prathi token** ki vector — `I`, `drink`, `tea` — moodu veru vectors.
+- Ivi **model lopale** vaadataru — manam chudamu, save cheyyamu. Model ki **"thinking material"**.
+
+##### External embeddings — separate embedding model
+
+```text
+"How to reset your password"  →  EMBEDDING MODEL (separate)  →  [0.12, -0.48, ..., 0.33]  (384 numbers)
+                                                                     ↓
+                                                              VECTOR DATABASE lo save
+```
+
+- **Motham sentence / paragraph** ki **okka vector** (lopala token vectors ni kalipi — pooling).
+- Manam **generate chesi, save chesi, compare** chestam — Section 1.9 **semantic search** lo chusindi ide.
+- Pani: **"ee text ki meaning lo daggara unna text edi?"** — search, recommendation, duplicate detection, clustering.
+
+##### Real example — mee career coach RAG project lo rendu ela kalisi pani chestayi
+
+[rag_engine.py](../Project-ai_career_coach_rag/ai_career_coach_rag/src/rag_engine.py) lo:
+- **External:** `HuggingFaceEmbeddings("all-MiniLM-L6-v2")` — prathi chunk ki **384-dim** vector → **ChromaDB**
+- **Internal:** `ChatGroq(llama-3.1-8b-instant)` — answer generate chese LLM — lopala **sontha** token embeddings
+
+```text
+User: "How do I prepare for a data science interview?"
+   │
+   ├─① EXTERNAL embedding: question → MiniLM → 384-dim vector
+   │
+   ├─② ChromaDB lo cosine similarity → top 3 chunks (TEXT) vetuku
+   │      "Practice SQL and statistics...", "Build 2-3 projects...", "Revise ML basics..."
+   │
+   ├─③ [question + 3 chunks TEXT] ni prompt ga LLM ki pampu
+   │
+   └─④ INTERNAL embeddings: Llama aa prompt TEXT ni malli TOKENIZE chesi,
+          tana embedding table lo vectors theeskoni (4,096-dim per token) → attention → answer generate
+```
+
+> ⚠️ **Chala important point:** Step ② lo vachina **384-dim vectors LLM ki velthavu!** LLM ki velledi **chunks TEXT** matrame.
+> LLM aa text ni **malli tokenize** chesi **tana internal embeddings** vaadutundi.
+> External vectors = **vetakadaniki (search)** matrame. Internal vectors = **ardham chesukoni rayadaniki (generate)**.
+
+##### Rendu vectors enduku kalavavu? — Veru "languages"
+
+```text
+MiniLM vector   (384 numbers)   — MiniLM training lo nerchukunna "meaning language"
+Llama vector    (4,096 numbers) — Llama training lo nerchukunna "meaning language"
+```
+
+- Size **veru** (384 vs 4,096), and **numbers ardham** kuda veru — prathi model **sontha ga** nerchukundi.
+- Telugu dictionary page number ni English dictionary lo vetikinattu — **match avvadu**.
+- Andhuke rules:
+  - Documents ki, query ki **SAME external embedding model** vaadali (Section 1.9 semantic search step 4).
+  - External embedding model **maarchithe** — documents anni **malli embed** cheyyali (paata vectors pani cheyyavu).
+  - External model **edaina** vaadochu, LLM **edaina** vaadochu — rendu **independent** (MiniLM + Llama, OpenAI embeddings + Claude… edaina combo).
+
+##### Quick comparison — oka line lo
+
+| Question | Internal | External |
+|---|---|---|
+| Edi generate chestundi? | LLM answer text | Search kosam vector |
+| Okka vector deeniki? | Token | Sentence / chunk |
+| Manam save chestama? | ❌ | ✅ Vector DB |
+| Context tho maarutunda? | Starting vector fixed, attention tarvata maarutundi (Section 1.10 Q6) | Okka sentence ki okka fixed vector |
+| Mee project lo | Llama 3.1 8B (Groq) | all-MiniLM-L6-v2 → ChromaDB |
+
+> **Oka line lo:** **Internal embeddings** = LLM **lopala**, prathi **token** ki, text **generate** cheyyadaniki (manaki kanipinchavu).
+> **External embeddings** = separate embedding model tho, prathi **sentence / chunk** ki, **search** cheyyadaniki (vector DB lo save).
+> RAG lo external tho **vetukutam**, internal tho **rastundi** — madhyalo velledi **text matrame**, vectors kaadu.
+
+#### Doubt: Tokenizer case-sensitive aa?
+
+**Avunu.** GPT tokenizers (tiktoken / BPE) **case-sensitive** — `Hello`, `hello`, `HELLO` anni **veru veru tokens, veru veru IDs**.
+
+```text
+"hello"   →  1 token   (chala common)
+"Hello"   →  1 token   (common — kaani "hello" ki VERU ID)
+"HELLO"   →  1–2 tokens avvochu  (training text lo takkuva — pieces ga split avvochu)
+"HeLLo"   →  chala pieces       (chala rare pattern)
+```
+
+(Token counts ardham kosam — exact split kosam `enc.encode("HELLO")` run chesi chudandi.)
+
+**Telusukovalsina points:**
+
+1. **Uppercase ki ekkuva tokens avvochu** — ALL CAPS / mixed case text tokenizer training lo **takkuva** vachindi, kabatti ekkuva pieces.
+   Prompt motham **CAPITAL LETTERS** lo rasthe — ekkuva tokens (ekkuva cost — Section 7.2).
+2. **Space kuda matter** — `"Hello"` (text modatlo) and `" Hello"` (mundu space tho) kuda **veru tokens** (Section 1.2 lo chusam).
+3. **Model ki avi related ani telusu** — IDs sambandham leni numbers, kaani training lo `hello`, `Hello`, `HELLO` **same vidhanga** vaadatam chusindi —
+   kabatti vaati **embeddings daggara daggara** untayi. **Tokenizer veru ga unchutundi, model similar ani nerchukuntundi.**
+
+**Enduku lowercase ki marchakunda case unchutaru?** — Case lo **meaning** undi:
+
+| Text | Meaning |
+|---|---|
+| `Apple` vs `apple` | Company 🍏💻 vs fruit 🍎 |
+| `US` vs `us` | Country (America) vs "manam" (pronoun) |
+| `Sai` | Capital letter → **peru** ani signal |
+| `getUserName` vs `getusername` | Code lo **veru variables** — programming languages case-sensitive |
+
+Anni lowercase chesthe — ee info **pothundi**, model **correct code** kaani, **capital letters tho proper sentences** kaani rayaledu.
+
+**Anni tokenizers ilaa kaadu:**
+
+| Tokenizer | Case | Note |
+|---|---|---|
+| **GPT, Claude, Llama** | ✅ Case-sensitive (cased) | Case info unchutayi |
+| **BERT `uncased`** (`bert-base-uncased`) | ❌ Mundu anni lowercase chestundi | Classification lantivi tasks ki okay, kaani paina differences pothayi |
+| **BERT `cased`** | ✅ Case-sensitive | Names / entities kosam better |
+
+> **Oka line lo:** Avunu, **case-sensitive** — `Hello`, `hello` veru tokens; **uppercase ki ekkuva tokens** avvochu;
+> kaani model **embeddings tho** avi same meaning ani nerchukuntundi. Case lo meaning undi (`Apple` vs `apple`) — andhuke unchutaru.
+
+### 1.10 Full Picture — Token ID → Embedding → Semantic → Softmax (step by step, simple ga)
+
+Ee section lo **4 words** clear ga ardham chesukundam:
+
+| Word | Oka line lo |
+|---|---|
+| **Token ID** | Token ki ichina **number label** (roll number laaga) — **meaning ledu** |
+| **Embedding** | Token **meaning** ni chupinche **numbers list** (profile laaga) |
+| **Semantic** | **"Meaning"** ani ardham — *semantic closeness* = **meaning lo daggara** |
+| **Softmax** | **Scores ni percentages** ga marche step — next token choose cheyyadaniki |
+
+---
+
+#### Part A — Mundu oka real life story (school) 🏫
+
+Teacher ki oka pani kavali: *"Taage vasthuvu gurinchi cheppe student kavali."* Ela select chestaru?
+
+| School lo | Model lo | Pani |
+|---|---|---|
+| **Roll number** (ex: 2) | **Token ID** | Just label — roll number chusi student gurinchi emi teliyadu |
+| Roll number tho register lo **student profile** theeyadam | **Embedding lookup** | Profile lo student skills untayi — **meaning** |
+| Class discussion lo profile **update** (context) | **Transformer layers** | Chuttu unna vaalla batti ardham maarutundi |
+| Teacher *"naaku kavalsindi"* ane idea | **Final vector h** | Model ippudu em alochistundo |
+| Prathi student profile ni teacher idea tho **compare chesi marks** | **Linear layer (scores / logits)** | Evaru entha match? |
+| Marks ni **percentages** ga marchadam | **Softmax** | Prathi student ki chance % |
+| Highest % student **select** → roll number → **peru** | **Pick → ID → decode** | Final answer text |
+
+Ee story gurthu pettukondi — kinda prathi step ide.
+
+---
+
+#### Part B — Setup (chinna model)
+
+**Vocabulary** = tokenizer daggara unna **text ↔ ID** list. Meaning **ledu**.
+
+| Token ID | Token text |
+|---|---|
+| 0 | I |
+| 1 | drink |
+| 2 | tea |
+| 3 | coffee |
+| 4 | car |
+
+**Embedding table** = model lopala, **row number = Token ID**. Prathi row lo **meaning numbers**.
+Ardham kosam ikkada **2 numbers** matrame, and vaatiki labels istham — **[taage-vasthuvu-feel, vehicle-feel]**:
+
+| Token ID | Token | Embedding `[taage, vehicle]` | Ardham |
+|---|---|---|---|
+| 0 | I | `[0.1, 0.1]` | rendu takkuva |
+| 1 | drink | `[0.3, 0.2]` | konchem taage feel |
+| 2 | **tea** | `[0.9, 0.0]` | **taage chala ekkuva** |
+| 3 | **coffee** | `[0.8, 0.1]` | **taage chala ekkuva** — tea ki daggara |
+| 4 | car | `[0.0, 0.9]` | **vehicle** chala ekkuva |
+
+> ⚠️ Nijam models lo **768 – 12,000+ numbers** untayi, and **labels undavu** (Section 1.9 doubt). Ikkada labels **ardham kosam matrame**.
+
+**Semantic closeness** ikkade kanipistundi: `tea [0.9, 0.0]` and `coffee [0.8, 0.1]` — numbers **daggara daggara** → **meaning daggara**.
+`car [0.0, 0.9]` — poorthiga veru → meaning dooram.
+
+---
+
+#### Part C — Step by step: `"I drink"` → next word enti?
+
+---
+
+**STEP 1 — Text → Token IDs** (tokenizer)
+
+| | |
+|---|---|
+| 📥 **Input** | Text: `"I drink"` |
+| ⚙️ **Em jarugutundi** | Tokenizer **vocabulary table** lo prathi token ki ID vetukutundi |
+| 📤 **Output** | `[0, 1]` |
+| 💡 **Gurthu pettuko** | `0`, `1` — **roll numbers** matrame. Ee numbers lo **meaning ledu**. Model ee numbers meeda maths **cheyyadu**. |
+
+---
+
+**STEP 2 — Token IDs → Embeddings** (embedding table lookup)
+
+| | |
+|---|---|
+| 📥 **Input** | IDs: `[0, 1]` |
+| ⚙️ **Em jarugutundi** | ID ni **row number** ga vaadi, embedding table lo aa row theeskuntundi. *ID = index* ante ide. |
+| 📤 **Output** | `I → [0.1, 0.1]`, `drink → [0.3, 0.2]` |
+| 💡 **Gurthu pettuko** | **Ikkada nundi meaning start.** ID pani ayipoyindi — ippudu model **vectors** tho matrame pani chestundi. |
+
+```text
+ID 0  ──(row 0 theesko)──→  [0.1, 0.1]   ("I" meaning)
+ID 1  ──(row 1 theesko)──→  [0.3, 0.2]   ("drink" meaning)
+```
+
+---
+
+**STEP 3 — Transformer layers** (attention + feed forward)
+
+| | |
+|---|---|
+| 📥 **Input** | Vectors: `[0.1, 0.1]`, `[0.3, 0.2]` |
+| ⚙️ **Em jarugutundi** | Attention lo words okadaanini okati chustayi (Section 4.1). `drink` → `I` chusi *"evaro edo taagutunnaru"* ani context. Chala layers lo idi repeat. |
+| 📤 **Output** | **Chivari token** (`drink`) daggara final vector: **`h = [3.0, 0.2]`** |
+| 💡 **Gurthu pettuko** | `h` = model **ippudu alochistunnadi** — *"next word taage vasthuvu avvali"*. Choodandi: **taage number (3.0) peddadi**, vehicle number (0.2) chinnadi. |
+
+---
+
+**STEP 4 — Linear layer: prathi token ki score** (ikkade semantic closeness pani chestundi)
+
+| | |
+|---|---|
+| 📥 **Input** | `h = [3.0, 0.2]` + vocabulary lo **anni 5 tokens** vectors |
+| ⚙️ **Em jarugutundi** | `h` ni **prathi token vector** tho compare — **dot product** tho. *"h ki ee token meaning entha match?"* |
+| 📤 **Output** | 5 scores (logits) — prathi token ki okkati |
+| 💡 **Gurthu pettuko** | Ikkada kuda **ID vaadaledu** — **vectors compare** chesam. |
+
+**Dot product ante enti? (simple ga)** — rendu lists lo **same position numbers multiply** chesi, **add** cheyyadam:
+
+```text
+h     = [3.0, 0.2]
+tea   = [0.9, 0.0]
+
+dot   = (3.0 × 0.9) + (0.2 × 0.0)
+      =    2.70     +    0.00
+      =    2.70
+```
+
+**Rendu vectors same positions lo peddaga unte → score peddadi** (match ekkuva). Ade "meaning daggara" ki number.
+
+Anni 5 tokens ki:
+
+| Token | Calculation `h · token` | Score (logit) | Ardham |
+|---|---|---|---|
+| I | (3.0 × 0.1) + (0.2 × 0.1) = 0.30 + 0.02 | **0.32** | match ledu |
+| drink | (3.0 × 0.3) + (0.2 × 0.2) = 0.90 + 0.04 | **0.94** | konchem |
+| **tea** | (3.0 × 0.9) + (0.2 × 0.0) = 2.70 + 0.00 | **2.70** | ✅ **best match** |
+| **coffee** | (3.0 × 0.8) + (0.2 × 0.1) = 2.40 + 0.02 | **2.42** | ✅ chala daggara |
+| car | (3.0 × 0.0) + (0.2 × 0.9) = 0.00 + 0.18 | **0.18** | ❌ match ledu |
+
+`h` **taage direction** lo undi → taage tokens (tea, coffee) ki **peddha scores**, car ki **chinna score**.
+**Model lopala semantic closeness** = ide.
+
+---
+
+**STEP 5 — Softmax: scores → percentages**
+
+| | |
+|---|---|
+| 📥 **Input** | Scores: `[0.32, 0.94, 2.70, 2.42, 0.18]` |
+| ⚙️ **Em jarugutundi** | Prathi score ni positive chesi (e^score), anni kalipi divide — motham **1.0 (100%)** ayyela |
+| 📤 **Output** | Probabilities (kinda table) |
+| 💡 **Gurthu pettuko** | Softmax **order maarchadu** — peddha score ki peddha %. Just **percentages** ga marchutundi. |
+
+| Token | Score | Probability |
+|---|---|---|
+| I | 0.32 | 0.04 (4%) |
+| drink | 0.94 | 0.08 (8%) |
+| **tea** | 2.70 | **0.48 (48%)** ✅ |
+| coffee | 2.42 | 0.36 (36%) |
+| car | 0.18 | 0.04 (4%) |
+| | **Motham** | **1.00 (100%)** |
+
+---
+
+**STEP 6 — Pick → ID → decode → text**
+
+| | |
+|---|---|
+| 📥 **Input** | Probabilities |
+| ⚙️ **Em jarugutundi** | Highest pick (greedy) → **tea**. Daani ID = **2**. `decode(2)` → vocabulary lo row 2 text. |
+| 📤 **Output** | `"tea"` |
+| 💡 **Gurthu pettuko** | **ID malli ikkade** vastundi — **chivarlo text theeskovadaniki matrame**. (Sampling aithe 36% chance tho `coffee` kuda ravochu — Section 7.4) |
+
+---
+
+**STEP 7 — Red loop**
+
+`"I drink tea"` → malli **STEP 1** nundi → next word kosam (`[END]` vachevaraku).
+
+---
+
+#### Part D — Motham journey okka picture lo
+
+```text
+  "I drink"                                                         "tea"
+     │ STEP 1: tokenizer                                               ↑ STEP 6: decode
+     ↓                                                                 │
+  [0, 1]  ← Token IDs (roll numbers, meaning LEDU)                  ID 2
+     │ STEP 2: embedding table lo row lookup                           ↑ pick highest
+     ↓                                                                 │
+  [0.1,0.1] [0.3,0.2]  ← Embeddings (meaning ✅)          48%  36%  8%  4%  4%  ← Probabilities
+     │ STEP 3: transformer (context)                                   ↑ STEP 5: softmax
+     ↓                                                                 │
+  h = [3.0, 0.2]  ──── STEP 4: h · prathi token vector ────→  2.70 2.42 0.94 0.32 0.18  ← Scores (logits)
+  ("taage vasthuvu kavali")    (semantic closeness)
+```
+
+**Token ID** — modatlo (Step 1) and chivarlo (Step 6) **matrame**. **Madhyalo pani antha embeddings / vectors tho.**
+
+---
+
+#### Part E — Common confusions — clear answers
+
+**Q1. Token ID ki embedding ki difference enti?**
+ID = **okka number, meaning ledu** (`2`). Embedding = **numbers list, meaning undi** (`[0.9, 0.0]`). ID tho embedding table lo **row vetukutham** — antey ID pani.
+
+**Q2. Softmax token IDs ni vaadutunda?**
+**Ledu.** Softmax ki vachedi **scores** (Step 4 nundi). Scores **vectors compare** chesi vachayi. ID **chivarlo** text kosam matrame.
+
+**Q3. "Semantic" ekkada vastundi?**
+Rendu chotla:
+- **Embedding table lo** — similar meaning tokens ki **daggara vectors** (tea ≈ coffee).
+- **Step 4 lo** — `h` ki **daggara unna tokens ki peddha score**. Ante prediction ante **meaning-match test**.
+
+**Q4. Semantic search lo softmax untunda?**
+**Ledu.** Semantic search lo query vector ni **documents vectors** tho compare chesi (cosine similarity), **sort** chesi top results istharu.
+Same **"daggara = similar meaning"** idea — kaani token predict cheyyadu, softmax ledu.
+
+| | GPT next-token prediction | Semantic search |
+|---|---|---|
+| Compare | `h` vs **vocabulary tokens** | Query vs **documents** |
+| Tarvata | Scores → **softmax** → okka token | Scores → **sort** → top documents |
+
+**Q5. Embedding numbers evaru pettaru?**
+Evaru kaadu — **random ga start**, training lo **similar contexts** valla daggaraki vachayi (Section 1.9 doubt — embedding closeness).
+
+**Q6. Vocabulary lo unna prathi word ki embedding training time lone create ayyindaa?**
+
+**Avunu.** Vocabulary lo prathi token ki embedding table lo **sontha row** undi — aa numbers **training lo nerchukunnavi**.
+Training ayyaka **freeze** — usage lo **just lookup**. Chat chestunnappudu **kotha embeddings create avvavu**.
+
+```text
+① Tokenizer training (BPE)          → vocabulary fixed: ~1,00,000 tokens, prathi daaniki ID
+② Model training start              → embedding table create: exactly 1,00,000 rows
+                                       ANNI rows RANDOM numbers tho (inka meaning ledu)
+③ Training (billions of sentences)  → token vachina prathi saari daani row konchem nudge
+                                       → similar context tokens daggaraki (tea ≈ coffee)
+④ Training end                      → table FREEZE — model weights lo save
+⑤ Usage (meeru chat chesetappudu)   → ID → aa row chadavadam. Emi create avvadu, emi maaradu.
+```
+
+**4 details:**
+
+1. **Starting embedding matrame store** — table lo prathi token ki **okka fixed vector**. Attention tarvata vache **context vector**
+   ("river bank" vs "money bank") **prathi saari kotha ga calculate** avutundi — save avvadu.
+   Ante: *starting meaning = stored, context meaning = calculated*.
+2. **Usage lo kotha word ki kotha embedding raadu** — `ChatGPTPro` vocabulary lo ledu → already unna tokens (`Chat`, `G`, `PT`, `Pro`) ga split →
+   vaatiki already trained rows unnayi. Subword tokens pani chesedi ee reason valle.
+3. **Rare tokens ki weak embeddings** — training text lo dadapu raani token ki row **random daggare** migiluthundi.
+   Famous real case: GPT-2/GPT-3 lo **`" SolidGoldMagikarp"`** — tokenizer konni websites lo chala saarlu chusi vocabulary lo pettindi,
+   kaani model training text lo dadapu raaledu → embedding dadapu random → daani gurinchi adigithe **vinthaina answers**. Veetini **"glitch tokens"** antaru.
+4. **Maaravachu — kaani training tho matrame:**
+   - **Fine-tuning** (kotha data tho extra training) embedding rows ni adjust cheyyochu.
+   - Vocabulary ki **kotha tokens add** chesthe — kotha rows (malli random) add chesi train cheyyali.
+   - Normal chat **emi maarchadu** (Section 7.6 — weights maaravu).
+
+> **Oka line lo:** Avunu — vocabulary mundu fix, tarvata training **random rows ni meaning unna embeddings** ga marchindi — usage lo **lookup matrame**.
+> Context version **prathi saari calculate**, store avvadu.
+
+---
+
+#### Part F — Final summary table
+
+| Step | Peru | Input | Output | Meaning undaa? |
+|---|---|---|---|---|
+| 1 | Tokenizer | Text `"I drink"` | IDs `[0, 1]` | ❌ |
+| 2 | Embedding lookup | IDs | Vectors `[0.1,0.1]`, `[0.3,0.2]` | ✅ |
+| 3 | Transformer | Vectors | Final vector `h = [3.0, 0.2]` | ✅ + context |
+| 4 | Linear (dot product) | `h` + anni token vectors | Scores `2.70, 2.42, …` | Match entha |
+| 5 | Softmax | Scores | Probabilities `48%, 36%, …` | Chance % |
+| 6 | Pick + decode | Probabilities | ID `2` → `"tea"` | ❌ (just label) |
+
+> **Oka line lo:** **ID** = roll number (meaning ledu) → **embedding** = profile (meaning) → **transformer** = context tho `h` →
+> **Linear** = `h` ni prathi token profile tho compare (**semantic match → scores**) → **softmax** = scores ni % ga → **highest pick** → ID → text.
+> **ID modatlo, chivarlo matrame — madhyalo antha meaning vectors.**
+
 ---
 
 ## 2. Transformer asalu em chestundi? (Oke oka pani)
@@ -1035,6 +2183,266 @@ ivi kalisi chala saarlu vachayi ani **pattern** telusu.
 > Ante ChatGPT "understanding" = **patterns chala baga telusukovadam**.
 > Patterns entha baga telisthe, next word antha correct ga guess chestundi —
 > andhuke manaki adi language artham chesukuntunnattu kanipistundi.
+
+### 2.3 RNN, LSTM unnayi kada — mari Transformer ki enduku move ayyam? (Durga Sir)
+
+Transformer ki **mundu** text ni process cheyyadaniki **RNN**, tarvata **LSTM** vaadevaaru.
+Vaatiki unna problems solve cheyyadaniki ne **Transformer** vachindi. Journey:
+
+```text
+RNN  ──(problems)──→  LSTM  ──(inka problems)──→  Transformer (2017)
+word by word          word by word + gates         all words together + attention
+small memory          long + short memory          no single memory — anni words direct ga chustundi
+```
+
+#### Mundu konni technical words — simple meanings
+
+| Word | Simple meaning |
+|---|---|
+| **RNN** | Recurrent Neural Network — text ni **okko word** chadivi, **chinna memory** lo gurthu pettukuntu velle network |
+| **Recurrent** | Malli malli — prathi word ki **same step repeat**, memory next step ki pass |
+| **LSTM** | Long Short-Term Memory — RNN ki **gates** add chesina improved version |
+| **Gate** | Oka **switch** — info lopaliki ranivvala, bayataki pampala, marchipovala decide chestundi |
+| **Sequential** | Okati tarvata okati — parallel ga kaadu |
+| **Long-range dependency** | Sentence lo **chala dooram** lo unna words madhya connection (modati word ↔ chivari word) |
+
+#### 1. RNN — Recurrent Neural Network
+
+![RNN — reads word by word, limited memory](images/rnn-word-by-word-limited-memory.png)
+
+Class example:
+
+```text
+"Yesterday night I had fever,
+ today morning headache,
+ afternoon stomach pain,
+ and now body pain"
+```
+
+RNN ee text ni ila chaduvutundi:
+
+```text
+Yesterday → night → I → had → fever → today → morning → headache → ... → body → pain
+   ↓          ↓       ↓     ↓      ↓
+ [memory] → [memory] → [memory] → [memory] → ...   (prathi word tarvata memory update)
+```
+
+> It will read text **word by word** and unable to read complete input at a time. **The processing will become slow.**
+>
+> As **memory is limited**, for long input, **old stored words will be overridden** with new words.
+
+![RNN — no mechanism to check importance](images/rnn-no-importance-check-lstm-intro.png)
+
+> There is **no mechanism to check whether the given input word is important or not**. Hence it will **store all words**.
+> To overcome these problems next level we used **LSTM**.
+
+**RNN problems — Tenglish lo:**
+
+| Problem | Ardham | Fever example lo |
+|---|---|---|
+| **Word by word** | Okko word, okati tarvata okati — **parallel ledu** → slow | 20 words → 20 steps, okati ayyaka ne next |
+| **Limited memory** | Oka chinna memory box — kotha words vasthe **paata words override** | `body pain` chadive time ki **`fever`** (modati word) dadapu marchipoyindi |
+| **No importance check** | Edi important, edi kaadu choose cheyyadu — **anni words store** | `fever` (important) and `and`, `now` (unimportant) — anni same ga store, memory waste |
+
+Doctor ki *"patient ki em problem?"* ani adigithe — RNN ki chivari words (`body pain`) matrame gurthu, **`fever`** marchipoyindi ❌.
+
+(Slide lo `"I want an apple"` kuda chinna example — RNN `I` → `want` → `an` → `apple` okko word ga chaduvutundi.
+Chinna sentence ki problem ledu — **podavu** sentences lo ne memory problem.)
+
+#### 2. LSTM — Long Short-Term Memory
+
+![LSTM — long + short memory, 3 gates](images/lstm-long-short-memory-3-gates.png)
+
+> **LSTM = Long + Short + Memory**
+> - Current words are stored in **short memory**.
+> - The words which are **important** will be stored in **long memory**.
+> - In short memory overriding may be possible.
+
+| Memory | Em untundi | Override avutunda? |
+|---|---|---|
+| **Short memory** | Ippudu chaduvutunna **current words** | ✅ Avutundi — kotha words vasthe paatavi pothayi |
+| **Long memory** | **Important words** matrame (ex: `fever`) | ❌ Takkuva — important info chala sepu untundi |
+
+> **LSTM has 3 gates (switches):**
+> - **Forget Gate** = Remove useless past
+> - **Input Gate** = Store important info
+> - **Output Gate** = Decide what to speak
+
+| Gate | Pani | Fever example lo |
+|---|---|---|
+| **Forget gate** 🗑️ | Avasaram leni **paata info teesey** | `and`, `now`, `today` lantivi long memory nundi teesestundi |
+| **Input gate** 📥 | Kotha word lo **important** unte long memory lo **store** | `fever`, `headache`, `stomach pain`, `body pain` → long memory lo save |
+| **Output gate** 📤 | Ippudu memory nundi **edi bayataki cheppalo** decide | *"Patient problem?"* → fever + headache + stomach pain + body pain |
+
+RNN ki **importance check ledu** — LSTM **gates** tho important info ni select chesi gurthu pettukuntundi. Ade improvement.
+
+**Limitations of LSTM**
+
+![Limitations of LSTM](images/lstm-limitations.png)
+
+> 1. It will read text **word by word** and unable to read complete input at a time. The processing will become **slow**.
+> 2. Even though more memory when compared with RNN, it is **unable to process very long input sentences**.
+>
+> To overcome these problems next level we have to go for **Transformers**.
+
+- LSTM kuda **okko word** — GPU parallel power vaadukolem → **training chala slow** (billions of sentences ki impossible).
+- Long memory unna — **chala podavu** text (pages, books) lo modati info malli pothundi.
+
+#### 3. Transformer ki mundu Encoder–Decoder (Seq2Seq with RNN / LSTM)
+
+**Encoder–Decoder idea Transformer tho puttaledu!** Transformer ki mundu ne (2014 lo) RNN / LSTM tho
+**Encoder–Decoder** models unnayi — vaatini **Seq2Seq (Sequence to Sequence)** antaru.
+Transformer aa **structure ni alaage unchi**, lopala RNN ni teesesi **attention** pettindi.
+
+**Enduku encoder–decoder kavali?**
+
+Konni tasks lo **input oka sequence, output inko sequence** — rendu **lengths veru**:
+
+| Task | Input sequence | Output sequence |
+|---|---|---|
+| Translation | `I love India` (3 words) | `Nenu India ni premistanu` (4 words) |
+| Summarization | 500 words article | 50 words summary |
+| Chatbot | Question | Answer |
+
+Okka RNN tho idi kashtam — andhuke **rendu parts**: okati **chadavadaniki** (encoder), okati **rayadaniki** (decoder).
+
+**Ela pani chesedi? (RNN / LSTM Seq2Seq)**
+
+```text
+                ENCODER (RNN/LSTM)                                 DECODER (RNN/LSTM)
+ I  ──→ [RNN] ──→ love ──→ [RNN] ──→ India ──→ [RNN] ──→  ●  ──→ [RNN] → Nenu → [RNN] → India → [RNN] → ni → [RNN] → premistanu → [END]
+        (okko word, memory update)                        ↑        ↑ [START]   ↑ (output malli input ki — red loop!)
+                                                   CONTEXT VECTOR
+                                          (motham sentence meaning — OKKA fixed-size vector)
+```
+
+1. **Encoder** — input ni **okko word** chadivi, memory update chestu velthundi.
+2. Chivari word tarvata unna memory = **Context Vector** — *"motham sentence meaning"* ani anukune **okka fixed size vector** (ex: 512 numbers).
+3. **Decoder** — aa context vector + `[START]` tho start chesi, **okko word** generate chestundi. Generate chesina word ni **malli input** ga theeskuntundi (Section 4.6 lo chusina **red loop** idea ide — appatike undi!).
+
+**Peddha problem — Bottleneck (sanna daari) 🍾**
+
+> Motham input sentence ni **okka fixed-size context vector** lo kukkali. Sentence entha podavu aina — **same size** vector.
+
+```text
+"I love India"                                → 512 numbers  ✅ okay
+"Yesterday night I had fever, today morning
+ headache, afternoon stomach pain, ... (50 words)" → same 512 numbers ❌ info pothundi
+```
+
+**Real life example:** Oka 3 hours movie ni **okka line** lo summary rasi, tarvata aa okka line chusi **motham movie story** cheppamante —
+chinna movie ki okay, peddha movie ki chala details miss avutayi. Context vector ade problem.
+
+- Podavu sentences lo **modati words info** context vector lo **dadapu undadu** → translation tappu.
+- Decoder **okka vector** matrame chudagaladu — input lo **ye word** ippudu important o chudalemu.
+
+**Step 1 fix — RNN Encoder–Decoder ki Attention add chesaru (2014–15)**
+
+Researchers (Bahdanau et al.) idea: *"Decoder okka context vector matrame enduku chudali? Encoder lo **prathi word** state ni chudanivvu!"*
+
+```text
+Encoder states:   h(I)    h(love)    h(India)       ← prathi word ki oka state (anni save)
+                    ↑        ↑          ↑
+Decoder "ni" rayadaniki →  0.10     0.25       0.65    ← attention weights — India ki ekkuva focus
+```
+
+- Prathi output word ki decoder **anni encoder words ni chusi**, important dani meeda **focus** chestundi.
+- Bottleneck problem **chala taggindi** — ide **attention modati version**, and Transformer lo **cross-attention** ki ide origin!
+- Kaani **inka RNN ne** — okko word, **slow**, parallel ledu.
+
+**Step 2 — Transformer (2017): RNN ni motham teesesaru**
+
+> *"Attention ki RNN enduku? **Attention okkate chalu!**"* — **"Attention Is All You Need"**
+
+| Part | Paata Seq2Seq (RNN/LSTM + attention) | Transformer |
+|---|---|---|
+| Encoder lopala | RNN / LSTM — okko word | **Self-attention** — anni words oke saari |
+| Decoder lopala | RNN / LSTM — okko word | **Masked self-attention** |
+| Decoder → Encoder connection | Context vector (later attention) | **Cross-attention** |
+| Order (word position) | RNN okko word chadavadam valla automatic ga telusu | **Positional encoding** add cheyyali (Section 4.6) — endukante anni oke saari chustundi |
+| Training speed | Slow (sequential) | **Fast** (parallel) |
+| Generation (output) | Okko word — red loop | Okko token — **red loop same** |
+
+> **Gamaninchandi:** RNN okko word chaduvutundi kabatti **order automatic ga** telusu. Transformer anni words **oke saari** chustundi —
+> andhuke **positional encoding** separate ga add cheyyalsi vachindi ("Dog bites a man" vs "man bites a dog").
+
+**Timeline — oka chupu lo**
+
+```text
+RNN                 →  LSTM                →  Seq2Seq Encoder–Decoder  →  Seq2Seq + Attention   →  Transformer (2017)   →  GPT (decoder-only)
+okko word,             gates tho              RNN/LSTM tho 2 parts,       decoder anni encoder     RNN teesesi attention   Transformer lo decoder
+chinna memory          better memory          context vector bottleneck   words chustundi          matrame — parallel      part matrame, chala peddaga
+```
+
+> **Oka line lo:** Encoder–Decoder idea **Transformer kanna mundu** (RNN/LSTM Seq2Seq) — kaani motham sentence ni **okka context vector** lo
+> pettadam valla **bottleneck**. Attention add chesi konchem fix chesaru, inka slow. Transformer **encoder–decoder structure unchi, RNN teesesi,
+> attention matrame** vaadindi → fast + long sentences lo kuda accurate.
+
+#### 4. Transformer — Attention tho solution
+
+![Attention came — why RNN/LSTM failed for long sentences](images/attention-why-rnn-lstm-failed.png)
+
+RNN / LSTM tarvata 2 questions vachayi:
+1. **Okko word enduku? Motham input oke saari enduku chadavakudadu?**
+2. **Why not give importance to relevant words?** — important words ki ekkuva importance enduku ivvakudadu?
+
+> To answer these questions, **attention** came, where:
+> - **Focus** on important words
+> - **Ignore** less important words
+> - **Process total input at a time**
+
+> **Q. Why RNN/LSTM failed for long sentences?**
+> RNN and LSTM process text **sequentially** and struggle to retain **long-range dependencies**, causing them to **forget earlier important words** in long sentences.
+> - **Word by word processing**
+> - **Limited memory**
+
+Fever example Transformer lo:
+
+```text
+"Yesterday night I had fever, today morning headache, afternoon stomach pain, and now body pain"
+     ↓ ANNI words OKE SAARI (parallel)
+Attention: "pain" ki → fever ✅  headache ✅  stomach ✅  body ✅   (dooram unna fever ni kuda DIRECT ga chustundi)
+           "and", "now" ki → chala takkuva weight (ignore)
+```
+
+- **Memory box ledu** — prathi word migatha **anni words ni direct ga** chustundi (Section 4.1). Kabatti `fever` modatlo unna, chivarlo unna `pain` daanni **direct ga** chudagaladu — marchipovadam ane problem ledu.
+- **Parallel** — anni words oke saari → GPU meeda chala fast (Section 4.5) → billions of sentences meeda train cheyyagalam → **GPT possible ayyindi**.
+
+#### RNN vs LSTM vs Transformer — full comparison (class table)
+
+![RNN vs LSTM vs Transformer comparison table](images/rnn-vs-lstm-vs-transformer-table.png)
+
+| Feature | RNN | LSTM | Transformer |
+|---|---|---|---|
+| **Full form** | Recurrent Neural Network | Long Short-Term Memory | Transformer Model |
+| **Memory type** | One small memory | Long + short memory | No single memory (attention tho anni words direct ga) |
+| **Remembers long past?** | ❌ No | ✅ Better | ✅✅ Excellent |
+| **Forgetting problem** | ❌ High | 🔶 Reduced | ✅ None (context window lopala) |
+| **How it reads sentence** | One word at a time | One word at a time | **All words together** |
+| **Speed** | ❌ Slow | ❌ Slow | ✅ Very fast |
+| **Parallel processing** | ❌ No | ❌ No | ✅ Yes |
+| **Handles long sentences** | ❌ Poor | 🔶 Medium | ✅ Excellent |
+| **Key idea** | Pass memory step by step | Memory with gates | **Attention on all words** |
+| **Main weakness** | Forgets old info | Still slow | Needs more compute |
+| **Used today in ChatGPT?** | ❌ No | ❌ No | ✅ Yes |
+
+**Table lo 2 chinna clarifications:**
+- **"Forgetting problem: None"** — **context window lopala** matrame. Limit daatithe Transformer kuda paata tokens marchipotundi (Section 7.2, 7.6).
+- **"Needs more compute"** — prathi word anni words tho attention → tokens double aithe attention pani ~4 times (Section 7.2 — token limit). Andhuke GPUs/TPUs kavali.
+
+#### Enduku Transformer ki move ayyam? — 3 main reasons
+
+| # | RNN / LSTM problem | Transformer solution |
+|---|---|---|
+| 1 | **Word by word** → slow, GPU parallel vaadukolem | **All words together** → parallel, very fast training |
+| 2 | **Limited memory** → podavu sentences lo modati words marchipovadam | **Attention** → prathi word anni words ni **direct ga** chustundi, dooram problem ledu |
+| 3 | **Importance check ledu** (RNN) / gates tho konchem (LSTM) | **Attention weights** → important words ki ekkuva focus, migathavi ignore |
+
+> **History note:** 2017 lo Google researchers **"Attention Is All You Need"** paper lo Transformer ni introduce chesaru —
+> peru lone undi: RNN / LSTM avasaram ledu, **attention okkate chalu**. Section 4.6 lo unna diagram aa paper nunde.
+
+> **Oka line lo:** RNN = okko word + chinna memory → marchipotundi. LSTM = gates tho better memory, kaani inka **okko word, slow**.
+> Transformer = **anni words oke saari + attention** → fast, long sentences lo kuda marchipodu. Andhuke ChatGPT, Claude, Gemini anni Transformers.
 
 ---
 
@@ -1366,6 +2774,145 @@ Attention(Q, K, V) = softmax( Q · Kᵀ / √d ) · V
 > **Oka line lo gurthu pettukondi:**
 > Attention = prathi word ki, *"migatha words lo evaru naaku ekkuva important?"*
 > ani decide chesi, vaalla nundi ekkuva meaning teesukodam.
+
+### 4.1.2 Attention vs Self-Attention vs Multi-Head Attention — difference enti?
+
+Ee 3 words chala saarlu kalisi vintam — kaani **3 veru levels**:
+
+```text
+ATTENTION  (general idea — "evari meeda focus cheyyali?")
+   │
+   ├── Self-Attention   → SAME sentence lo words okadaanini okati chustayi
+   │      └── Masked Self-Attention → same, kaani FUTURE words block (decoder / GPT)
+   │
+   └── Cross-Attention  → oka sentence words, INKO sentence ni chustayi (decoder → encoder)
+
+MULTI-HEAD  = paina edaina (self / masked / cross) attention ni CHALA HEADS tho PARALLEL ga run cheyyadam
+```
+
+**Simple ga:** **Attention** = idea. **Self-attention** = aa idea **same sentence** lopala. **Multi-head** = aa pani **chala mandi oke saari, veru angles lo**.
+
+---
+
+#### 1. Attention — general idea
+
+> **Oka item (Query), konni items (Keys) ni chusi, important vaati meeda ekkuva focus petti, vaati info (Values) ni weighted ga kalupukovadam.**
+
+- Section 4.1.1 lo chusina **Query / Key / Value + softmax** — ade attention.
+- Ikkada **Query ekkada nundi vachina** parledu — same sentence nundi aina, veru sentence nundi aina.
+- **History:** Attention modata **RNN encoder–decoder** lo vachindi (2014–15) — decoder, encoder words ni chusedi (Section 2.3). Ante attention **Transformer kanna mundu** ne undi.
+
+**Real life:** Exam rasetappudu question chusi (**Query**), textbook lo ye page important o chusi (**Keys**), aa page content (**Values**) vaadukovadam.
+
+---
+
+#### 2. Self-Attention — same sentence lopala
+
+> **Query, Key, Value — moodu kuda SAME sentence nundi.** Sentence lo prathi word, **adhe sentence** lo migatha words ni chustundi.
+
+```text
+"The cat sat on the mat because it was tired"
+
+"it" (Query) → same sentence lo words (Keys) chustundi:
+   The 0.02   cat 0.70 ✅   sat 0.05   mat 0.15   tired 0.01 ...
+→ "it" = cat
+```
+
+- **"Self"** ante — **tana sentence ni tane** chusukovadam (bayati sentence kaadu).
+- Transformer **encoder** lo idi (Section 4.6 — Multi-Head Attention block).
+
+**Masked Self-Attention** — self-attention ne, kaani **future words block** (Section 4.4, 4.6):
+
+```text
+"I love India" generate chesetappudu:
+   "love" → I ✅   love ✅   India ❌ (future — inka raayaledu)
+```
+
+GPT, Claude lantivi **decoder-only** models lo **idi okkate** attention.
+
+**Real life:** Class lo students **adhe class** lo unna classmates tho discuss chesukovadam — bayati vaallu kaadu.
+
+---
+
+#### 3. Cross-Attention — inko sentence ni chudadam (comparison kosam)
+
+> **Query oka sentence nundi, Key & Value INKO sentence nundi.**
+
+```text
+Translation: "I love India" → "Nenu India ni premistanu"
+
+Decoder "ni" (Query — Telugu side) → Encoder words (Keys — English side):
+   I 0.10   love 0.25   India 0.65 ✅
+```
+
+- Original Transformer **decoder lo middle block** (Section 4.6 — Encoder-Decoder attention).
+- GPT lo **ledu** (encoder ledu kabatti).
+
+**Real life:** Student (decoder) answer rastu, **textbook (encoder)** ni chudadam — veru source.
+
+---
+
+#### 4. Multi-Head Attention — chala heads, parallel ga
+
+> **Attention (self / masked / cross) ni okka saari kaakunda, CHALA HEADS tho parallel ga run cheyyadam.**
+> Prathi head ki **sontha W_Q, W_K, W_V** — andhuke prathi head **veru relation** chustundi.
+
+```text
+"Durga drinks cold mansion house at night"
+
+Head 1 → WHO?      Durga ⟷ drinks
+Head 2 → WHAT?     drinks ⟷ mansion house
+Head 3 → QUALITY?  cold ⟷ mansion house
+Head 4 → WHEN?     night → drinks
+   ...
+        ↓  Concat + W_O
+Full meaning — anni relations kalipi
+```
+
+- **Single-head** attention aithe — okka relation matrame baga pattukuntundi.
+- **Multi-head** — who, what, when, quality **anni oke saari**.
+- Heads count = **design lo fix** chese hyperparameter (Original 8, GPT-3 96) — Section 4.6 lo detailed ga.
+
+**Real life:** Cricket match ni commentator, coach, umpire, fan — **andaru oke match**, kaani prathi okkari focus veru (Section 4.6).
+
+---
+
+#### Side by side — full comparison
+
+| | **Attention** | **Self-Attention** | **Masked Self-Attention** | **Cross-Attention** | **Multi-Head Attention** |
+|---|---|---|---|---|---|
+| **Enti** | General idea / mechanism | Attention — same sentence lo | Self-attention + future block | Attention — inko sentence ni | Attention ni chala heads tho |
+| **Query nundi** | Edaina | Same sentence | Same sentence | Decoder (output side) | Head type batti |
+| **Key / Value nundi** | Edaina | Same sentence | Same sentence (past matrame) | Encoder (input side) | Head type batti |
+| **Future words chudagalada?** | — | ✅ Avunu (encoder) | ❌ Ledu | ✅ Motham input | Type batti |
+| **Ekkada** | RNN seq2seq (2014) nundi | Transformer encoder, BERT | Transformer decoder, **GPT** | Transformer decoder (middle) | Transformer lo **anni attention blocks** |
+| **Example** | Exam lo textbook chudadam | `it` → `cat` | `love` → `I` (India ❌) | `ni` → `India` | Who / what / when heads |
+| **Real life** | Focus cheyyadam | Classmates tho discuss | Discuss — kaani future spoilers ledu | Textbook chudadam | Chala mandi experts oke saari |
+
+#### Transformer diagram lo ye block ye type?
+
+| Diagram block (Section 4.6) | Full correct peru |
+|---|---|
+| Encoder — **Multi-Head Attention** | **Multi-head SELF-attention** |
+| Decoder — **Masked Multi-Head Attention** | **Multi-head MASKED SELF-attention** |
+| Decoder — middle **Multi-Head Attention** | **Multi-head CROSS-attention** (encoder-decoder attention) |
+| **GPT** lo | **Multi-head masked self-attention** matrame (cross ledu) |
+
+Ante Transformer lo **prathi attention block multi-head** — "multi-head" ane word **ela run chestaro** cheptundi,
+"self / masked / cross" ane word **ye words ni chustundo** cheptundi.
+
+#### Common confusion — clear ga
+
+**Q. Multi-head attention ante self-attention kanna veru type aa?**
+**Kaadu** — multi-head **type kaadu, run chese vidhanam**. Self-attention ni 8 heads tho chesthe = *multi-head self-attention*.
+Cross-attention ni 8 heads tho chesthe = *multi-head cross-attention*.
+
+**Q. "Attention" and "self-attention" same aa?**
+Self-attention **attention lo oka rakam**. Ante prathi self-attention **attention e**, kaani prathi attention **self-attention kaadu** (cross-attention kuda undi).
+
+> **Oka line lo:** **Attention** = *"evari meeda focus?"* ane general idea. **Self-attention** = aa focus **same sentence lopala**
+> (**masked** aithe future block). **Cross-attention** = **inko sentence** ni chudadam. **Multi-head** = ee attention ni **chala heads tho parallel ga**,
+> prathi head veru relation chustundi. Transformer lo anni blocks **multi-head**; GPT = **multi-head masked self-attention**.
 
 ### 4.2 Softmax ante enti?
 
@@ -4338,6 +5885,670 @@ Weather example lo (`Rain is heavy`) — tools lekapothe model ki nijam weather 
 
 > **Oka line lo:** GPT **words predict chese tool** — emotions levu, confident ga tappu cheppagaladu, live info teliyadu (tools lekapothe),
 > and daani salaha ki **responsibility meede**. Strengths (7.7) kosam vaadandi, limitations (7.8) gurthu pettukoni verify cheyyandi.
+
+### 7.9 Doubt: GPT web search chesi sources isthe — token mechanism ela pani chestundi?
+
+**Doubt:** GPT browser lo search chesi sources istundi — ante **training data nundi kaakunda bayati sources** nundi answer.
+Mari "next token prediction" mechanism ikkada ela pani chestundi?
+
+**Short answer:** Token mechanism **emi maaradu!** App web pages ni fetch chesi, aa text ni **tokens ga marchi context window lo** pedutundi.
+Model eppudu chese pane chestundi — context lo unna anni tokens ni **attention tho chadivi next token predict**.
+**Facts context nundi**, **chadive / rase skill training nundi**.
+
+#### Step by step — ChatGPT search chesetappudu em jarugutundi?
+
+Question: *"What is today's gold rate in Hyderabad?"*
+
+```text
+① User question → tokens → context window
+   [What] [ is] [ today]['s] [ gold] [ rate] [ in] [ Hyderabad] [?]
+
+② Model search cheyyalani decide chestundi — idi kuda NEXT-TOKEN PREDICTION ne
+   Answer badulu special "tool call" tokens generate cheyyadam training lo nerchukundi:
+   → search("gold rate Hyderabad today")
+   (Model generate chesedi just text — model sontha ga browse cheyyaledu)
+
+③ APP (model kaadu) search run chestundi
+   Search engine → top pages → text extract → relevant parts select
+   (tarachuga Section 1.9 lo chusina semantic search idea tho)
+
+④ Results tokens ga marchi context window ki add
+   ┌──────────────────────────────────────────────────────────────────┐
+   │ User: What is today's gold rate in Hyderabad?                    │
+   │ Tool call: search("gold rate Hyderabad today")                   │
+   │ Result [1] site-a.com: "22K gold in Hyderabad today: ₹X/gram…"   │  ← bayati text —
+   │ Result [2] site-b.com: "Gold prices rose by ₹Y today…"           │    ippudu just TOKENS
+   └──────────────────────────────────────────────────────────────────┘
+
+⑤ Model MOTHAM context meeda malli run
+   Attention: answer tokens → result tokens ("₹X", "22K", "site-a.com") meeda strong focus
+   Token by token generate (red loop):
+   "Today 22K gold in Hyderabad is ₹X per gram [1]."
+                                    ↑ context tokens nundi copy
+```
+
+(`site-a.com`, `₹X` — ardham kosam placeholders.)
+
+#### Sources (links) ekkada nundi vastayi?
+
+URLs **context window lo tokens** ga unnayi (`site-a.com`) — model vaatini answer lo **copy** chestundi, price ni copy chesinattu.
+Training nundi link **gurthu chesukoni** cheppadam kaadu.
+
+#### Training nundi em vastundi? Search nundi em vastundi?
+
+| **Training (weights)** nundi | **Search (context window)** nundi |
+|---|---|
+| Text chadivi ardham chesukovadam | **Actual facts** — price, date, news |
+| Summarize, compare cheyyadam | **Source URLs** |
+| Grammar, writing style | Training cutoff **tarvata** latest info |
+| **Eppudu** search tool call cheyyali, query **ela** rayali | |
+| Cite cheyyadam — fact pakkana `[1]` pettadam | |
+
+**Real life example — Open-book exam 📖:** Training student ki **chadavadam, ardham chesukovadam, answer rayadam** nerpinchindi.
+Search exam lo **textbook page** chetiki istundi. Student (model) page chadivi **sontha matallo** answer rastadu — kaani **facts page nunde**.
+
+**Model weights maaravu** — emi permanent ga nerchukodu. Chat close chesthe ivvala gold rate model ki gurthu undadu.
+Section 7.6 (personal context) and Section 1.9 (semantic search / RAG) lo chusina **same idea**:
+> **Bayati info edaina — model ki cherali ante context window lo ki raavali.**
+
+```text
+Personal context (7.6)  ─┐
+RAG / semantic search    ├──→  [CONTEXT WINDOW tokens]  →  Transformer (attention)  →  next token
+Web search (7.9)        ─┘          ↑ anni ikkade kalustayi — weights maaravu
+```
+
+#### Telusukovalsina points
+
+- **Inka tappu avvochu:** Model result ni **tappu ga chadavochu**, context ni **paata training memory tho kalapochu**, fact ki **wrong source** cite cheyyochu,
+  leda **tappu unna page** ni nammochu. Search hallucination ni **taggistundi, poorthiga teeseyadu** — sources click chesi check cheyyandi (Section 7.3).
+- **Search results ki tokens kharchu:** Pages of results context lo **velalla tokens** add chestayi — **prefill** (parallel ga process), kaani cost, limit lo count avutayi (Section 7.2).
+- **Model sontha ga browse cheyyadu:** Adi *"search cheyyi"* ani **text generate** chestundi matrame — fetch chesedi **app**.
+  Section 7.8 lo *"unless connected to tools"* ane line ki ide ardham.
+
+> **Oka line lo:** Web search lo **app** pages fetch chesi vaati text ni **tokens ga context window lo** pedutundi. Model inka **next token matrame predict**
+> chestundi — kaani ippudu attention aa **result tokens** ni chadivi answer rastundi. **Facts + links context nundi**, **chadive / rase skill training nundi**.
+
+### 7.10 Fine-tuning — enti? enduku vaadataru?
+
+#### Fine-tuning ante enti?
+
+> **Already train ayina model ni, chinna specific dataset tho inka konchem train cheyyadam** — oka particular pani lo better avvadaniki.
+> Ikkada **model weights nijam ga maarutayi** — prompting, RAG, web search lo laaga context window ki text add cheyyadam kaadu.
+
+```text
+① PRE-TRAINING  (chala expensive — OpenAI / Meta lantivi companies okka saari chestayi)
+   Billions of internet sentences → next-token prediction
+   Result: "base model" — language, facts telusu, kaani just text continue chestundi
+        ↓
+② FINE-TUNING  (chala chinnadi, cheap)
+   Velalla carefully select chesina examples → inka konchem train
+   Result: oka task / behaviour ki specialise ayina model
+```
+
+**Real life example — Doctor 🩺:** **Pre-training = MBBS** — general medicine, chala chaduvu. **Fine-tuning = specialisation (cardiology)** —
+already unna knowledge meeda **chinna, focused training**. Zero nundi start cheyyaru.
+
+#### Class notes — Fine Tuning (Durga Sir)
+
+![Fine tuning — definition and when it is required](images/fine-tuning-definition-when-required.png)
+
+> **Fine tuning** means training an **already trained AI model again** using **our own example data** to change its **behaviour and response style**.
+
+**When it is required?**
+
+> - If you want **same tone every time**.
+> - If you want **fixed format**.
+> - If you want **domain specific answers**.
+
+| Eppudu kavali | Ardham | Example |
+|---|---|---|
+| **Same tone every time** | Prathi answer **okate feel** — polite, friendly, formal | Bank bot eppudu formal ga, food app bot eppudu friendly ga |
+| **Fixed format** | Output eppudu **same structure** | Prathi report lo: Summary → Findings → Recommendation |
+| **Domain specific answers** | Oka field (medical, legal) **language, style** lo answers | Doctor laaga report rayadam, lawyer laaga clause rayadam |
+
+![Fine tuning examples — customer support bots, medical/legal drafting](images/fine-tuning-examples-support-medical.png)
+
+**eg-1: Customer support bots**
+
+> - Same tone
+> - Same type of replies
+> - Company approved language
+
+Customer ki prathi saari **same brand experience** — okasari *"Hey buddy!"*, inkosari *"Dear Sir"* ani maarakudadu.
+Company **approve chesina words** matrame (ex: *"refund guaranteed"* lantivi promises cheyyakudadu).
+
+**eg-2: Medical / Legal drafting**
+
+> - Fixed format
+> - No creativity
+> - High consistency
+
+Medical report, legal contract lo **creativity danger** — prathi saari **same structure, same terms**, extra kalpanalu undakudadu.
+(Ikkada **low temperature** — Section 7.4 — kuda vaadataru.)
+
+**Q. Already prompt is there, what is the need of fine tuning?**
+
+![Already prompt is there — why fine tuning?](images/fine-tuning-why-not-just-prompt.png)
+
+> Same question, same prompt — **but AI gives different style answers every time**.
+> **Fine tuning makes AI consistent.**
+
+- Prompt lo *"polite ga, 3 lines lo, ee format lo cheppu"* ani rasina — model **sampling** (Section 7.4) valla prathi saari **konchem veru** ga rastundi.
+- Long instructions + examples prompt lo prathi saari pampithe — **ekkuva tokens, ekkuva cost** (Section 7.2), and long prompts lo konni instructions model **miss** avvochu.
+- Fine-tune chesthe aa style **model weights lone** untundi → **chinna prompt** ki kuda **consistent** answer.
+
+```text
+Prompt matrame:   Same question 3 saarlu →  Answer 1: formal, 5 lines
+                                            Answer 2: casual, emoji tho
+                                            Answer 3: bullet points       ← style maarutundi ❌
+
+Fine-tuned model: Same question 3 saarlu →  Answer 1, 2, 3: same tone, same format  ✅
+```
+
+![Fine tuning makes AI consistent — process in simple way](images/fine-tuning-process-simple.png)
+
+> **Note: Fine Tuning mainly meant for behaviour change.**
+
+**Process in simple way:**
+
+| # | Class step | Technical ga em jarugutundi |
+|---|---|---|
+| 1 | **Start with already trained model** | Base / pre-trained model (GPT, Llama…) theeskuntam — zero nundi kaadu |
+| 2 | **Prepare your own example data (custom data)** | *Prompt → ideal answer* pairs — sadharanam ga **JSONL** file lo vandala / velalla examples |
+| 3 | **Show these examples to the model many times** | Training **epochs** — dataset motham konni saarlu model ki chupistaru |
+| 4 | **Model slowly adjusts itself** | Prathi example lo **loss** chusi **weights konchem nudge** (gradient descent — Section 1.9 doubt laage) |
+| 5 | **A new specialized model created** | Kotha weights tho **kotha model version** save — daanni call chesthe mee style lo answers |
+
+```text
+[Already trained model] + [Mee examples] ──(many rounds, weights slowly adjust)──→ [New specialized model]
+       general                custom                                                  mee behaviour / style
+```
+
+#### Example — company customer support
+
+Model ni **mee company style** lo customer questions ki answer cheyyinchali:
+
+```text
+Training examples (prompt → ideal answer):
+  "Where is my order?"   → "Hi! 😊 Please share your order ID and I'll check right away."
+  "I want a refund"      → "Sorry to hear that! Refunds are processed within 5–7 days…"
+  ... (vandala nundi velalla examples)
+```
+
+Fine-tuning lo model **paata training loop ne** run chestundi — ideal answer lo next token predict → tappu entha (loss) → weights konchem nudge.
+Tarvata **prathi saari cheppakunda** mee style lo answer chestundi.
+
+**ChatGPT kuda fine-tuned model e!** Base GPT just text continue chestundi. Daanni *question → manchi answer* examples tho fine-tune chesaru
+(**instruction tuning**), tarvata human ratings tho (**RLHF**) helpful + safe ga train chesaru. Andhuke ChatGPT mee sentence **continue cheyyakunda answer** istundi.
+
+#### Model lopala em maarutundi?
+
+- **Weights** — attention, feed forward, embedding rows kuda konchem maaravachu (Section 1.10 Q6 — *"embeddings training / fine-tuning tho matrame maarutayi"*).
+- **Vocabulary maaradu** — tokenizer same.
+- **Chinna adjustments matrame** — already manchi model nundi start kabatti, pre-training kanna **chala takkuva data, compute** chalu.
+
+#### Types
+
+| Type | Em chestundi | Cost |
+|---|---|---|
+| **Full fine-tuning** | **Anni** weights update | Expensive — peddha GPUs kavali |
+| **LoRA / PEFT** (parameter-efficient) | Original weights **freeze**, **chinna extra add-on weights** matrame train (tarachuga model lo **1% kanna takkuva**) | Cheap — okka GPU lo kuda — chala popular |
+| **Instruction tuning** | *Question → answer* examples tho fine-tune — chat assistant chesadaniki | Base model ni ChatGPT laaga marche step |
+
+#### Enduku vaadataru? — Fine-tuning reasons
+
+![Fine-tuning — we can customize behaviour and response styles](images/fine-tuning-customize-behaviour-styles.png)
+
+**Class lo ichhina reason (Durga Sir):**
+
+> **We can customize behaviour and response styles.**
+
+Ide **main reason** — fine-tuning tho model **ela behave cheyyalo** and **ela answer ivvalo** mana avasaraniki tagga marchukovachu.
+
+| Slide words | Ardham | Kinda table lo reasons |
+|---|---|---|
+| **Behaviour** | Model **em cheyyali, em cheyyakudadu** — ye pani lo expert ga undali | #9 Behaviour / safety, #1 Specific task lo better |
+| **Response styles** | Answer **ela undali** — tone, length, format | #2 Consistent style / tone, #3 Fixed output format |
+
+Migatha reasons (domain language, shorter prompts, chinna model, language support, privacy) — ee **customization valla vache extra benefits**.
+
+> ⚠️ Gurthu pettukondi: Fine-tuning = **"ELA"** behave / respond cheyyali. **"EM facts"** cheppali ante — **RAG** (kinda "Common mistake" chudandi).
+
+| # | Reason | Ardham | Example |
+|---|---|---|---|
+| 1 | **Specific task lo better** | General model anni panulu *okay* ga chestundi — fine-tune chesthe **okka pani lo expert** | Medical reports nundi diagnosis codes extract cheyyadam |
+| 2 | **Consistent style / tone** | Prathi answer **same brand voice** lo — prompt lo prathi saari cheppakkarledu | Company support bot — always polite, emoji tho, short |
+| 3 | **Fixed output format** | Output eppudu **exact format** lo (JSON, specific template) | Invoice text → always same JSON structure |
+| 4 | **Domain language** | **Medical, legal, finance** lantivi special words, phrases baga ardham | Legal contracts lo clauses gurthinchadam |
+| 5 | **Shorter prompts → cost + speed save** | Long instructions, examples prompt lo pettakkarledu — model ki already telusu → **takkuva input tokens** (Section 7.2) | 2,000-token instruction prompt badulu 50 tokens chalu |
+| 6 | **Chinna model tho peddha model performance** | Narrow task ki fine-tune chesina **chinna, cheap model** peddha general model antha baga cheyyochu | Chinna model fast + cheap ga serve cheyyochu |
+| 7 | **Language support** | General model weak unna language lo improve | Telugu customer chats tho fine-tune → better Telugu replies |
+| 8 | **Privacy / own server** | Open models (Llama lantivi) ni mee data tho fine-tune chesi **mee server lone** run — data bayataki velladu | Hospital, bank lo sensitive data |
+| 9 | **Behaviour / safety** | Model **em cheyyali, em cheyyakudadu** nerpinchadam | ChatGPT RLHF — harmful requests ki refuse cheyyadam |
+
+#### Fine-tuning vs Prompting vs RAG — edi eppudu?
+
+| | **Prompting** | **RAG** (semantic search — Section 1.9) | **Fine-tuning** |
+|---|---|---|---|
+| Weights maarutaya? | ❌ | ❌ | ✅ |
+| Best for | Quick instructions | **Facts / knowledge** — mee documents nundi, roju maare info | **Style, format, behaviour**, specialised task |
+| Update ela | Prompt edit | Documents add / replace | Malli train |
+| Cost | Free / cheap | Medium | Ekkuva |
+| Example | *"5 points lo cheppu"* | *"Maa policy PDF nundi answer ivvu"* | *"Eppudu maa brand tone lo reply"* / medical notes classify |
+
+```text
+Model ki kotha info / behaviour ivvadaniki 2 daarulu:
+
+  CONTEXT WINDOW (weights maaravu)          WEIGHTS (permanent ga maarutayi)
+  ├── Prompting                             └── Fine-tuning
+  ├── Personal context (7.6)
+  ├── RAG / semantic search (1.9)
+  └── Web search (7.9)
+```
+
+**Common mistake ⚠️:** Model ki **facts** (ex: product prices) nerpinchadaniki fine-tune cheyyadam. Facts maarutu untayi, and fine-tuned model
+vaatini inka **hallucinate** cheyyochu. **Knowledge kosam RAG**, **behaviour / style kosam fine-tuning** — real apps lo tarachuga **rendu kalipi** vaadataru.
+
+#### Fine-tuning vs RAG — deep ga
+
+Rendu **model ni mana avasaraniki tagga marchadaniki** vaadataru — kaani **pani poorthiga veru**.
+
+**Real life example — Kotha employee 🧑‍💼:**
+
+```text
+FINE-TUNING = Employee ki TRAINING ivvadam
+              → company tho ela matladali, ye format lo reports rayali — HABITS maaratayi
+              → training ayyaka manual chudakunda ne aa style lo pani chestadu
+
+RAG         = Employee desk meeda REFERENCE BOOK / company manual pettadam
+              → question vachinappudu book open chesi correct info chusi cheptadu
+              → book update chesthe ventane kotha info — employee ni malli train cheyyakkarledu
+```
+
+**Inko example — Student:** Fine-tuning = **coaching** (answer **ela rayalo** nerpinchadam). RAG = **open-book exam** (**em rayalo** book nundi).
+
+##### Ela pani chestayi — pipelines
+
+```text
+FINE-TUNING  (okka saari, mundhe):
+  [Base model] + [Examples: prompt → ideal answer] → training → [NEW model — weights maarayi]
+  Usage:  question → NEW model → answer (mee style lo)
+
+RAG  (prathi question ki):
+  question → semantic search (Section 1.9) → mee documents nundi relevant chunks
+           → [question + chunks] context window lo → SAME model (weights maaravu) → answer (documents base chesukoni)
+```
+
+##### Side by side comparison
+
+| | **Fine-tuning** | **RAG** |
+|---|---|---|
+| **Main pani** | **Behaviour / style** maarchadam — *"ELA"* | **Knowledge / facts** ivvadam — *"EM"* |
+| **Model weights** | ✅ Maarutayi (kotha model) | ❌ Maaravu — context window lo text add |
+| **Data type** | *Prompt → ideal answer* **examples** | Mee **documents** (PDFs, policies, manuals, DB) |
+| **Latest info** | ❌ Training time data varake — malli train cheyyali | ✅ Document update chesthe **ventane** kotha info |
+| **Facts hallucination** | Facts nerpisthe inka **hallucinate** cheyyochu | Documents nundi chusi chepthundi → **takkuva** (poorthiga zero kaadu) |
+| **Sources / citations** | ❌ Ye source nundi ani cheppaledu | ✅ Ye document / chunk nundi ani **chupinchochu** |
+| **Update cost** | Malli training — time + GPU kharchu | Documents add / replace — cheap, fast |
+| **Setup cost** | Data prepare + training (ekkuva) | Vector DB + embeddings (medium) |
+| **Per-question cost / speed** | Chinna prompt → **fast, takkuva tokens** | Search step + chunks prompt lo → **konchem slow, ekkuva tokens** |
+| **Private data** | Data model lo kalisipotundi — delete cheyyadam kashtam | Data DB lo — access control, delete easy |
+| **Best examples** | Support bot tone, medical report format, JSON output | Company policy Q&A, product catalog, latest docs chatbot |
+
+##### Edi eppudu? — Decision
+
+```text
+Mee problem enti?
+  │
+  ├── "Model ki MAA INFO teliyadu / latest info kavali / sources chupinchali"
+  │        → RAG ✅
+  │
+  ├── "Info telusu, kaani ANSWER STYLE / FORMAT / TONE correct ga ledu, prathi saari maarutundi"
+  │        → FINE-TUNING ✅
+  │
+  └── "Rendu kavali — maa info + maa style"
+           → RAG + FINE-TUNING kalipi ✅
+```
+
+**Mundu edi try cheyyali?** — Sadharanam ga order: **Prompting → RAG → Fine-tuning**.
+Prompt tho pani ayipothe chalu (cheap). Knowledge problem aithe RAG. Inka style / consistency problem unte appudu fine-tuning.
+
+##### Rendu kalipi — real example 🏥
+
+Hospital chatbot:
+
+| Kavalsindi | Edi vaadali | Enduku |
+|---|---|---|
+| Reports eppudu **same medical format** lo, **formal tone**, creativity ledu | **Fine-tuning** | Behaviour / style — Durga Sir eg-2 |
+| Latest **treatment guidelines**, **hospital policies**, doctor timings | **RAG** | Facts — roju maarutayi, source chupinchali |
+
+```text
+Patient question → RAG: latest guidelines / policy chunks vetuku
+                → Fine-tuned model (medical format + tone nerchukunnadi) ki [question + chunks]
+                → Answer: correct facts (RAG nundi) + correct format (fine-tuning nundi) ✅
+```
+
+> **Oka line lo:** **Fine-tuning = model ki "ELA" behave cheyyalo nerpinchadam** (weights maarutayi — tone, format, consistency).
+> **RAG = model ki "EM" cheppalo documents nundi ivvadam** (weights maaravu — latest facts, sources).
+> Employee ki **training** vs desk meeda **reference book**. Real apps lo tarachuga **rendu kalipi**.
+
+#### Fine-tuning ki em kavali?
+
+| Kavalsindi | Enduku |
+|---|---|
+| **Quality data** (vandala – velalla examples) | Tappu examples isthe tappu ne nerchukuntundi — *garbage in, garbage out* |
+| **GPU / cloud** | Training compute (LoRA aithe takkuva) |
+| **Base model** | Open model (Llama, Mistral) leda provider fine-tuning API (OpenAI lantivi) |
+| **Evaluation** | Fine-tune tarvata nijam ga better ayyinda ani test — konni saarlu paata skills **marchipovachu** (*catastrophic forgetting*) |
+
+> **Oka line lo:** Fine-tuning = already train ayina model ni **chinna, focused data** tho inka train chesi **weights adjust** cheyyadam.
+> **Enduku** — specific task lo expert, consistent style / format, domain language, shorter prompts (cost save), chinna model tho manchi results, privacy.
+> **Facts kosam RAG, behaviour kosam fine-tuning.** Pre-training = MBBS, fine-tuning = specialisation.
+
+### 7.11 RAG Full Architecture — Transformer, Attention anni ela kalisi pani chestayi?
+
+**Doubt:** RAG lo kuda transformer, attention concepts untaya?
+**Answer: Avunu, poorthiga!** RAG transformer ni **replace cheyyadu** — RAG = **rendu transformers** + madhyalo oka **search step**.
+Tokenizer, embeddings, positional encoding, attention, Add & Norm, feed forward — anni **rendu models lo** untayi.
+
+Ee section lo mee **career coach RAG project** ([rag_engine.py](../Project-ai_career_coach_rag/ai_career_coach_rag/src/rag_engine.py)) ne example ga theeskuntam.
+
+---
+
+#### Full Architecture Diagram
+
+```text
+╔════════════════════════════ PHASE 1 — INDEXING (okka saari, mundhe) ════════════════════════════╗
+║                                                                                                   ║
+║  [Resume + Job Description text]                                                                  ║
+║        ↓                                                                                          ║
+║  ① LOADER  → text ni Document objects ga                         (transformer ❌)                 ║
+║        ↓                                                                                          ║
+║  ② CHUNKER → 800 characters chunks, 150 overlap                   (transformer ❌)                 ║
+║        ↓     RecursiveCharacterTextSplitter                                                       ║
+║  ┌─────────────────────────────────────────────────────────────┐                                  ║
+║  │ ③ EMBEDDING MODEL — all-MiniLM-L6-v2   TRANSFORMER #1 ✅     │                                  ║
+║  │   (ENCODER-only — BERT style)                                │                                  ║
+║  │   tokenizer → token embeddings ⊕ position                    │                                  ║
+║  │   → 6 × [Multi-Head SELF-Attention (NO mask)                 │                                  ║
+║  │          → Add & Norm → Feed Forward → Add & Norm]           │                                  ║
+║  │   → POOLING (anni token vectors average) → 384-dim vector    │                                  ║
+║  └─────────────────────────────────────────────────────────────┘                                  ║
+║        ↓                                                                                          ║
+║  ④ VECTOR DATABASE — ChromaDB                                     (transformer ❌)                 ║
+║     prathi chunk ki: [384-dim vector] + [chunk TEXT] + [metadata: resume / JD]                    ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+╔════════════════════════════ PHASE 2 — QUERY (prathi question ki) ═══════════════════════════════╗
+║                                                                                                   ║
+║  [User question: "What skills am I missing for this job?"]                                        ║
+║        ↓                                                                                          ║
+║  ⑤ SAME EMBEDDING MODEL (TRANSFORMER #1) → question ki 384-dim vector                            ║
+║        ↓                                                                                          ║
+║  ⑥ SIMILARITY SEARCH — ChromaDB lo cosine similarity → top-k (k=5/6) chunks   (transformer ❌)     ║
+║        ↓     retriever = vectorstore.as_retriever(search_kwargs={"k": k})                         ║
+║  ⑦ PROMPT BUILDER — [system instruction] + [retrieved chunks TEXT] + [question]  (transformer ❌)  ║
+║        ↓     ChatPromptTemplate                                                                   ║
+║  ┌─────────────────────────────────────────────────────────────┐                                  ║
+║  │ ⑧ LLM — llama-3.1-8b-instant (Groq)   TRANSFORMER #2 ✅      │                                  ║
+║  │   (DECODER-only — GPT style)                                 │                                  ║
+║  │   SONTHA tokenizer → internal embeddings ⊕ position          │                                  ║
+║  │   → N × [MASKED Multi-Head Self-Attention                    │                                  ║
+║  │          → Add & Norm → Feed Forward → Add & Norm]           │                                  ║
+║  │   → Linear → Softmax → next token → 🔴 RED LOOP              │                                  ║
+║  └─────────────────────────────────────────────────────────────┘                                  ║
+║        ↓                                                                                          ║
+║  ⑨ ANSWER + SOURCES (ye chunks nundi vachindo)                                                    ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════════════╝
+```
+
+**9 components lo — 2 transformers (③/⑤ and ⑧)**, migathavi plain code / maths. **Intelligent pani** chesedi aa rendu transformers e.
+
+---
+
+#### Prathi component — step by step explanation
+
+Example question: **"What skills am I missing for this job?"**
+
+---
+
+**① Loader — documents load**
+
+| | |
+|---|---|
+| 📥 Input | Resume text, Job Description (JD) text |
+| ⚙️ Em jarugutundi | Text ni `Document` objects ga marchi, **metadata** (source = resume / JD) add |
+| 📤 Output | 2 Documents |
+| 🧠 Transformer? | ❌ Ledu — just file reading |
+
+---
+
+**② Chunker — chinna pieces**
+
+| | |
+|---|---|
+| 📥 Input | 2 Documents |
+| ⚙️ Em jarugutundi | `RecursiveCharacterTextSplitter(chunk_size=800, chunk_overlap=150)` — prathi chunk ~800 characters, pakka chunks madhya 150 characters **common** (sentence madhyalo cut ayina context poakunda) |
+| 📤 Output | Ex: 12 chunks — *"Skills: Python, SQL, Pandas…"*, *"Required: Docker, AWS, ML deployment…"* |
+| 🧠 Transformer? | ❌ Ledu (Semantic chunking aithe embedding model vaadutundi — `RAG/chunking/SemanticChunking.py`) |
+
+**Enduku chunks?** — Motham document okka vector ayithe meaning **dilute** avutundi, and LLM context window lo **anni pattavu** (Section 7.2). Chinna chunks → **accurate search**, avasaram unnavi matrame LLM ki.
+
+---
+
+**③ Embedding model — TRANSFORMER #1 (Encoder)**
+
+| | |
+|---|---|
+| 📥 Input | Prathi chunk TEXT |
+| ⚙️ Em jarugutundi | Chunk ni **encoder transformer** lo pampi **okka sentence vector** |
+| 📤 Output | Prathi chunk ki **384 numbers** vector (external embedding — Section 1.9) |
+| 🧠 Transformer? | ✅ **Avunu — encoder-only** |
+
+**Lopala em jarugutundi? (mee notes concepts tho):**
+
+```text
+"Required: Docker, AWS, ML deployment experience"
+   ↓ ① MiniLM SONTHA tokenizer → subword tokens (Section 1.9)
+   ↓ ② internal token embeddings ⊕ positional encoding (Section 4.6)
+   ↓ ③ 6 layers × encoder block:
+   │     Multi-Head SELF-Attention — NO MASK (Section 4.1.2)
+   │       "Docker" → "deployment", "AWS" ni chustundi — VENAKA + MUNDU rendu
+   │     Add & Norm → Feed Forward → Add & Norm   (Section 4.6 — encoder)
+   ↓ ④ prathi token ki context-aware vector
+   ↓ ⑤ POOLING — anni token vectors AVERAGE → OKKA vector      ← GPT lo ledu, kotha part
+[0.12, -0.48, 0.91, …]  (384 numbers)
+```
+
+**Enduku mask ledu?** — Ikkada **generate cheyyadam ledu**, motham sentence **ardham chesukovali** — kabatti prathi word **rendu vaipula** chudali. Daachalsina "future" ledu.
+
+**Model size (published):** all-MiniLM-L6-v2 — **6 layers, 384-dim, 12 heads, ~22M parameters** — chala chinnadi, mee laptop lo kuda fast ga run avutundi, API key avasaram ledu.
+
+---
+
+**④ Vector Database — ChromaDB**
+
+| | |
+|---|---|
+| 📥 Input | 12 chunks × (384-dim vector + text + metadata) |
+| ⚙️ Em jarugutundi | Disk lo save (`persist_directory`) — next time malli embed cheyyakkarledu |
+| 📤 Output | Searchable vector index |
+| 🧠 Transformer? | ❌ Ledu — storage |
+
+```text
+ChromaDB:
+  id   vector (384)              text                                         metadata
+  0    [0.21, -0.10, …]          "Skills: Python, SQL, Pandas, Matplotlib…"   resume
+  1    [0.05,  0.33, …]          "Projects: Sales dashboard using Pandas…"    resume
+  ...
+  7    [0.12, -0.48, …]          "Required: Docker, AWS, ML deployment…"      JD
+  8    [0.40,  0.02, …]          "Nice to have: Spark, Airflow…"              JD
+```
+
+---
+
+**⑤ Question embedding — SAME Transformer #1**
+
+| | |
+|---|---|
+| 📥 Input | *"What skills am I missing for this job?"* |
+| ⚙️ Em jarugutundi | **Step ③ lo vaadina SAME model** tho question ni vector ga |
+| 📤 Output | Question ki 384-dim vector |
+| 🧠 Transformer? | ✅ Avunu — same encoder |
+
+⚠️ **Same model kavali** — veru model aithe vectors veru "language" lo untayi, compare cheyyalem (Section 1.9 — internal vs external).
+
+---
+
+**⑥ Similarity search — cosine similarity**
+
+| | |
+|---|---|
+| 📥 Input | Question vector + ChromaDB lo anni chunk vectors |
+| ⚙️ Em jarugutundi | Prathi chunk tho **cosine similarity** (Section 1.9) → highest **k = 5/6** chunks |
+| 📤 Output | Top chunks — **TEXT** |
+| 🧠 Transformer? | ❌ Ledu — plain maths |
+
+```text
+Question vector  vs  chunk vectors (ardham kosam scores):
+  chunk 7  "Required: Docker, AWS, ML deployment…"       → 0.71 ✅
+  chunk 0  "Skills: Python, SQL, Pandas…"                → 0.66 ✅
+  chunk 8  "Nice to have: Spark, Airflow…"               → 0.63 ✅
+  chunk 1  "Projects: Sales dashboard…"                  → 0.41 ✅
+  chunk 3  "Education: B.Tech 2021…"                     → 0.12 ❌ (top-k lo ledu)
+```
+
+---
+
+**⑦ Prompt builder**
+
+| | |
+|---|---|
+| 📥 Input | Top chunks TEXT + question |
+| ⚙️ Em jarugutundi | `ChatPromptTemplate` tho okka prompt ga kalupu |
+| 📤 Output | LLM ki velle full prompt **TEXT** |
+| 🧠 Transformer? | ❌ Ledu — string formatting |
+
+```text
+System: You are a career coach. Answer ONLY using the context below.
+        If the answer is not in the context, say you don't know.         ← hallucination taggadaniki (Section 7.3)
+
+Context:
+  [Resume] Skills: Python, SQL, Pandas, Matplotlib...
+  [JD] Required: Docker, AWS, ML deployment experience...
+  [JD] Nice to have: Spark, Airflow...
+  [Resume] Projects: Sales dashboard using Pandas...
+
+Question: What skills am I missing for this job?
+```
+
+> ⚠️ Ikkada **vectors levu — TEXT matrame**. Step ③ / ⑥ lo vectors **vetakadaniki** matrame vaadam.
+
+---
+
+**⑧ LLM — TRANSFORMER #2 (Decoder)**
+
+| | |
+|---|---|
+| 📥 Input | Full prompt TEXT |
+| ⚙️ Em jarugutundi | Decoder transformer prompt chadivi, answer **token by token** rastundi |
+| 📤 Output | Answer text |
+| 🧠 Transformer? | ✅ **Avunu — decoder-only** |
+
+**Lopala em jarugutundi? (mee notes concepts tho):**
+
+```text
+Full prompt TEXT
+   ↓ ① Llama SONTHA tokenizer → tokens (MiniLM tokenizer kaadu!)
+   ↓ ② Llama internal embeddings (4,096-dim per token) ⊕ position
+   ↓ ③ PREFILL — prompt tokens anni OKE SAARI parallel (Section 4.4)
+   ↓ ④ N layers × decoder block:
+   │     MASKED Multi-Head Self-Attention (Section 4.1.2) — past tokens matrame
+   │     Add & Norm → Feed Forward → Add & Norm
+   ↓ ⑤ Linear → Softmax → next token (Section 1.10)
+   ↓ ⑥ 🔴 RED LOOP — token add chesi malli (KV cache tho fast) → [END] varaku
+"You are missing Docker, AWS and ML deployment experience. Spark and Airflow are nice-to-have..."
+```
+
+**Attention ikkade RAG ki heart ❤️** — answer rasetappudu, answer tokens **context chunk tokens** ni **attention** tho chustayi:
+
+```text
+Rastunna token: "Docker"
+   attention → [JD] "Required: Docker, AWS, ML deployment"   ← HIGH weight ✅
+             → [Resume] "Skills: Python, SQL, Pandas"         ← medium (Docker LEDU ani compare)
+             → System instruction                             ← low
+```
+
+- Model ki **resume lo Docker ledu, JD lo undi** ani telisedi **attention** valle — rendu chunks ni compare chesi.
+- Attention sariga pani cheyyakapothe — chunks unna **ignore** chesi training memory nundi guess chestundi (hallucination).
+- Andhuke **chala chunks / irrelevant chunks** isthe problem — attention **spread** ayyi important chunk miss (*lost in the middle* — Section 7.2).
+- `temperature=0.2` — takkuva randomness → **facts ki stick** avvadaniki (Section 7.4).
+
+---
+
+**⑨ Answer + Sources**
+
+| | |
+|---|---|
+| 📤 Output | Answer text + ye chunks vaadamo (`source_docs`) |
+| 💡 | Sources chupisthe user **verify** cheyyochu — RAG advantage (fine-tuning lo ledu — Section 7.10) |
+
+---
+
+#### Rendu transformers — side by side
+
+| | **Transformer #1 — Embedding model** | **Transformer #2 — LLM** |
+|---|---|---|
+| Mee project lo | `all-MiniLM-L6-v2` | `llama-3.1-8b-instant` (Groq) |
+| Type | **Encoder-only** (BERT style) | **Decoder-only** (GPT style) |
+| Section 4.6 diagram lo | **Left side** (encoder) | **Right side** (decoder, cross-attention lekunda) |
+| Attention | Multi-head self-attention — **NO mask** (rendu vaipula) | Multi-head **MASKED** self-attention (past matrame) |
+| Tokenizer | Sontha (MiniLM) | Sontha (Llama) — **veru** |
+| Embedding size | 384 | 4,096 |
+| Chivari step | **Pooling** → okka sentence vector | **Linear + Softmax** → next token |
+| Red loop? | ❌ Okka saari run | ✅ Token by token |
+| Ekkada run | Mee laptop (local) | Groq cloud (API) |
+| Pani | **Vetakadaniki** (search) | **Rayadaniki** (generate) |
+| Phases | Indexing (③) + Query (⑤) | Query (⑧) matrame |
+
+---
+
+#### Component summary table
+
+| # | Component | Transformer? | Attention type | Input → Output | Mee code |
+|---|---|---|---|---|---|
+| ① | Loader | ❌ | — | Files → Documents | `create_documents()` |
+| ② | Chunker | ❌ | — | Documents → chunks | `split_documents()` — 800 / 150 |
+| ③ | Embedding model | ✅ Encoder | Self-attn, no mask | Chunk text → 384 vector | `get_embeddings()` |
+| ④ | Vector DB | ❌ | — | Vectors → stored index | `build_vectorstore()` — Chroma |
+| ⑤ | Query embedding | ✅ Encoder (same) | Self-attn, no mask | Question → 384 vector | (retriever lopala) |
+| ⑥ | Similarity search | ❌ | — | Vectors → top-k chunks | `retrieve_context()` — k=5/6 |
+| ⑦ | Prompt builder | ❌ | — | Chunks + question → prompt | `ChatPromptTemplate` |
+| ⑧ | LLM | ✅ Decoder | **Masked** multi-head self-attn | Prompt → answer | `get_llm()` — Groq Llama |
+| ⑨ | Output | ❌ | — | Answer + sources | `run_career_coach()` |
+
+---
+
+#### Ekkada problems ravachu? (debug checklist)
+
+| Problem | Ye component | Fix |
+|---|---|---|
+| Correct chunk **raaledu** | ② Chunker / ③ Embedding / ⑥ k | Chunk size tune, better embedding model, k penchu, hybrid search |
+| Chunks vachayi kaani answer **tappu** | ⑧ LLM attention | Takkuva + relevant chunks, clear instruction (*"only from context"*), re-ranker |
+| Answer chunks lo leni info cheppindi | ⑧ LLM (hallucination) | *"If not in context, say you don't know"*, low temperature |
+| Embedding model maarcha — search **broke** | ③ / ⑤ mismatch | Documents anni **malli embed** (paata vectors veru language) |
+| Telugu documents ki weak results | ③ Embedding model | Multilingual embedding model |
+| Slow / costly | ⑧ chala chunks | k taggu, chunks chinnaga, summary |
+
+**Optional extra — Re-ranker:** Chala RAG systems ⑥ tarvata **3rd transformer** (cross-encoder) pedatayi — question + prathi chunk ni **kalipi** okka model lo
+pampi (attention rendintini oke saari chustundi) **inka accurate score**. Tarvata best chunks matrame LLM ki.
+
+---
+
+> **Oka line lo:** RAG = **Encoder transformer** (chunks + question ni vectors ga — self-attention, no mask, pooling) → **plain maths search** (cosine, top-k)
+> → **chunks TEXT prompt lo** → **Decoder transformer** (masked attention tho chunks chadivi, red loop lo answer rastundi).
+> Mee notes lo unna **tokenizer, embeddings, positional encoding, attention, Add & Norm, feed forward, softmax** — anni **rendu models lo** pani chestayi.
+> Madhyalo velledi **text matrame**, vectors kaadu.
 
 ---
 
